@@ -1,0 +1,45 @@
+Help me check my work for the spider droper.
+
+Let's call the torque provided by the motor T_in.
+
+Let's call the gear ratio G.  This an overdrive not a reduction, so G is less than one.
+
+The torque at the output gear is given by T_out = T_in * G.
+
+The spool is attached to the output gear.  Let's call the radius of the spool r.
+
+The force at the radius of the spool is F = T_out / r.  The dropper will stall at the point this force drops below the gravitational force.  So the absolute maximum mass for the prop is
+
+m = F / g
+
+where g is the acceleration due to gravity (9.8 m/s^2).
+
+Putting it all together,
+
+m = T_in * G / r / g
+
+Dimensional analysis works out:
+
+kg = N*m * (unitless ratio) / m / (m / s^2) [drop the ratio]
+   = N*m / m / (m / s^2)                    [cancel the mass over mass]
+   = N / (m / s^2)                          [expand N to base units]
+   = (kg * (m / s^2)) / (m / s^2)           [cancel acceleration over acceleration]
+   = kg                                     [seems legit]
+
+The motor is a 4 Watt synchronous single-phase AC motor that runs at 5-6 RPM (let's conservatively call it 6).  Online calculators tell me that gives a torque (T_in) around 6.3 Nm, depending on the power factor.
+
+My current gear ratio is 12:57.
+
+The spool radius depends on the desired drop distance, but a typical value is just under 28 mm.
+
+Therefore, the heaviest spider the prop dropper could possibly handle is less than:
+
+m = 6.3 Nm * 12/57 / 0.028 m / (9.8 m/s^2) = 4.8 kg (about 10.5 pounds)
+
+In reality, it's lower than that because of friction and the masses and moments of inertia of the gears and the spool.  Nonetheless, that number is much higher than I expected.
+
+My guess is that the torque calculators are assuming the power (4 W) has already been reduced for the inefficiency of the motor, but the vendors are probably reporting power due to the current drawn.  Even so, the intertubes tell me the efficiency of synchronous motors is pretty high, like 80 to 90% depending on the power factor.
+
+I guess it's time to try out the spring scale.
+
+Aid.
