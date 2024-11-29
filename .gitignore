@@ -1,0 +1,5 @@
+*.stl
+*.kicad_sch-bak
+schematics/spider_dropper/laser_tunnel-backups
+schematics/spider_dropper/fp-info-cache
+schematics/*/gerbers/*
