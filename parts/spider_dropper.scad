@@ -373,17 +373,18 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     // The "slightly smarter" version uses a small PCB that attaches to
     // the motor side of the build plate.  These dimensions must match
     // those used in the PCB layout.
-    pcb_w = 20;
-    pcb_l = 80;
+    pcb_w = 80;
+    pcb_l = 20;
     pcb_th = 1.6;
     cradle_w = pcb_w + 2*min_th;
     cradle_l = pcb_l + 2*min_th;  // doesn't include screw tabs
     cradle_th = min_th + pcb_th;
-    cradle_yoffset = jgy_w/2 + cradle_w/2 + min_th;
+    cradle_xoffset = (AG_root_diameter(drive) - cradle_l)/2;
+    cradle_yoffset = 0;
     cradle_nut_d = nut_diameter(m3_nut_w, 6, nozzle_d=nozzle_d);
     cradle_boss_d = cradle_nut_d + 2*min_th;
-    cradle_boss_xoffset = (cradle_l - cradle_boss_d)/2;
-    cradle_boss_yoffset = (cradle_w + min_th + m3_free_d)/2;
+    cradle_boss_xoffset = -(cradle_l + cradle_boss_d)/2;
+    cradle_boss_yoffset = (cradle_w - cradle_boss_d)/2;
 
     module drive_gear() {
         difference() {
@@ -402,7 +403,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 translate([0, 0, drive_collar_z]) {
                     last_tooth = actual_drive_teeth - 1;
                     advance = 2;  // stop 2 drive teeth before the drop
-                    degrees_to_switch = -90;
+                    degrees_to_switch = 180;
                     rpm = 6;
                     seconds_to_hold = 1;
                     sweep = 360 * rpm / 60 * seconds_to_hold;
@@ -590,52 +591,49 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
 
         translate([0, 0, plate_th/2]) {
             difference() {
-                linear_extrude(plate_th, convexity=8, center=true) {
-                    cutaway(outline=-2*min_th) {
-                        cutaway(outline=min_th) {
-                            union() {
-                                translate([plate_xoffset, plate_yoffset, 0]) {
-                                    bounded_honeycomb(plate_l, plate_w, 14,
-                                                      min_th, center=true) {
-                                        footprint();
-                                    }
-                                    outline(-wall_th) footprint();
+                linear_extrude(plate_th, convexity=8, center=true) union() {
+                    cutaway(outline=min_th) {
+                        union() {
+                            translate([plate_xoffset, plate_yoffset]) {
+                                bounded_honeycomb(plate_l, plate_w, 14,
+                                                  min_th, center=true) {
+                                    footprint();
                                 }
-                                // add bosses for the motor mounting screws
-                                rotate([0, 0, -90]) {
-                                    for (hole=mounting_holes) {
-                                        translate(hole[0]) {
-                                            offset(min_th) circle(d=hole[1]+nozzle_d);
-                                        }
-                                    }
-                                }
-                                // bosses for PCB cradle
-                                translate([-cradle_boss_xoffset, cradle_yoffset + cradle_boss_yoffset]) {
-                                    circle(d=cradle_boss_d);
-                                }
-                                translate([cradle_boss_xoffset, cradle_yoffset - cradle_boss_yoffset]) {
-                                    circle(d=cradle_boss_d);
-                                }
+                                outline(-wall_th) footprint();
                             }
-                            // cutaways
-                            circle(d=motor_base_d+nozzle_d);
+                            // add bosses for the motor mounting screws
                             rotate([0, 0, -90]) {
                                 for (hole=mounting_holes) {
-                                    translate(hole[0]) circle(d=hole[3]+nozzle_d);
+                                    translate(hole[0]) {
+                                        offset(min_th) circle(d=hole[1]+nozzle_d);
+                                    }
                                 }
                             }
-                            translate([-cradle_boss_xoffset, cradle_yoffset + cradle_boss_yoffset]) {
-                                circle(d=m3_free_d + nozzle_d);
-                            }
-                            translate([cradle_boss_xoffset, cradle_yoffset - cradle_boss_yoffset]) {
-                                circle(d=m3_free_d + nozzle_d);
-                            }
-                            translate([0, cradle_yoffset]) {
-                                square([cradle_l, cradle_w], center=true);
+                            // bosses for PCB cradle
+                            translate([cradle_xoffset, cradle_yoffset]) {
+                                translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
+                                    square(cradle_boss_d, center=true);
+                                }
+                                translate([cradle_boss_xoffset, -cradle_boss_yoffset]) {
+                                    square(cradle_boss_d, center=true);
+                                }
                             }
                         }
-                        translate([0, cradle_yoffset]) {
-                            square([cradle_l, cradle_w], center=true);
+                        // cutaways
+                        circle(d=motor_base_d+nozzle_d);
+                        rotate([0, 0, -90]) {
+                            for (hole=mounting_holes) {
+                                translate(hole[0]) circle(d=hole[3]+nozzle_d);
+                            }
+                        }
+                        translate([cradle_xoffset, cradle_yoffset]) {
+                            translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
+                                circle(d=m3_free_d + nozzle_d);
+                            }
+                            translate([cradle_boss_xoffset, - cradle_boss_yoffset]) {
+                                circle(d=m3_free_d + nozzle_d);
+                            }
+                            offset(-min_th) square([pcb_l, pcb_w], center=true);
                         }
                     }
                 }
@@ -650,14 +648,16 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                         }
                     }
                 }
-                translate([-cradle_boss_xoffset, cradle_yoffset+cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
-                    linear_extrude(plate_th, center=true) {
-                        circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                translate([cradle_xoffset, cradle_yoffset]) {
+                    translate([cradle_boss_xoffset, cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
+                        linear_extrude(plate_th, center=true) {
+                            circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                        }
                     }
-                }
-                translate([cradle_boss_xoffset, cradle_yoffset-cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
-                    linear_extrude(plate_th, center=true) {
-                        circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                    translate([cradle_boss_xoffset, -cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
+                        linear_extrude(plate_th, center=true) {
+                            circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                        }
                     }
                 }
             }
@@ -678,14 +678,14 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             b = -(pcb_w/2 + nozzle_d/2);
             difference() {
                 polygon([
-                    [l, b+cut],
+                    [l, b],
                     [l, t-cut],
                     [l+cut, t],
-                    [r, t],
-                    [r, b],
-                    [l+cut, b]
+                    [r-cut, t],
+                    [r, t-cut],
+                    [r, b]
                 ]);
-                translate([pcb_l/2 - 24, -pcb_w/2]) circle(r=3-nozzle_d/2);
+                translate([-pcb_l/2, 25.4 - pcb_w/2]) circle(r=3-nozzle_d/2);
             }
         }
         
@@ -694,46 +694,48 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 hull() {
                     difference() {
                         circle(d=cradle_boss_d);
-                        translate([0, -cradle_boss_d/2])
+                        translate([cradle_boss_d/2, 0])
                             square(cradle_boss_d, center=true);
                     }
-                    translate([0, -m3_free_d/2])
-                        square([cradle_boss_d, min_th], center=true);
+                    translate([cradle_boss_d/2, 0])
+                        square([min_th, cradle_boss_d], center=true);
                 }
                 circle(d=m3_free_d + nozzle_d);
             }
         }
         
-        linear_extrude(min_th) {
+        linear_extrude(min_th, convexity=8) {
             difference() {
                 cradle_envelope();
                 offset(-min_th) square([pcb_l, pcb_w], center=true);
             }
         }
-        linear_extrude(cradle_th) {
+        linear_extrude(cradle_th, convexity=8) {
             difference() {
                 cradle_envelope();
                 pcb_footprint();
             }
-            translate([-cradle_boss_xoffset, cradle_boss_yoffset]) {
+            translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
                 screw_tab();
             }
             translate([cradle_boss_xoffset, -cradle_boss_yoffset]) {
-                rotate([0, 0, 180]) screw_tab();
+                screw_tab();
             }
         }
     }
 
     show_assembled = $preview;
     
-    if (Include_Base_Plate) base_plate();
+    if (Include_Base_Plate) {
+        color("springgreen") base_plate();
+    }
 
     if (Include_Drive_Gear) {
         t = show_assembled ?
             [0, 0, 0] :
             [plate_xoffset+AG_tips_diameter(drive)/2+1, plate_yoffset+(plate_w+AG_tips_diameter(drive))/2+1, drive_z1];
         r = show_assembled ? [0, 0, 0] : [180, 0, 0];
-        translate(t) rotate(r) drive_gear();
+        color("yellow") translate(t) rotate(r) drive_gear();
     }
 
     if (Include_Spool_Assembly) {
@@ -741,22 +743,21 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             [-dx, 0, 0] :
             [plate_xoffset-(spool_flange_d+2)/2, plate_yoffset+(plate_w+spool_flange_d)/2+1, spool_h + AG_thickness(winder) + plate_th + spacer_h];
         r = show_assembled ? [0, 0, 0] : [180, 0, 0];
-        translate(t) rotate(r) spool_assembly();
+        color("dodgerblue") translate(t) rotate(r) spool_assembly();
     }
 
     if (Include_Button) {
         t = show_assembled ?
             [-dx + spool_d/4, spool_d/4, plate_th + spacer_h + AG_thickness(winder) + spool_h] :
             [plate_xoffset-button_d/2, plate_yoffset+(plate_w+button_d)/2+1, 0];
-        translate(t) button();
+        color("orange") translate(t) button();
     }
     
     if (Include_PCB_Cradle) {
         t = show_assembled ?
-            [0, cradle_yoffset, -cradle_th] :
+            [cradle_xoffset, cradle_yoffset, -cradle_th] :
             [dx + cradle_boss_d + 2, 0, 0];            
-        r = show_assembled ? [0, 0, 0] : [0, 0, -90];
-        translate(t) rotate(r) cradle();
+        color("white") translate(t) cradle();
     }
 
     if (!$preview) {
