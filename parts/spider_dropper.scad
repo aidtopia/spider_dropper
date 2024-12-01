@@ -247,6 +247,13 @@ module sector(r=1, sweep=30) {
     }
 }
 
+module track(r, track_w=1) {
+    difference() {
+        offset(track_w/2) circle(r=r);
+        offset(-track_w/2) circle(r=r);
+    }
+}
+
 module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     $fs = nozzle_d/2;
 
@@ -400,24 +407,33 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 translate([0, 0, drive_collar_z]) {
                     cylinder(h=drive_collar_h+0.1, d=drive_collar_d, $fs=nozzle_d/2);
                 }
-                translate([0, 0, drive_collar_z]) {
-                    last_tooth = actual_drive_teeth - 1;
-                    advance = 2;  // stop 2 drive teeth before the drop
-                    degrees_to_switch = 180;
-                    rpm = 6;
-                    seconds_to_hold = 1;
-                    sweep = 360 * rpm / 60 * seconds_to_hold;
-                    linear_extrude(drive_collar_h) {
-                        rotate([0, 0, 360*(last_tooth - advance)/drive_teeth + degrees_to_switch])
-                        sector(r=AG_root_diameter(drive)/2-2, sweep=sweep, $fa=2);
-                    }
-                }
             }
             if (motor == "jgy") {
                 jgy_motor_spline(drive_z1, nozzle_d=nozzle_d);
             } else if (motor == "deer") {
                 translate([0, 0, deer_base_h])
                 deer_motor_spline(drive_z1, nozzle_d=nozzle_d);
+            }
+            translate([0, 0, drive_collar_z+2]) {
+                track_r = 35;
+                track_w = 8;
+                last_tooth = actual_drive_teeth - 1;
+                advance = 2;  // stop 2 drive teeth before the drop
+                degrees_to_switch = 180;
+                index_angle =
+                    360*(last_tooth - advance)/drive_teeth + degrees_to_switch;
+                rpm = 6;
+                seconds_to_hold = 1;
+                sweep = 360 * rpm / 60 * seconds_to_hold;
+                sector_r = AG_root_diameter(drive)/2 - min_th;
+                linear_extrude(2+nozzle_d, convexity=4) {
+                    difference() {
+                        track(r=track_r, track_w=track_w, $fa=2);
+                        rotate([0, 0, index_angle]) {
+                            sector(r=sector_r, sweep=sweep, $fa=2);
+                        }
+                    }
+                }
             }
         }
     }
