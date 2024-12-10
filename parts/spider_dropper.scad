@@ -381,10 +381,11 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     pcb_w = 80;
     pcb_l = 20;
     pcb_th = 1.6;
+    switch_xoffset = 5;
     cradle_w = pcb_w + 2*min_th;
     cradle_l = pcb_l + 2*min_th;
     cradle_th = min_th + pcb_th;
-    cradle_xoffset = (AG_root_diameter(drive) - cradle_l)/2;
+    cradle_xoffset = 30;
     cradle_yoffset = 0;
     cradle_index_xoffset = -pcb_l/2;
     cradle_index_yoffset = 25.4 - pcb_w/2;
@@ -416,8 +417,9 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 deer_motor_spline(drive_z1, nozzle_d=nozzle_d);
             }
             translate([0, 0, drive_collar_z+2]) {
-                track_r = 35;
+                track_r = cradle_xoffset + switch_xoffset;
                 track_w = 8;
+                assert(track_r + track_w/2 < AG_root_diameter(drive)/2);
                 last_tooth = actual_drive_teeth - 1;
                 advance = 2;  // stop 2 drive teeth before the drop
                 degrees_to_switch = 180;
