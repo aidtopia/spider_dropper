@@ -1,18 +1,16 @@
 // Stupidly Simple Spider Dropper
 // Adrian McCarthy 2023-02-25
 
-// The assembly is mounted overhead.  A string secured to the spool
-// holds a toy spider.  A slow motor turns the big gear, which winds
-// the spool, raising the spider.  When the toothless section of the
-// drive gear comes around, the winder becomes free wheeling, and the
-// weight of the spider will cause the spool to unwind rapidly (the
-// drop).  When the teeth again engage, the spider will climb back up.
+// The assembly is hung overhead.  A string secured to the spool
+// passes through the guide and holds a toy spider.  A slow motor
+// turns the big gear, which winds the spool, raising the spider.
+// When the toothless section of the drive gear comes around, the
+// winder becomes free wheeling, and the weight of the spider
+// will cause the spool to unwind rapidly (the drop).  When the
+// teeth again engage, the spider will climb back up.
 
-// How far the prop should drop.
-Drop_Distance = 24; // [1:100]
-
-// Units for Drop Distance.
-Drop_Distance_Units = "inch"; // ["inch", "mm", "cm"]
+// How far the prop should drop (in inches)?
+Drop_Distance = 24; // [14, 18, 24, 30, 36]
 
 // Select your motor type.  The FrightProps and MonsterGuts motors are identical. Other deer motors will work only if they always turn clockwise.
 Motor = "Aslong JGY-370 12 VDC Worm Gearmotor"; // ["FrightProps Deer Motor", "MonsterGuts Mini-Motor", "Aslong JGY-370 12 VDC Worm Gearmotor"]
@@ -329,7 +327,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
 
     spool_turns = actual_drive_teeth / AG_tooth_count(winder);
     spool_d = drop_distance / (spool_turns * PI);  // to bottom of groove
-    spool_flange_d = spool_d + string_d*spool_turns;
+    spool_flange_d = spool_d + string_d*ceil(spool_turns);
     spool_h = 2*bearing608_th - AG_thickness(winder);
     spool_z0 = winder_z1;
     spool_z1 = spool_z0 + spool_h;
@@ -350,7 +348,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     plate_xoffset = -plate_l/2 + plate_th/2 + AG_tips_diameter(drive)/2;
     plate_w =
         wall_th +
-        max(AG_tips_diameter(drive), spool_flange_d, motor_w) +
+        max(AG_tips_diameter(drive), spool_flange_d + min_th, motor_w) +
         wall_th;
     plate_yoffset = 0;
     plate_r = 10;
@@ -384,14 +382,17 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     pcb_l = 20;
     pcb_th = 1.6;
     cradle_w = pcb_w + 2*min_th;
-    cradle_l = pcb_l + 2*min_th;  // doesn't include screw tabs
+    cradle_l = pcb_l + 2*min_th;
     cradle_th = min_th + pcb_th;
     cradle_xoffset = (AG_root_diameter(drive) - cradle_l)/2;
     cradle_yoffset = 0;
+    cradle_index_xoffset = -pcb_l/2;
+    cradle_index_yoffset = 25.4 - pcb_w/2;
+    cradle_index_d = 6;
     cradle_nut_d = nut_diameter(m3_nut_w, 6, nozzle_d=nozzle_d);
     cradle_boss_d = cradle_nut_d + 2*min_th;
     cradle_boss_xoffset = -(cradle_l + cradle_boss_d)/2;
-    cradle_boss_yoffset = (cradle_w - cradle_boss_d)/2;
+    cradle_boss_yoffset = (cradle_w - cradle_boss_d)/2 - 12;
 
     module drive_gear() {
         difference() {
@@ -642,6 +643,9 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                                 translate(hole[0]) circle(d=hole[3]+nozzle_d);
                             }
                         }
+                        translate([cradle_xoffset + cradle_index_xoffset, cradle_yoffset + cradle_index_yoffset]) {
+                            circle(d=cradle_index_d);
+                        }
                         translate([cradle_xoffset, cradle_yoffset]) {
                             translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
                                 circle(d=m3_free_d + nozzle_d);
@@ -667,12 +671,12 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 translate([cradle_xoffset, cradle_yoffset]) {
                     translate([cradle_boss_xoffset, cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
                         linear_extrude(plate_th, center=true) {
-                            circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                            circle(d=cradle_nut_d, $fn=6);
                         }
                     }
                     translate([cradle_boss_xoffset, -cradle_boss_yoffset, plate_th-m3_nut_h-min_th]) {
                         linear_extrude(plate_th, center=true) {
-                            circle(d=cradle_nut_d+nozzle_d, $fn=6);
+                            circle(d=cradle_nut_d, $fn=6);
                         }
                     }
                 }
@@ -683,9 +687,15 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     }
 
     module cradle() {
-        module cradle_envelope() {
+        module envelope() {
             square([cradle_l, cradle_w], center=true);
         }
+        
+        module index() {
+            translate([cradle_index_xoffset, cradle_index_yoffset])
+                circle(d=cradle_index_d-nozzle_d);
+        }
+        
         module pcb_footprint() {
             cut = 3 - nozzle_d/2;
             l = -(pcb_l/2 + nozzle_d/2);
@@ -701,7 +711,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                     [r, t-cut],
                     [r, b]
                 ]);
-                translate([-pcb_l/2, 25.4 - pcb_w/2]) circle(r=3-nozzle_d/2);
+                index();
             }
         }
         
@@ -722,13 +732,13 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
         
         linear_extrude(min_th, convexity=8) {
             difference() {
-                cradle_envelope();
+                envelope();
                 offset(-min_th) square([pcb_l, pcb_w], center=true);
             }
         }
         linear_extrude(cradle_th, convexity=8) {
             difference() {
-                cradle_envelope();
+                envelope();
                 pcb_footprint();
             }
             translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
@@ -738,7 +748,15 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 screw_tab();
             }
         }
+        linear_extrude(cradle_th + plate_th) index();
     }
+
+    echo(str("\n",
+        "design teeth:\t", AG_tooth_count(model), "\n",
+        "actual teeth:\t", actual_drive_teeth, "\n",
+        "drive diameter:\t", AG_tips_diameter(drive), " mm\n",
+        "spool diameter:\t", spool_flange_d, " mm\n",
+        "plate size:\t", plate_l, " mm x ", plate_w, " mm\n"));
 
     show_assembled = $preview;
     
@@ -858,10 +876,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     }
 }
 
-drop_distance =
-    Drop_Distance_Units == "inch" ? inch(Drop_Distance) :
-    Drop_Distance_Units == "mm"   ? Drop_Distance :
-    Drop_Distance_Units == "cm"   ? 10*Drop_Distance : Drop_Distance;
+drop_distance = inch(Drop_Distance);
 
 motor =
     Motor == "FrightProps Deer Motor" ? "deer" :
