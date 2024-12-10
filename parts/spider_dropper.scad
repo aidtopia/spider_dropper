@@ -165,7 +165,7 @@ module jgy_motor_spline(h=1, nozzle_d=0.4) {
         if (passthru_h > 0) {
             translate([0, 0, shaped_h]) {
                 linear_extrude(passthru_h+0.2, convexity=10) {
-                    circle(d=m4_free_d+nozzle_d, $fs=nozzle_d/2);
+                    circle(d=m3_free_d+nozzle_d, $fs=nozzle_d/2);
                 }
             }
             // If there's still more height, we'll make a simple hole to
@@ -174,7 +174,7 @@ module jgy_motor_spline(h=1, nozzle_d=0.4) {
             if (remainder_h > 0) {
                 translate([0, 0, shaped_h + passthru_h]) {
                     linear_extrude(remainder_h+2, convexity=10) {
-                        circle(d=m4_head_d+nozzle_d, $fs=nozzle_d/2);
+                        circle(d=m3_head_d+nozzle_d, $fs=nozzle_d/2);
                     }
                 }
             }
