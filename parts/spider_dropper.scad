@@ -20,6 +20,7 @@ Include_Drive_Gear = true;
 Include_Spool_Assembly = true;
 Include_Button = false;
 Include_PCB_Cradle = false;
+Include_Switch_Mount = true;
 
 module __Customizer_Limit__ () {}
 
@@ -38,6 +39,13 @@ function nut_diameter(nut_w, nut_sides=6, nozzle_d=0.4) =
         round_up(nut_w / cos(180/nut_sides), nozzle_d) :
         nut_w);
 
+m2_free_d = 2.4;
+m2_close_d = 2.4;
+m2_head_h = 1.6;
+m2_pitch = 0.4;
+m2_nut_w = 4.0;
+m2_nut_h = 1.6;
+
 m3_free_d = 3.6;
 m3_head_d = 6.0;
 m3_head_h = 2.4;
@@ -45,12 +53,11 @@ m3_flange_d = 7.0;
 m3_flange_h = 0.7;
 m3_nut_w = 5.5;
 m3_nut_h = 2.4;
+
 m4_free_d = 4.5;
 m4_head_d = 8.0;
 m4_head_h = 3.1;
-no6_free_d = thou(149.5);
-no6_head_d = thou(262);
-no6_sink_h = thou(83);
+
 bearing608_od = 22;
 bearing608_id = 8;
 bearing608_th = 7;
@@ -100,6 +107,16 @@ jgy_mount_dy2 = 33 + jgy_mount_dy1;
 jgy_w = 32;
 jgy_l = 81;
 jgy_h = 27;
+
+// Honeywell ZX-series subminature snap switch (and clones)
+// These define the plastic body of the switch, and the size and position
+// of the two mounting holes that run horizontally through the body.
+switch_w = 12.8;
+switch_h = 6.3;
+switch_th = 5.8;
+switch_mount_spacing = 6.5;
+switch_mount_h = 1.5;
+switch_mount_d = 2;
 
 function lerp(t, x0=0, x1=1) = x0 + t*(x1 - x0);
 function mid(x0, x1) = lerp(0.5, x0, x1);
@@ -386,7 +403,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     switch_xoffset = 5;
     cradle_w = pcb_w + 2*wall_th;
     cradle_l = pcb_l + 2*wall_th;
-    cradle_th = 2*min_th + pcb_th;
+    cradle_th = pcb_th + 12.5; //2*min_th;
     cradle_xoffset = 30;
     cradle_yoffset = 0;
     cradle_index_xoffset = -pcb_l/2;
@@ -735,14 +752,27 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
         }
         
         module nut_pocket(h) {
-            linear_extrude(h, convexity=8) {
-                rotate([0, 0, 30]) circle(d=cradle_nut_d+nozzle_d, $fn=6);
+            // The extra complexity it to ensure the hole above the nut pocket
+            // can print well without supports.
+            layer_h = 0.3;
+            rotate([0, 0, 30]) {
+                linear_extrude(h, convexity=4) {
+                    circle(d=cradle_nut_d, $fn=6);
+                }
+                translate([0, 0, h-0.0001]) {
+                    linear_extrude(layer_h+0.0001, convexity=4) {
+                        intersection() {
+                            square([cradle_nut_d, m3_free_d+nozzle_d], center=true);
+                            circle(d=cradle_nut_d, $fn=6);
+                        }
+                    }
+                    linear_extrude(2*layer_h+0.0001, convexity=4) {
+                        square(m3_free_d+nozzle_d, center=true);
+                    }
+                }
             }
         }
         
-        screw_l = 6;
-        nut_zoffset = screw_l - max(plate_th - m3_head_h, min_th) - (cradle_th - min_th);
-
         difference() {
             union() {
                 linear_extrude(cradle_th-pcb_th, convexity=8) {
@@ -766,18 +796,75 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 linear_extrude(cradle_th + plate_th) index();
             }
             translate([cradle_boss_xoffset, cradle_boss_yoffset, -1]) {
-                nut_pocket(h=nut_zoffset + 1);
+                nut_pocket(h=cradle_th-1.6 + 1);
             }
             translate([cradle_boss_xoffset, -cradle_boss_yoffset, -1]) {
-                nut_pocket(h=nut_zoffset + 1);
+                nut_pocket(h=cradle_th-1.6 + 1);
             }
-            // Access for power connector
-            translate([-pcb_l/2, -pcb_w/2 + 6, pcb_th-8/2]) {
-                cube([2*wall_th+2, 8, 8], center=true);
+            // Clearance for plug into power connector
+            power_w = 9;
+            power_h = 11;
+            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h-nozzle_d]) {
+                rotate([90, 0, 90]) {
+                    linear_extrude(2*wall_th+2, center=true) {
+                        square([power_w, power_h]);
+                    }
+                }
+            }
+            // Clearance for wires from motor to terminals.
+            wire_d = 7;
+            translate([-pcb_l/2, pcb_w/2 - 6, cradle_th-pcb_th-wire_d/2-nozzle_d]) {
+                rotate([90, 0, 90]) {
+                    linear_extrude(2*wall_th+2, center=true) {
+                        circle(d=wire_d);
+                    }
+                }
             }
         }
     }
-
+    
+    module switch_mount() {
+        m2_nut_d = nut_diameter(m2_nut_w, nozzle_d);
+        screw_l = 10;
+        block_h = max(spacer_h, screw_l - switch_th + m2_pitch/2);
+        block_w = switch_w + nozzle_d;
+        block_base_w = block_w + 2*block_h;
+        block_l = 2*switch_h;
+        assert(plate_th + block_h + switch_th + m2_head_h < spool_z0);
+        difference() {
+            rotate([90, 0, 0]) {
+                linear_extrude(block_l, center=true, convexity=8) {
+                    polygon([
+                        [-block_w/2, 0],
+                        [-block_base_w/2, block_h],
+                        [ block_base_w/2, block_h],
+                        [ block_w/2, 0]
+                    ]);
+                }
+            }
+            translate([0, 0, -1]) {
+                linear_extrude(block_h+2, convexity=4) {
+                    translate([0, switch_mount_h]) {
+                        translate([switch_mount_spacing/2, 0])
+                            circle(d=m2_close_d);
+                        translate([-switch_mount_spacing/2, 0])
+                            circle(d=m2_close_d);
+                    }
+                }
+            }
+            translate([0, 0, block_h-(m2_nut_h+m2_pitch)]) {
+                linear_extrude(block_h, convexity=8) {
+                    translate([0, switch_mount_h]) {
+                        translate([switch_mount_spacing/2, 0])
+                            rotate([0, 0, 30]) circle(d=m2_nut_d+nozzle_d, $fn=6);
+                        translate([-switch_mount_spacing/2, 0])
+                            rotate([0, 0, 30]) circle(d=m2_nut_d+nozzle_d, $fn=6);
+                    }
+                }
+            }
+        }
+    }
+    
     echo(str("\n",
         "design teeth:\t", AG_tooth_count(model), "\n",
         "actual teeth:\t", actual_drive_teeth, "\n",
@@ -819,6 +906,10 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             [cradle_xoffset, cradle_yoffset, -cradle_th] :
             [dx + cradle_boss_d + 2, 0, 0];            
         color("white") translate(t) cradle();
+    }
+    
+    if (Include_Switch_Mount) {
+        switch_mount();
     }
 
     if (!$preview) {
