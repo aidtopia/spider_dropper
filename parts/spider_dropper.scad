@@ -403,7 +403,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
     switch_xoffset = 5;
     cradle_w = pcb_w + 2*wall_th;
     cradle_l = pcb_l + 2*wall_th;
-    cradle_th = pcb_th + 12.5; //2*min_th;
+    cradle_th = pcb_th + 12;
     cradle_xoffset = 30;
     cradle_yoffset = 0;
     cradle_index_xoffset = -pcb_l/2;
@@ -836,7 +836,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             // Clearance for plug into power connector
             power_w = 9;
             power_h = 11;
-            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h-nozzle_d]) {
+            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h]) {
                 rotate([90, 0, 90]) {
                     linear_extrude(2*wall_th+2, center=true) {
                         square([power_w, power_h]);
@@ -845,7 +845,7 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             }
             // Clearance for wires from motor to terminals.
             wire_d = 7;
-            translate([-pcb_l/2, pcb_w/2 - 6, cradle_th-pcb_th-wire_d/2-nozzle_d]) {
+            translate([-pcb_l/2, pcb_w/2 - 6, cradle_th-pcb_th-wire_d/2-min_th]) {
                 rotate([90, 0, 90]) {
                     linear_extrude(2*wall_th+2, center=true) {
                         circle(d=wire_d);
