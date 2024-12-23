@@ -804,7 +804,20 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                 }
             }
         }
-        
+
+        module boss_cutaway(h) {
+            rotate([90, 0, 0]) {
+                linear_extrude(cradle_boss_d+1, center=true) {
+                    polygon([
+                        [0, -1],
+                        [0, h],
+                        [cradle_boss_d, h-cradle_boss_d],
+                        [cradle_boss_d, -1]
+                    ]);
+                }
+            }
+        }
+
         difference() {
             union() {
                 linear_extrude(cradle_th-pcb_th, convexity=8) {
@@ -835,8 +848,8 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
             }
             // Clearance for plug into power connector
             power_w = 9;
-            power_h = 11;
-            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h]) {
+            power_h = 11 - 2*nozzle_d;
+            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h-2*nozzle_d]) {
                 rotate([90, 0, 90]) {
                     linear_extrude(2*wall_th+2, center=true) {
                         square([power_w, power_h]);
@@ -852,9 +865,18 @@ module spider_dropper(drop_distance=inch(24), motor="deer", nozzle_d=0.4) {
                     }
                 }
             }
+
+            translate([-(cradle_l/2 + cradle_boss_d), 0, 0]) {
+                translate([0, cradle_boss_yoffset, 0]) {
+                    boss_cutaway(cradle_th - 1.6 + 1);
+                }
+                translate([0, -cradle_boss_yoffset, 0]) {
+                    boss_cutaway(cradle_th - 1.6 + 1);
+                }
+            }
         }
     }
-    
+
     module switch_mount() {
         difference() {
             rotate([90, 0, 0]) {
