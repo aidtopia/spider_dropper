@@ -4300,8 +4300,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x03_Socket")
-		(at 109.22 82.55 0)
-		(mirror y)
+		(at 109.22 82.55 180)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4309,7 +4308,7 @@
 		(dnp no)
 		(uuid "4ae59cfe-77d0-4834-b0f7-6a6dced5d95d")
 		(property "Reference" "J2"
-			(at 109.22 74.676 0)
+			(at 109.22 90.424 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4317,14 +4316,14 @@
 			)
 		)
 		(property "Value" "Sensor"
-			(at 109.22 77.1003 0)
+			(at 109.22 87.9997 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical"
 			(at 109.22 82.55 0)
 			(effects
 				(font
@@ -4461,7 +4460,7 @@
 				)
 			)
 		)
-		(property "Footprint" "aid_Modules:HC-SR312_PIR_Motion_Sensor"
+		(property "Footprint" "Connector_JST:JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical"
 			(at 52.07 82.55 0)
 			(effects
 				(font
