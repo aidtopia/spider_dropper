@@ -4,3 +4,4 @@ schematics/spider_dropper/spider_dropper-backups
 schematics/spider_dropper/fp-info-cache
 schematics/*/gerbers/*
 schematics/spider_dropper/*.lck
+notes/IMG*.jpeg
