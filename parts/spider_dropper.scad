@@ -71,7 +71,7 @@ deer_shaft_screw = "M4";  // machine screw
 deer_shaft_screw_l = 10;
 // The base is a circular area around the shaft that rises above the
 // mounting face of the motor.
-deer_base_d = 21;  // at the face plate.  Tapers down to 17.
+deer_base_d = 20;  // at the face plate.  Tapers down to 17.
 deer_base_h = 5;
 deer_mounting_screw = "M3 self-tapping";  // a #6 would fit
 deer_mounting_screw_l = 12;
