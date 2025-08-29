@@ -27,7 +27,6 @@ Include_Base_Plate = true;
 Include_Drive_Gear = true;
 Include_Spool_Assembly = true;
 Include_Button = false;
-Include_PCB_Cradle = false;
 
 module __Customizer_Limit__ () {}
 
@@ -51,7 +50,7 @@ function nut_diameter(nut_w, nut_sides=6, nozzle_d=0.4) =
 
 // Dimensions of the hardware we're going to incorporate.
 
-// As much as possible, we're going to use 6mm long M3 roundhead machine screws.
+// Nearly all screws used are M3.
 m3_free_d = 3.4;
 m3_head_d = 6.0;
 m3_head_h = 2.4;
@@ -66,6 +65,7 @@ m4_free_d = 4.5;
 m4_head_d = 8.0;
 m4_head_h = 3.1;
 
+// Widely available "skateboard" bearings.
 bearing608_od = 22;
 bearing608_id = 8;
 bearing608_th = 7;
@@ -138,14 +138,27 @@ mounting_holes = [
     [[ deer_mount_dx2/2, -deer_mount_dy2], deer_mount_screw_head_d, deer_mount_screw_head_h, deer_mount_screw_free_d, deer_mount_screw_takeup]
 ];
 
-
-pcb_w = 80;
-pcb_l = 20;
+pcb_w = 20;
+pcb_l = 80;
 pcb_th = 1.6;  // +/- 0.16
+pcb_cut = 3;  // diagonal cuts on two corners for orientation
+pcb_clearance = 1.2;  // PCB design has clearance around the edges
+pcb_to_index = [-pcb_l/2 + 20, -pcb_w/2]; // center to center
+pcb_index_r = 3;  // size of the index notch
+pcb_to_mount_screw = [pcb_l/2 - 20, -pcb_w/2 + 5];  // center to center
+pcb_mount_screw_d = 3.2;  // M3 close fit, but standards vary
+pcb_to_switch_op = [0, pcb_w/2 - 5];  // PCB center to switch operating point
+switch_op_to_switch = [5.08, 0];
 
+// The a microswitch on the "Slightly Smarter" PCB.
 switch_h = 6.5;  // body height above the PCB
-switch_up_h   = 8.8;  // if height above PCB > 8.8, switch is definitely up
-switch_down_h = 8.0;  // if height above PCB < 8.0, switch is definitely down
+// The operating point is 8.4+/-0.8mm above the PCB, and there's at
+// least 0.6mm of overtravel.
+switch_up_h   = 8.4 + 0.8;  // switch is definitely up
+switch_down_h = 8.4 - 0.8;  // switch is definitely down
+switch_hard_stop_h = switch_down_h - 0.6;  // lowest point ever allowed
+switch_w = 5.8;
+switch_l = 12.8;
 
 module circular_arrow(r, theta0=0, theta1=360, th=1) {
     dir = sign(theta1 - theta0);
@@ -217,6 +230,29 @@ module track(r, track_w=1) {
     }
 }
 
+module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, horizontal=false, clear=0, center=false) {
+    diameter = !is_undef(r) ? 2*r : !is_undef(d) ? d : 1;
+    diameter1 = !is_undef(d1) ? d1 : diameter;
+    diameter2 = !is_undef(d2) ? d2 : diameter;
+    r1 = diameter1/2;
+    r2 = diameter2/2;
+    assert(r1 > 0 && r2 > 0);
+    z1 = center ? -h/2 : 0;
+    z2 = z1 + h;
+    points = [
+        [0, z1-clear],
+        [0, z2+clear],
+        [r2+chamfer, z2+clear],
+        [r2+chamfer, z2],
+        [r2, z2-abs(chamfer)],
+        [r1, z1+abs(chamfer)],
+        [r1+chamfer, z1],
+        [r1+chamfer, z1-clear]
+    ];
+    r = horizontal ? [0, -90, 0] : [0, 0, 0];
+    rotate(r) rotate_extrude(convexity=4) polygon(points);
+}
+
 module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     $fs = nozzle_d/2;
 
@@ -283,10 +319,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     spool_z0 = spool_z1 - spool_th;
     spool_assembly_z0 = spool_z0;
 
-    // The string guide hole must align with the center of the spool.
+    // The hole in the guide must align with the center of the spool.
     guide_z = spool_z0 + 0.5*spool_th;
-    guide_id = 4*string_d;
-    guide_od = 4*guide_id;
 
     // The spacer is part of the plate that holds the spool assembly
     // clear of the face of the plate
@@ -298,6 +332,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     drive_z1 = spool_assembly_z1;
     drive_z0 = drive_z1 - drive_th;
     assert(drive_z0 > spool_z1);
+    echo(str("drive_z0 = ", drive_z0));
+    echo(str("shaft_max_z = ", shaft_max_z));
 
     // The switch must be high enough that the bottom face of the
     // drive gear will activate it.
@@ -308,6 +344,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     pcb_z = switch_z - pcb_th;
     assert(pcb_z >= min_th);
     echo(str("pcb_z = ", pcb_z));
+    pcb_support_h = max(pcb_z + pcb_th + nozzle_d, plate_th);
     
     // HORIZONTAL LAYOUT
     motor_w = max(deer_w, jgy_w);
@@ -403,40 +440,15 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     honeycomb_size = 14;
     
-    // The guide ensures the string wraps onto the spool.
-    guide_th = wall_th;
-    guide_h = plate_th + spacer_h + spool_th/2;
-    guide_base_w = 15*string_d;
-    guide_base_h = plate_th;
-    guide_d = 5*string_d;
-
     // The "slightly smarter" version uses a small PCB that attaches to
     // the base plate.  One side has a switch whose lever rides in a
     // channel of the drive gear so that it is depressed once per
     // revolution.
-    shaft_to_switch = [-35, 0];
+    shaft_to_switch_op = [-35, 0];
     track_w = 8;
 
-    assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch.x) + track_w/2 + min_th);
+    assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch_op.x) + track_w/2 + min_th);
 
-    // those used in the PCB layout.
-    pcb_w = 20;
-    pcb_l = 80;
-    pcb_th = 1.6;
-    switch_xoffset = 5;
-//    cradle_w = pcb_w + 2*wall_th;
-//    cradle_l = pcb_l + 2*wall_th;
-//    cradle_th = pcb_th + 12;
-//    cradle_xoffset = 30;
-//    cradle_yoffset = 0;
-//    cradle_index_xoffset = -pcb_l/2;
-//    cradle_index_yoffset = 20 - pcb_w/2;
-//    cradle_index_d = 6;
-//    cradle_nut_d = nut_diameter(m3_nut_w, 6, nozzle_d=nozzle_d);
-//    cradle_boss_d = cradle_nut_d + 2*min_th;
-//    cradle_boss_xoffset = -(pcb_l + cradle_boss_d)/2 - min_th;
-//    cradle_boss_yoffset = 24;//(pcb_w - cradle_boss_d)/2 - 11;
-//
 //    module drive_gear() {
 //        difference() {
 //            union() {
@@ -572,8 +584,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         // This generates the spacer, which rises through the base plate,
         // the axle itself, the chamfer at the top, a hollow space inside
         // that makes the axle stronger because it generates more
-        // perimeters, and a conical indentation at the top end for
-        // alignment and support from and upper plate.
+        // perimeters, and a conical indentation at the top end (which
+        // could provide alignment and support from an upper plate).
         recess_d = 4;
         recess_h = recess_d/2;
         chamfer = 1;
@@ -607,14 +619,21 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         rotate_extrude(convexity=4) polygon(points);
     }
 
-    module guide(th=guide_th, h=guide_h, base_w=guide_base_w, base_h=guide_base_h, id=string_d, od=guide_d, nozzle_d=0.4) {
+    // The guide ensures the string wraps onto the spool.
+    module guide() {
+        th = wall_th;
+        id = 4*string_d;
+        od = max(3*id, id + 2*min_th);
+        base_w = 2*od;
+        base_h = plate_th;
+
         rotate([90, 0, 0]) {
             difference() {
                 linear_extrude(th, center=true) {
                     difference() {
                         hull() {
                             circle(d=od);
-                            translate([-base_w/2, -h])
+                            translate([-base_w/2, -guide_z])
                                 square([base_w, base_h]);
                         }
                     }
@@ -632,7 +651,73 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
         }
     }
+
+    module pcb_footprint() {
+        // The KiCad PCB design uses a left-handed coordinate system,
+        // considers the origin to be the corner closes to the power
+        // connector, and treats the component side as the front.
+        // Note that the switch is on the opposite side from the other
+        // components.
+        // This SCAD footprint uses a right-handed coordinate system,
+        // considers the origin to be the center of the board, and
+        // has the component side facing +Z.
+        // When mounted to the base plate, the component side of the
+        // board faces "down" (toward the motor side).
+        cut = pcb_cut;
+        l = -pcb_l/2;
+        r =  pcb_l/2;
+        t =  pcb_w/2;
+        b = -pcb_w/2;
+        difference() {
+            polygon([
+                [l, b],
+                [l, t],
+                [r-cut, t],
+                [r, t-cut],
+                [r, b+cut],
+                [r-cut, b]
+            ]);
+            translate(pcb_to_index) circle(r=pcb_index_r+nozzle_d/2);
+            translate(pcb_to_mount_screw) circle(d=pcb_mount_screw_d+nozzle_d);
+        }
+    }
     
+    module pcb_model() {
+        module switch_model() {
+            translate(-switch_op_to_switch) {
+                linear_extrude(switch_h) {
+                    square([switch_l, switch_w], center=true);
+                }
+                rotate([90, 0, 0]) linear_extrude(3, center=true) {
+                    polygon([
+                        [-switch_l/2+min_th, 0],
+                        [-switch_l/2+min_th, switch_h],
+                        [switch_l/2 + 1.6, switch_hard_stop_h],
+                        [switch_l/2, 0]
+                    ]);
+                }
+            }
+        }
+        
+        translate([0, 0, pcb_th]) rotate([0, 180, 0]) {
+            color("green")
+            difference() {
+                linear_extrude(pcb_th, convexity=8) pcb_footprint();
+                // etch the outline of the edge clearance
+                translate([0, 0, pcb_th - nozzle_d]) {
+                    linear_extrude(pcb_th, convexity=4) difference() {
+                        offset(r=-pcb_clearance+nozzle_d) pcb_footprint();
+                        offset(r=-pcb_clearance) pcb_footprint();
+                    }
+                }
+            }
+            // The switch is on the opposite side
+            rotate([0, 180, 0]) color("white") {
+                translate(pcb_to_switch_op) switch_model();
+            }
+        }
+    }
+
     module base_plate() {
         module footprint() {
             offset(plate_r) offset(-plate_r)
@@ -641,58 +726,46 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
 
         difference() {
-            linear_extrude(plate_th, convexity=8) union() {
-                cutaway(outline=min_th) {
-                    union() {
-                        translate(plate_offset) {
-                            bounded_honeycomb(plate_l, plate_w, honeycomb_size,
-                                              min_th, center=true) {
-                                footprint();
+            union() {
+                linear_extrude(plate_th, convexity=8) union() {
+                    cutaway(outline=min_th) {
+                        union() {
+                            translate(plate_offset) {
+                                bounded_honeycomb(plate_l, plate_w, honeycomb_size,
+                                                  min_th, center=true) {
+                                    footprint();
+                                }
+                                outline(-wall_th) footprint();
                             }
-                            outline(-wall_th) footprint();
+
+                            // add bosses for the motor mounting screws
+                            for (hole=mounting_holes) {
+                                rotate([0, 0, 90]) translate(hole[0]) {
+                                    offset(min_th+nozzle_d) circle(d=hole[1]);
+                                }
+                            }
                         }
 
-                        // add bosses for the motor mounting screws
+                        // cutaways
+                        circle(d=motor_base_d+nozzle_d);
                         for (hole=mounting_holes) {
                             rotate([0, 0, 90]) translate(hole[0]) {
-                                offset(min_th+nozzle_d) circle(d=hole[1]);
+                                circle(d=hole[3]+nozzle_d);
                             }
                         }
-
-
-//                            // bosses for PCB cradle
-//                            translate([cradle_xoffset, cradle_yoffset]) {
-//                                translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
-//                                    circle(d=max(honeycomb_size, cradle_boss_d), $fn=6);
-//                                }
-//                                translate([cradle_boss_xoffset, -cradle_boss_yoffset]) {
-//                                    circle(d=max(honeycomb_size, cradle_boss_d), $fn=6);
-//                                }
-//                            }
                     }
-
-                    // cutaways
-                    circle(d=motor_base_d+nozzle_d);
-                    for (hole=mounting_holes) {
-                        rotate([0, 0, 90]) translate(hole[0]) {
-                            circle(d=hole[3]+nozzle_d);
-                        }
-                    }
-
-//                        translate([cradle_xoffset + cradle_index_xoffset, cradle_yoffset + cradle_index_yoffset]) {
-//                            circle(d=cradle_index_d);
-//                        }
-//                        translate([cradle_xoffset, cradle_yoffset]) {
-//                            translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
-//                                circle(d=m3_free_d + nozzle_d);
-//                            }
-//                            translate([cradle_boss_xoffset, - cradle_boss_yoffset]) {
-//                                circle(d=m3_free_d + nozzle_d);
-//                            }
-//                            offset(-min_th) square([pcb_l, pcb_w], center=true);
-//                        }
                 }
 
+                // PCB support
+                linear_extrude(pcb_support_h, convexity=8) {
+                    translate(shaft_to_switch_op) {
+                        rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                            translate(-pcb_to_switch_op) {
+                                offset(min_th+nozzle_d) pcb_footprint();
+                            }
+                        }
+                    }
+                }
             }
 
             // Recess the heads of the motor mounting screws.
@@ -706,163 +779,89 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
 
-//                translate([cradle_xoffset, cradle_yoffset]) {
-//                    translate([cradle_boss_xoffset, cradle_boss_yoffset, plate_th-m3_head_h]) {
-//                        linear_extrude(plate_th, center=true) {
-//                            circle(d=m3_head_d+nozzle_d);
-//                        }
-//                    }
-//                    translate([cradle_boss_xoffset, -cradle_boss_yoffset, plate_th-m3_head_h]) {
-//                        linear_extrude(plate_th, center=true) {
-//                            circle(d=m3_head_d+nozzle_d);
-//                        }
-//                    }
-//                }
+            // Recess the PCB to hold it at the proper height.
+            translate(shaft_to_switch_op) {
+                translate([0, 0, pcb_z]) {
+                    linear_extrude(pcb_support_h+0.02, convexity=8) {
+                        rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                            translate(-pcb_to_switch_op) {
+                                offset(delta=nozzle_d) pcb_footprint();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Punch out for the components on the PCB.
+            translate(shaft_to_switch_op) {
+                translate([0, 0, -0.01]) {
+                    linear_extrude(pcb_support_h+0.02, convexity=8) {
+                        rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                            translate(-pcb_to_switch_op) {
+                                difference() {
+                                    offset(-pcb_clearance) pcb_footprint();
+                                    translate(pcb_to_mount_screw) hull() {
+                                        circle(d=8);
+                                        translate([-8/2, -5])
+                                            square([8, 5]);
+                                    }
+                                }
+                               translate(pcb_to_mount_screw) {
+                                    circle(d=pcb_mount_screw_d+nozzle_d);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         translate(shaft_to_axle) axle();
-        translate([shaft_to_axle.x, -(plate_w - wall_th)/2, guide_h])
-            guide(nozzle_d=nozzle_d);
+        translate([shaft_to_axle.x, -(plate_w - wall_th)/2, guide_z])
+            guide();
     }
 
-//
-//    module cradle() {
-//        module envelope() {
-//            square([cradle_l, cradle_w], center=true);
-//        }
-//        
-//        module index() {
-//            translate([cradle_index_xoffset, cradle_index_yoffset])
-//                circle(d=cradle_index_d-nozzle_d);
-//        }
-//        
-//        module pcb_footprint() {
-//            cut = 3 - nozzle_d/2;
-//            l = -(pcb_l/2 + nozzle_d/2);
-//            r =   pcb_l/2 + nozzle_d/2;
-//            t =   pcb_w/2 + nozzle_d/2;
-//            b = -(pcb_w/2 + nozzle_d/2);
-//            difference() {
-//                polygon([
-//                    [l, b],
-//                    [l, t-cut],
-//                    [l+cut, t],
-//                    [r-cut, t],
-//                    [r, t-cut],
-//                    [r, b]
-//                ]);
-//                index();
-//            }
-//        }
-//        
-//        module screw_tab() {
-//            difference() {
-//                hull() {
-//                    difference() {
-//                        circle(d=cradle_boss_d);
-//                        translate([cradle_boss_d/2, 0])
-//                            square(cradle_boss_d, center=true);
-//                    }
-//                    translate([cradle_boss_d/2, 0])
-//                        square([min_th, cradle_boss_d], center=true);
-//                }
-//                circle(d=m3_free_d + nozzle_d);
-//            }
-//        }
-//        
-//        module nut_pocket(h) {
-//            // The extra complexity it to ensure the hole above the nut pocket
-//            // can print well without supports.
-//            layer_h = 0.3;
-//            rotate([0, 0, 30]) {
-//                linear_extrude(h, convexity=4) {
-//                    circle(d=cradle_nut_d, $fn=6);
-//                }
-//                translate([0, 0, h-0.0001]) {
-//                    linear_extrude(layer_h+0.0001, convexity=4) {
-//                        intersection() {
-//                            square([cradle_nut_d, m3_free_d+nozzle_d], center=true);
-//                            circle(d=cradle_nut_d, $fn=6);
-//                        }
-//                    }
-//                    linear_extrude(2*layer_h+0.0001, convexity=4) {
-//                        square(m3_free_d+nozzle_d, center=true);
-//                    }
-//                }
-//            }
-//        }
-//
-//        module boss_cutaway(h) {
-//            rotate([90, 0, 0]) {
-//                linear_extrude(cradle_boss_d+1, center=true) {
-//                    polygon([
-//                        [0, -1],
-//                        [0, h],
-//                        [cradle_boss_d, h-cradle_boss_d],
-//                        [cradle_boss_d, -1]
-//                    ]);
-//                }
-//            }
-//        }
-//
-//        difference() {
-//            union() {
-//                linear_extrude(cradle_th-pcb_th, convexity=8) {
-//                    difference() {
-//                        envelope();
-//                        offset(-min_th) square([pcb_l, pcb_w], center=true);
-//                    }
-//                }
-//                linear_extrude(cradle_th, convexity=8) {
-//                    difference() {
-//                        envelope();
-//                        pcb_footprint();
-//                    }
-//                    translate([cradle_boss_xoffset, cradle_boss_yoffset]) {
-//                        screw_tab();
-//                    }
-//                    translate([cradle_boss_xoffset, -cradle_boss_yoffset]) {
-//                        screw_tab();
-//                    }
-//                }
-//                linear_extrude(cradle_th + plate_th) index();
-//            }
-//            translate([cradle_boss_xoffset, cradle_boss_yoffset, -1]) {
-//                nut_pocket(h=cradle_th-1.6 + 1);
-//            }
-//            translate([cradle_boss_xoffset, -cradle_boss_yoffset, -1]) {
-//                nut_pocket(h=cradle_th-1.6 + 1);
-//            }
-//            // Clearance for plug into power connector
-//            power_w = 9;
-//            power_h = 11 - 2*nozzle_d;
-//            translate([-pcb_l/2, -pcb_w/2 + 6 - power_w/2, cradle_th-pcb_th-power_h-2*nozzle_d]) {
-//                rotate([90, 0, 90]) {
-//                    linear_extrude(2*wall_th+2, center=true) {
-//                        square([power_w, power_h]);
-//                    }
-//                }
-//            }
-//            // Clearance for wires from motor to terminals.
-//            wire_d = 7;
-//            translate([-pcb_l/2, pcb_w/2 - 6, cradle_th-pcb_th-wire_d/2-min_th]) {
-//                rotate([90, 0, 90]) {
-//                    linear_extrude(2*wall_th+2, center=true) {
-//                        circle(d=wire_d);
-//                    }
-//                }
-//            }
-//
-//            translate([-(cradle_l/2 + cradle_boss_d), 0, 0]) {
-//                translate([0, cradle_boss_yoffset, 0]) {
-//                    boss_cutaway(cradle_th - 1.6 + 1);
-//                }
-//                translate([0, -cradle_boss_yoffset, 0]) {
-//                    boss_cutaway(cradle_th - 1.6 + 1);
-//                }
-//            }
-//        }
-//    }
-//
+    module shaft_adapter(
+        motor_shaft_d=deer_shaft_d,
+        motor_base_h=deer_base_h,
+        nozzle_d=0.4
+    ) {
+        motor_base_d = max(deer_base_d, jgy_base_d);
+        motor_shaft_h =
+            max(deer_base_h + deer_shaft_h, jgy_base_h + jgy_shaft_h);
+        adapter_d = motor_base_d - 3;
+        adapter_h = max(14, motor_shaft_h);
+        grub_dz = (motor_shaft_h)/2 - motor_base_h + m3_sqnut_h/2;
+        nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2.5*nozzle_d;
+
+        module nut_pocket() {
+            pocket_h = grub_dz + m3_sqnut_w/2 + nozzle_d/2 + 0.01;
+            translate([0, 0, -0.01]) {
+                linear_extrude(pocket_h, convexity=4)
+                    offset(r=nozzle_d/2, $fs=nozzle_d/2)
+                        square([m3_sqnut_h, m3_sqnut_w], center=true);
+            }
+        }
+
+        difference() {
+            rotate([0, 0, 180/8])
+                clean_cylinder(h=adapter_h, d=adapter_d, chamfer=-0.4, $fn=8);
+            clean_cylinder(h=adapter_h, d=motor_shaft_d + nozzle_d,
+                           chamfer=0.4, clear=0.01, $fs=nozzle_d/2);
+            translate([0, 0, grub_dz]) {
+                clean_cylinder(h=adapter_d, d=m3_free_d, chamfer=0.5,
+                               horizontal=true, clear=1, center=true,
+                               $fs=nozzle_d/2);
+            }
+            translate([ nut_dx, 0, 0]) nut_pocket();
+            translate([-nut_dx, 0, 0]) nut_pocket();
+        }
+    }
+
+    !union() {
+        shaft_adapter(deer_shaft_d, deer_base_h);
+        translate([25, 0, 0]) shaft_adapter(jgy_shaft_d, jgy_base_h);
+    }
+
     echo(str("\n",
         "design teeth:\t", AG_tooth_count(model_gear), "\n",
         "actual teeth:\t", actual_drive_teeth, "\n",
@@ -871,11 +870,18 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         "plate size:\t", plate_l, " mm x ", plate_w, " mm x ", plate_th, " mm\n"));
 
     show_assembled = $preview;
-    
     if (Include_Base_Plate) {
         color("springgreen") base_plate();
     }
 
+    if (show_assembled) {
+        #translate(shaft_to_switch_op) {
+            translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
+                translate(-pcb_to_switch_op) pcb_model();
+            }
+        }
+    }
+    
 //    if (Include_Drive_Gear) {
 //        t = show_assembled ?
 //            [0, 0, 0] :
@@ -899,13 +905,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 //        color("orange") translate(t) button();
 //    }
 //    
-//    if (Include_PCB_Cradle) {
-//        t = show_assembled ?
-//            [cradle_xoffset, cradle_yoffset, -cradle_th] :
-//            [dx + cradle_boss_d + 2, 0, 0];            
-//        color("white") translate(t) cradle();
-//    }
-//    
 //    if (!$preview) {
 //        echo(str(
 //            "\nPRINTING INSTRUCTIONS\n",
@@ -919,65 +918,3 @@ drop_distance = inch(Drop_Distance);
 
 spider_dropper(drop_distance=drop_distance);
 
-module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, horizontal=false, clear=0, center=false) {
-    diameter = !is_undef(r) ? 2*r : !is_undef(d) ? d : 1;
-    diameter1 = !is_undef(d1) ? d1 : diameter;
-    diameter2 = !is_undef(d2) ? d2 : diameter;
-    r1 = diameter1/2;
-    r2 = diameter2/2;
-    assert(r1 > 0 && r2 > 0);
-    z1 = center ? -h/2 : 0;
-    z2 = z1 + h;
-    points = [
-        [0, z1-clear],
-        [0, z2+clear],
-        [r2+chamfer, z2+clear],
-        [r2+chamfer, z2],
-        [r2, z2-abs(chamfer)],
-        [r1, z1+abs(chamfer)],
-        [r1+chamfer, z1],
-        [r1+chamfer, z1-clear]
-    ];
-    r = horizontal ? [0, -90, 0] : [0, 0, 0];
-    rotate(r) rotate_extrude(convexity=4) polygon(points);
-}
-
-module shaft_adapter(
-    motor_shaft_d=deer_shaft_d,
-    motor_base_h=deer_base_h,
-    nozzle_d=0.4
-) {
-    motor_base_d = max(deer_base_d, jgy_base_d);
-    motor_shaft_h =
-        max(deer_base_h + deer_shaft_h, jgy_base_h + jgy_shaft_h);
-    adapter_d = motor_base_d - 3;
-    adapter_h = max(14, motor_shaft_h);
-    grub_dz = (motor_shaft_h)/2 - motor_base_h + m3_sqnut_h/2;
-    nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2.5*nozzle_d;
-
-    module nut_pocket() {
-        pocket_h = grub_dz + m3_sqnut_w/2 + nozzle_d/2 + 0.01;
-        translate([0, 0, -0.01]) {
-            linear_extrude(pocket_h, convexity=4)
-                offset(r=nozzle_d/2, $fs=nozzle_d/2)
-                    square([m3_sqnut_h, m3_sqnut_w], center=true);
-        }
-    }
-
-    difference() {
-        rotate([0, 0, 180/8])
-            clean_cylinder(h=adapter_h, d=adapter_d, chamfer=-0.4, $fn=8);
-        clean_cylinder(h=adapter_h, d=motor_shaft_d + nozzle_d,
-                       chamfer=0.4, clear=0.01, $fs=nozzle_d/2);
-        translate([0, 0, grub_dz]) {
-            clean_cylinder(h=adapter_d, d=m3_free_d, chamfer=0.5,
-                           horizontal=true, clear=1, center=true,
-                           $fs=nozzle_d/2);
-        }
-        translate([ nut_dx, 0, 0]) nut_pocket();
-        translate([-nut_dx, 0, 0]) nut_pocket();
-    }
-}
-
-shaft_adapter(deer_shaft_d);
-//translate([25, 0, 0]) shaft_adapter(jgy_shaft_d, jgy_base_h);
