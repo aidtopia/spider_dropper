@@ -59,8 +59,8 @@ Drop_Distance = 24; // [14, 18, 24, 30, 36]
 Include_Base_Plate = true;
 Include_6mm_Shaft_Adapter = true;
 Include_7mm_Shaft_Adapter = false;
-Include_Drive_Gear = true;
 Include_Spool_Assembly = true;
+Include_Drive_Gear = true;
 Include_PCB_Model = false;
 
 module __Customizer_Limit__ () {}
@@ -479,6 +479,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         AG_tips_diameter(drive_gear)/2 +
         shaft_to_axle.x +
         spool_flange_d/2 +
+        min_th +
         wall_th;
     plate_w =
         wall_th +
@@ -553,90 +554,72 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-//    module spool_assembly() {
-//        module spool() {
-//            module pocket() {
-//                module input(nudge=0) {
-//                    rotate([0, 90, 0])
-//                        translate([0, 0, nudge])
-//                            linear_extrude(spool_d/2, convexity=4)
-//                                rotate([0, 0, 45])
-//                                    square(string_d, center=true);
-//                }
-//                module output(nudge=0) {
-//                    rotate([0, -45, 0])
-//                        translate([0, 0, nudge])
-//                        linear_extrude(spool_h, convexity=4)
-//                            rotate([0, 0, 45])
-//                                square(string_d, center=true);
-//                }
-//                
-//                translate([spool_d/2-plate_th, 0, spool_h/2]) {
-//                    rotate([0, 0, -45]) {
-//                        input();
-//                        output();
-//                        intersection() {
-//                            input(nudge=-(1+cos(45))*string_d);
-//                            output(nudge=-(1+cos(45))*string_d);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            difference() {
-//                rotate_extrude(convexity=10, $fa=5) {
-//                    r0 = 0;
-//                    r1 = spool_flange_d/2;
-//                    r2 = spool_d/2;
-//                    y0 = 0;
-//                    y1 = spool_h;
-//                    y2 = y1 - (r1-r2);
-//                    y3 = min(y0 + (r1-r2), y2);
-//                    polygon([
-//                        [r0, y0],
-//                        [r0, y1],
-//                        [r1, y1],
-//                        [r2, y2],
-//                        [r2, y3],
-//                        [r1, y0]
-//                    ]);
-//                }
-//                // The string is secured to the spool in the pocket.
-//                pocket();
-//                translate([0, 0, spool_h])
-//                    linear_extrude(2, convexity=6, center=true)
-//                        circular_arrow(0.35*spool_flange_d, 100, 260);
-//            }
-//        }
-//
-//        module winder_gear() {
-//            AG_gear(winder);
-//        }
-//   
-//        translate([0, 0, plate_th+spacer_h]) {
-//            difference() {
-//                union() {
-//                    winder_gear();
-//                    translate([0, 0, AG_thickness(winder)]) {
-//                        spool();
-//                    }
-//                }
-//                translate([0, 0, -1]) {
-//                    linear_extrude(spool_h + AG_thickness(winder) + 2) {
-//                        circle(d=bearing608_od);
-//                    }
-//                }
-//                // Beveling to make it easier to insert the bearings.
-//                translate([0, 0, AG_thickness(winder)+spool_h-1]) {
-//                    cylinder(h=2, d1=bearing608_od, d2=bearing608_od + 2);
-//                }
-//                translate([0, 0, -1]) {
-//                    cylinder(h=2, d1=bearing608_od + 2, d2=bearing608_od);
-//                }
-//            }
-//        }
-//    }
-//    
+    module spool_assembly() {
+        module spool() {
+            module pocket() {
+                module input(nudge=0) {
+                    rotate([0, 90, 0])
+                        translate([0, 0, nudge])
+                            linear_extrude(spool_d/2, convexity=4)
+                                rotate([0, 0, 45])
+                                    square(string_d, center=true);
+                }
+                module output(nudge=0) {
+                    rotate([0, -45, 0])
+                        translate([0, 0, nudge])
+                        linear_extrude(spool_th, convexity=4)
+                            rotate([0, 0, 45])
+                                square(string_d, center=true);
+                }
+                
+                translate([spool_d/2-plate_th, 0, spool_th/2]) {
+                    rotate([0, 0, -45]) {
+                        input();
+                        output();
+                        intersection() {
+                            input(nudge=-(1+cos(45))*string_d);
+                            output(nudge=-(1+cos(45))*string_d);
+                        }
+                    }
+                }
+            }
+
+            difference() {
+                rotate_extrude(convexity=10, $fa=5) {
+                    r0 = 0;
+                    r1 = spool_flange_d/2;
+                    r2 = spool_d/2;
+                    y0 = 0;
+                    y1 = spool_th;
+                    y2 = y1 - (r1-r2);
+                    y3 = min(y0 + (r1-r2), y2);
+                    polygon([
+                        [r0, y0],
+                        [r0, y1],
+                        [r1, y1],
+                        [r2, y2],
+                        [r2, y3],
+                        [r1, y0]
+                    ]);
+                }
+                // The string is secured to the spool in the pocket.
+                pocket();
+                translate([0, 0, spool_th])
+                    linear_extrude(2, convexity=6, center=true)
+                        circular_arrow(0.35*spool_flange_d, 100, 260);
+            }
+        }
+
+        difference() {
+            union() {
+                spool();
+                translate([0, 0, spool_th]) AG_gear(winder_gear);
+            }
+            clean_cylinder(h=spool_assembly_th, d=bearing608_od,
+                           chamfer=nozzle_d, clear=1);
+        }
+    }
+    
     module axle() {
         // This generates the spacer, which rises through the base plate,
         // the axle itself, the chamfer at the top, a hollow space inside
@@ -1037,6 +1020,17 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
+    if (Include_Spool_Assembly) {
+        echo(str("shaft_to_axle = ", shaft_to_axle));
+        echo(str("spool_assembly_z0 = ", spool_assembly_z0));
+        color("orange")
+        if (show_assembled) {
+            translate(shaft_to_axle) translate([0, 0, spool_assembly_z0]) {
+                spool_assembly();
+            }
+        }
+    }
+
     if (Include_Drive_Gear) {
         color("yellow")
         if (show_assembled) {
@@ -1047,14 +1041,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-//    if (Include_Spool_Assembly) {
-//        t = show_assembled ?
-//            [-dx, 0, 0] :
-//            [plate_offset.x-(spool_flange_d+2)/2, (plate_w+spool_flange_d)/2+1, spool_h + AG_thickness(winder) + plate_th + spacer_h];
-//        r = show_assembled ? [180, 0, 0] : [0, 0, 0];
-//        color("dodgerblue") translate(t) rotate(r) spool_assembly();
-//    }
-//
 //    if (!$preview) {
 //        echo(str(
 //            "\nPRINTING INSTRUCTIONS\n",
