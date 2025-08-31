@@ -858,14 +858,25 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                     }
                 }
 
-                // Finally, a nut pocket for the PCB mounting screw.
+                // Finally, a nut pocket for the PCB mounting screw.  This
+                // requires incremental bridging for the floating hole.
                 if (pcb_z >= m3_sqnut_h + min_th) {
                     translate([0, 0, pcb_z - min_th - plate_th - 0.01]) {
-                        linear_extrude(plate_th+0.01) {
+                        linear_extrude(plate_th+0.01-nozzle_d) {
                             rotate([180, 0, 0]) rotate([0, 0, 90]) {
                                 translate(pcb_to_mount_screw-pcb_to_switch_op) {
                                     offset(nozzle_d/2) {
                                         square(m3_sqnut_w, center=true);
+                                    }
+                                }
+                            }
+                        }
+                        linear_extrude(plate_th+0.01) {
+                            rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                                translate(pcb_to_mount_screw-pcb_to_switch_op) {
+                                    offset(nozzle_d/2) {
+                                        square([m3_sqnut_w, pcb_mount_screw_d],
+                                               center=true);
                                     }
                                 }
                             }
@@ -877,6 +888,12 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         translate(shaft_to_axle) axle();
         translate([shaft_to_axle.x, -(plate_w - wall_th)/2, guide_z])
             guide();
+
+        // Alternate guide if the user wants the mechanism in the taller
+        // orientation.
+        translate([plate_offset.x + (plate_l-wall_th)/2, 0, guide_z]) {
+            rotate([0, 0, 90]) guide();
+        }
     }
 
     module shaft_adapter(
