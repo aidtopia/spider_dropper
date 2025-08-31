@@ -255,17 +255,13 @@ module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, hori
 }
 
 // Makes a star-shaped polygon of count points.
-// bias must be in [-1..1].  A bias of 0 results in a symmetric spline.
-// For an asymmetric spline (which further restricts orientation),
-// use a positive bias turning clockwise, or negative for counterclockwise.
-module spline_shape(count, od, id, bias=0) {
+module spline_shape(count, od, id) {
     assert(count >= 3);
     assert(0 < id && id < od);
-    assert(-1 <= bias && bias <= 1);
     or = od/2;
     ir = id/2;
     dtheta = 360 / count;
-    htheta = dtheta * (bias + 1)/2;
+    htheta = 1/2 * dtheta;
     polygon([
         for (theta=[0:dtheta:360-dtheta])
         each [
