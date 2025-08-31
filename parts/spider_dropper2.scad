@@ -757,12 +757,21 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
+    module pcb_mounting_tab() {
+        nut_d = sqrt(2*(m3_sqnut_w*m3_sqnut_w));
+        tab_w = max(m3_head_d, nut_d) + 2*min_th;
+
+        hull() {
+            circle(d=tab_w);
+            translate([-tab_w/2, -5]) square([tab_w, 5]);
+        }
+    }
+
     module base_plate() {
         module footprint() {
             offset(plate_r) offset(-plate_r)
                 square([plate_l, plate_w], center=true);
         }
-
 
         difference() {
             union() {
@@ -832,21 +841,32 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
 
             // Punch out for the components on the PCB.
-            translate(shaft_to_switch_op) {
-                translate([0, 0, -0.01]) {
-                    linear_extrude(pcb_support_h+0.02, convexity=8) {
-                        rotate([180, 0, 0]) rotate([0, 0, 90]) {
-                            translate(-pcb_to_switch_op) {
-                                difference() {
-                                    offset(-pcb_clearance) pcb_footprint();
-                                    translate(pcb_to_mount_screw) hull() {
-                                        circle(d=8);
-                                        translate([-8/2, -5])
-                                            square([8, 5]);
-                                    }
+            translate(shaft_to_switch_op) translate([0, 0, -0.01]) {
+                linear_extrude(pcb_support_h+0.02, convexity=8) {
+                    rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                        translate(-pcb_to_switch_op) {
+                            difference() {
+                                offset(-pcb_clearance) pcb_footprint();
+                                translate(pcb_to_mount_screw) {
+                                    pcb_mounting_tab();
                                 }
-                               translate(pcb_to_mount_screw) {
-                                    circle(d=pcb_mount_screw_d+nozzle_d);
+                            }
+                            translate(pcb_to_mount_screw) {
+                                circle(d=pcb_mount_screw_d+nozzle_d);
+                            }
+                        }
+                    }
+                }
+
+                // Finally, a nut pocket for the PCB mounting screw.
+                if (pcb_z >= m3_sqnut_h + min_th) {
+                    translate([0, 0, pcb_z - min_th - plate_th - 0.01]) {
+                        linear_extrude(plate_th+0.01) {
+                            rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                                translate(pcb_to_mount_screw-pcb_to_switch_op) {
+                                    offset(nozzle_d/2) {
+                                        square(m3_sqnut_w, center=true);
+                                    }
                                 }
                             }
                         }
