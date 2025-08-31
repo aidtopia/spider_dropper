@@ -671,7 +671,7 @@
 			(at 4.2 8.1 0)
 			(unlocked yes)
 			(layer "F.SilkS")
-			(uuid "daa68e3b-cc75-4cd3-ae94-1e104f33f6c5")
+			(uuid "e1528953-7555-4d5e-923f-8e547bebe69b")
 			(effects
 				(font
 					(size 1 1)
@@ -683,7 +683,7 @@
 			(at 0 7.57 0)
 			(unlocked yes)
 			(layer "F.Fab")
-			(uuid "2c021de4-51d1-480c-b714-77b41ab3c6e9")
+			(uuid "45139589-fde3-4538-97cf-2fe2f1419ff9")
 			(effects
 				(font
 					(size 1 1)
@@ -696,7 +696,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "2349e298-a4b5-4622-80d3-392a2edd046d")
+			(uuid "8a5ba0bc-05c1-4ba8-9ca5-c87d738cb0fa")
 			(effects
 				(font
 					(size 1 1)
@@ -709,7 +709,7 @@
 			(unlocked yes)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "190e88fb-6009-4842-8c76-0cb28c585b69")
+			(uuid "f9ecc3db-b3f7-4b8f-9982-ea87fb8fe919")
 			(effects
 				(font
 					(size 1 1)
@@ -1478,7 +1478,7 @@
 			(uuid "2c88453c-0377-46eb-b3e9-8330bc3faff6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_XH_B2B-XH-AM_1x02_P2.50mm_Vertical.step"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -3120,7 +3120,7 @@
 			(uuid "bd44289b-d2d1-4fc3-b81b-f38d9b18f02b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_XH_B3B-XH-AM_1x03_P2.50mm_Vertical.step"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_XH_B3B-XH-A_1x03_P2.50mm_Vertical.step"
 			(offset
 				(xyz 0 0 0)
 			)
