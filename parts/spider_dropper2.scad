@@ -151,7 +151,7 @@ pcb_mount_screw_d = 3.2;  // M3 close fit, but standards vary
 pcb_to_switch_op = [0, pcb_w/2 - 5];  // PCB center to switch operating point
 switch_op_to_switch = [5.08, 0];
 
-// The a microswitch on the "Slightly Smarter" PCB.
+// The microswitch on the "Slightly Smarter" PCB.
 switch_h = 6.5;  // body height above the PCB
 // The operating point is 8.4+/-0.8mm above the PCB, and there's at
 // least 0.6mm of overtravel.
@@ -484,7 +484,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     module spline_hole() {
-        offset(-nozzle_d/2) offset(3/4*nozzle_d)
+        offset(-nozzle_d/2) offset(5/8*nozzle_d)
             spline_shape(adapter_sides, spline_od, spline_id);
     }
 
@@ -871,7 +871,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         base_h = drive_z0 - motor_base_h;
         nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2*nozzle_d;
 
-        pin_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
+        spline_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
         z=set_screw_z - motor_base_h;
 
         module nut_pocket() {
@@ -886,13 +886,18 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         difference() {
             rotate([0, 0, 180/adapter_sides]) {
                     clean_cylinder(h=base_h, d=adapter_d, $fn=adapter_sides);
-                translate([0, 0, base_h-0.1]) {
-                    linear_extrude(pin_h + 0.01, scale=0.98, convexity=6) {
+                translate([0, 0, base_h-0.01]) {
+                    linear_extrude(spline_h + 0.01 - min_th, convexity=6) {
                         spline_hub();
+                    }
+                    translate([0, 0, spline_h - min_th]) {
+                        linear_extrude(min_th+0.01, scale=0.98, convexity=6) {
+                            spline_hub();
+                        }
                     }
                 }
             }
-            clean_cylinder(h=base_h+pin_h, d=motor_shaft_d + nozzle_d/2,
+            clean_cylinder(h=base_h+spline_h, d=motor_shaft_d + nozzle_d/2,
                            chamfer=nozzle_d, clear=0.01, $fs=nozzle_d/2);
             translate([0, 0, set_screw_z - motor_base_h]) {
                 clean_cylinder(h=2*adapter_r, d=m3_free_d, chamfer=nozzle_d,
@@ -902,8 +907,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             translate([ nut_dx, 0, 0]) nut_pocket();
             translate([-nut_dx, 0, 0]) nut_pocket();
 
-            // Little slots in case you need to wedge a small screwdriver
-            // under the gear to work it up and off the spline.
+            // Little slots allow insertion of a prying tool in case the
+            // fit between the gear and the spline is too tight.
             translate([0, 0, base_h-min_th]) {
                 linear_extrude(min_th + 0.01, convexity=4) {
                     rotate([0, 0, 90])
@@ -913,17 +918,16 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         }
-        
     }
 
 //    !union() {
-//        translate([0, 25, 0]) shaft_adapter(deer_shaft_d, deer_base_h);
+////        translate([0, 25, 0]) shaft_adapter(deer_shaft_d, deer_base_h);
 //        shaft_adapter(jgy_shaft_d, jgy_base_h);
 //        color("orange") translate([-25, 0, 0]) {
 //            linear_extrude(gear_th, convexity=8) {
 //                rotate([0, 0, 180/adapter_sides])
 //                difference() {
-//                    circle(d=25, $fn=8);
+//                    circle(d=30, $fn=8);
 //                    spline_hole();
 //                }
 //            }
