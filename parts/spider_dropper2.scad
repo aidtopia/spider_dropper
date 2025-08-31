@@ -22,11 +22,12 @@ Drop_Distance = 24; // [14, 18, 24, 30, 36]
 
 // Select your motor type.  The FrightProps and MonsterGuts motors are identical. Other deer motors will work only if they always turn clockwise.
 Motor = "Aslong JGY-370 12 VDC Worm Gearmotor"; // ["FrightProps Deer Motor", "MonsterGuts Mini-Motor", "Aslong JGY-370 12 VDC Worm Gearmotor"]
-
+Show_Assembled = true;
 Include_Base_Plate = true;
 Include_Drive_Gear = true;
 Include_Spool_Assembly = true;
 Include_Button = false;
+Include_PCB_Model = false;
 
 module __Customizer_Limit__ () {}
 
@@ -253,6 +254,27 @@ module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, hori
     rotate(r) rotate_extrude(convexity=4) polygon(points);
 }
 
+// Makes a star-shaped polygon of count points.
+// bias must be in [-1..1].  A bias of 0 results in a symmetric spline.
+// For an asymmetric spline (which further restricts orientation),
+// use a positive bias turning clockwise, or negative for counterclockwise.
+module spline_shape(count, od, id, bias=0) {
+    assert(count >= 3);
+    assert(0 < id && id < od);
+    assert(-1 <= bias && bias <= 1);
+    or = od/2;
+    ir = id/2;
+    dtheta = 360 / count;
+    htheta = dtheta * (bias + 1)/2;
+    polygon([
+        for (theta=[0:dtheta:360-dtheta])
+        each [
+            [or*cos(theta), or*sin(theta)],
+            [ir*cos(theta+htheta), ir*sin(theta+htheta)]
+        ]
+    ]);
+}
+
 module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     $fs = nozzle_d/2;
 
@@ -283,7 +305,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     // The horizontal set screws in the shaft adapters must clear the top
     // of the plate so that they're accessible.  
     set_screw_z = plate_th + min_th + m3_head_d/2;
-    assert(set_screw_z <= shaft_max_z - m3_head_d/2);
+    assert(set_screw_z + m3_head_d/2 <= shaft_max_z);
     echo(str("set_screw_z = ", set_screw_z));
 
     // The target thickness of the meshing portion of gears.
@@ -352,6 +374,12 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     motor_base_d = max(deer_base_d, jgy_base_d);
     motor_base_h = max(deer_base_h, jgy_base_h);
 
+    adapter_d = motor_base_d - 3;
+    echo(str("adapter_d = ", adapter_d));
+    adapter_sides = 8;
+    assert(adapter_sides % 2 == 0);
+    adapter_r = adapter_d/2 * cos(180/adapter_sides);
+
     // This is the model for the drive gear, which is connected directly
     // to the motor shaft.
     model_gear = AG_define_gear(
@@ -391,6 +419,16 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     shaft_to_axle = [AG_center_distance(drive_gear, winder_gear), 0];
     echo(str("shaft_to_axle = ", shaft_to_axle));
 
+    // The spline is the shape used to key the shaft adapter to the
+    // drive gear.
+    spline_od = adapter_d;
+    spline_id = max(
+        jgy_shaft_d + 2*min_th,
+        deer_shaft_d + 2*min_th,
+        spline_od/2
+    );
+    spline_count = adapter_sides;
+
     spool_turns = actual_drive_teeth / AG_tooth_count(winder_gear);
     spool_d = drop_distance / (spool_turns * PI);  // to bottom of groove
     assert(spool_d > bearing608_od + min_th);
@@ -399,15 +437,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
              "; spool_d = ", spool_d,
              "; spool_flange_d = ", spool_flange_d));
 
-//    motor_screw_head_h =
-//        max(deer_mount_screw_head_h, jgy_mount_screw_head_h);
-//    motor_shaft_h =
-//        max(deer_base_h + deer_shaft_h, jgy_base_h + jgy_shaft_h);
-//
-//
-//    button_d = 5*string_d;
-//    
-
     // TODO: The axle needs to snug up tighter against the inner race
     // of the bearings.  The bounce at the bottom of the drop is much
     // less severe when the inner race isn't as free to spin around
@@ -415,8 +444,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     axle_l = 2*bearing608_th + nozzle_d;
     axle_d = bearing608_id;
 
-    // The bearing rests against the spacer, which should contact only
-    // the inner ring.
+    // The bottom bearing rests against the spacer, which should contact
+    // only the inner ring.
     spacer_d = bearing608_id + 3;
 
     plate_l =
@@ -449,41 +478,55 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch_op.x) + track_w/2 + min_th);
 
-//    module drive_gear() {
-//        difference() {
-//            union() {
-//                translate([0, 0, drive_z0]) {
-//                    difference() {
-//                        AG_gear(drive_gear);
-//                        translate([0, 0, AG_thickness(drive_gear)])
-//                            linear_extrude(1, center=true)
-//                                circular_arrow(0.35*AG_tips_diameter(drive_gear), 160, 20);
-//                    }
-//                }
-//            }
-//            track_r = cradle_xoffset + switch_xoffset;
-//            track_w = 8;
-//            assert(track_r + track_w/2 < AG_root_diameter(drive_gear)/2);
-//            last_tooth = actual_drive_teeth - 1;
-//            advance = 2;  // stop 2 drive teeth before the drop
-//            degrees_to_switch = 180;
-//            index_angle =
-//                360*(last_tooth - advance)/drive_teeth + degrees_to_switch;
-//            rpm = 6;
-//            seconds_to_hold = 1;
-//            sweep = 360 * rpm / 60 * seconds_to_hold;
-//            sector_r = AG_root_diameter(drive_gear)/2 - min_th;
-//            linear_extrude(2+nozzle_d, convexity=4) {
-//                difference() {
-//                    track(r=track_r, track_w=track_w, $fa=2);
-//                    rotate([0, 0, index_angle]) {
-//                        sector(r=sector_r, sweep=sweep, $fa=2);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
+    module spline_hub() {
+        offset(nozzle_d/2) offset(-nozzle_d/2)
+            spline_shape(spline_count, spline_od, spline_id);
+    }
+
+    module spline_hole() {
+        offset(-nozzle_d/2) offset(3/4*nozzle_d)
+            spline_shape(adapter_sides, spline_od, spline_id);
+    }
+
+    module drive_gear() {
+        arrow_r = 0.35*AG_tips_diameter(drive_gear);
+        track_r = abs(shaft_to_switch_op.x);
+        last_tooth = actual_drive_teeth - 1;
+        advance = 2;  // stop 2 drive teeth before the drop
+        degrees_to_switch = 180;
+        index_angle =
+            360*(last_tooth - advance)/drive_teeth + degrees_to_switch;
+        rpm = 6;
+        seconds_to_hold = 1;
+        sweep = 360 * rpm / 60 * seconds_to_hold;
+        sector_r = AG_root_diameter(drive_gear)/2 - min_th;
+
+        translate([0, 0, AG_thickness(drive_gear)]) rotate([180, 0, 0])
+        difference() {
+            union() {
+                difference() {
+                    AG_gear(drive_gear);
+                    translate([0, 0, AG_thickness(drive_gear)])
+                        linear_extrude(2*nozzle_d, center=true)
+                            circular_arrow(arrow_r, 160, 20);
+                }
+            }
+            translate([0, 0, -0.01]) {
+                linear_extrude(2+nozzle_d+0.01, convexity=4) {
+                    difference() {
+                        track(r=track_r, track_w=track_w, $fa=2);
+                        rotate([0, 0, index_angle]) {
+                            sector(r=sector_r, sweep=sweep, $fa=2);
+                        }
+                    }
+                }
+                linear_extrude(AG_thickness(drive_gear) + 0.02) {
+                    spline_hole();
+                }
+            }
+        }
+    }
+
 //    module spool_assembly() {
 //        module spool() {
 //            module pocket() {
@@ -825,42 +868,67 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         motor_base_h=deer_base_h,
         nozzle_d=0.4
     ) {
-        motor_base_d = max(deer_base_d, jgy_base_d);
-        motor_shaft_h =
-            max(deer_base_h + deer_shaft_h, jgy_base_h + jgy_shaft_h);
-        adapter_d = motor_base_d - 3;
-        adapter_h = max(14, motor_shaft_h);
-        grub_dz = (motor_shaft_h)/2 - motor_base_h + m3_sqnut_h/2;
-        nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2.5*nozzle_d;
+        base_h = drive_z0 - motor_base_h;
+        nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2*nozzle_d;
+
+        pin_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
+        z=set_screw_z - motor_base_h;
 
         module nut_pocket() {
-            pocket_h = grub_dz + m3_sqnut_w/2 + nozzle_d/2 + 0.01;
+            pocket_h = z + (m3_sqnut_w + nozzle_d)/2 + 0.01;
             translate([0, 0, -0.01]) {
                 linear_extrude(pocket_h, convexity=4)
-                    offset(r=nozzle_d/2, $fs=nozzle_d/2)
+                    offset(nozzle_d/2)
                         square([m3_sqnut_h, m3_sqnut_w], center=true);
             }
         }
 
         difference() {
-            rotate([0, 0, 180/8])
-                clean_cylinder(h=adapter_h, d=adapter_d, chamfer=-0.4, $fn=8);
-            clean_cylinder(h=adapter_h, d=motor_shaft_d + nozzle_d,
-                           chamfer=0.4, clear=0.01, $fs=nozzle_d/2);
-            translate([0, 0, grub_dz]) {
-                clean_cylinder(h=adapter_d, d=m3_free_d, chamfer=0.5,
+            rotate([0, 0, 180/adapter_sides]) {
+                    clean_cylinder(h=base_h, d=adapter_d, $fn=adapter_sides);
+                translate([0, 0, base_h-0.1]) {
+                    linear_extrude(pin_h + 0.01, scale=0.98, convexity=6) {
+                        spline_hub();
+                    }
+                }
+            }
+            clean_cylinder(h=base_h+pin_h, d=motor_shaft_d + nozzle_d/2,
+                           chamfer=nozzle_d, clear=0.01, $fs=nozzle_d/2);
+            translate([0, 0, set_screw_z - motor_base_h]) {
+                clean_cylinder(h=2*adapter_r, d=m3_free_d, chamfer=nozzle_d,
                                horizontal=true, clear=1, center=true,
                                $fs=nozzle_d/2);
             }
             translate([ nut_dx, 0, 0]) nut_pocket();
             translate([-nut_dx, 0, 0]) nut_pocket();
+
+            // Little slots in case you need to wedge a small screwdriver
+            // under the gear to work it up and off the spline.
+            translate([0, 0, base_h-min_th]) {
+                linear_extrude(min_th + 0.01, convexity=4) {
+                    rotate([0, 0, 90])
+                        translate([adapter_r-1.7, -3/2]) square(3);
+                    rotate([0, 0, -90])
+                        translate([adapter_r-1.7, -3/2]) square(3);
+                }
+            }
         }
+        
     }
 
-    !union() {
-        shaft_adapter(deer_shaft_d, deer_base_h);
-        translate([25, 0, 0]) shaft_adapter(jgy_shaft_d, jgy_base_h);
-    }
+//    !union() {
+//        translate([0, 25, 0]) shaft_adapter(deer_shaft_d, deer_base_h);
+//        shaft_adapter(jgy_shaft_d, jgy_base_h);
+//        color("orange") translate([-25, 0, 0]) {
+//            linear_extrude(gear_th, convexity=8) {
+//                rotate([0, 0, 180/adapter_sides])
+//                difference() {
+//                    circle(d=25, $fn=8);
+//                    spline_hole();
+//                }
+//            }
+//        }
+//    }
 
     echo(str("\n",
         "design teeth:\t", AG_tooth_count(model_gear), "\n",
@@ -869,27 +937,30 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         "spool diameter:\t", spool_flange_d, " mm\n",
         "plate size:\t", plate_l, " mm x ", plate_w, " mm x ", plate_th, " mm\n"));
 
-    show_assembled = $preview;
     if (Include_Base_Plate) {
         color("springgreen") base_plate();
     }
 
-    if (show_assembled) {
-        #translate(shaft_to_switch_op) {
-            translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
-                translate(-pcb_to_switch_op) pcb_model();
+    if (Include_PCB_Model) {
+        if (Show_Assembled) {
+            #translate(shaft_to_switch_op) {
+                translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
+                    translate(-pcb_to_switch_op) pcb_model();
+                }
             }
+        } else {
+            pcb_model();
         }
     }
     
-//    if (Include_Drive_Gear) {
-//        t = show_assembled ?
-//            [0, 0, 0] :
-//            [plate_offset.x+AG_tips_diameter(drive_gear)/2+1, (plate_w+AG_tips_diameter(drive))/2+1, drive_z1];
-//        r = show_assembled ? [0, 0, 0] : [180, 0, 0];
-//        color("yellow") translate(t) rotate(r) drive_gear();
-//    }
-//
+    if (Include_Drive_Gear) {
+        t = Show_Assembled ?
+            [0, 0, 0] :
+            [plate_offset.x+AG_tips_diameter(drive_gear)/2+1, (plate_w+AG_tips_diameter(drive))/2+1, drive_z1];
+        r = Show_Assembled ? [0, 0, 0] : [180, 0, 0];
+        color("yellow") translate(t) rotate(r) drive_gear();
+    }
+
 //    if (Include_Spool_Assembly) {
 //        t = show_assembled ?
 //            [-dx, 0, 0] :
