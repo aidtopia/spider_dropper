@@ -20,13 +20,47 @@
 // How far the prop should drop (in inches)?
 Drop_Distance = 24; // [14, 18, 24, 30, 36]
 
-// Select your motor type.  The FrightProps and MonsterGuts motors are identical. Other deer motors will work only if they always turn clockwise.
-Motor = "Aslong JGY-370 12 VDC Worm Gearmotor"; // ["FrightProps Deer Motor", "MonsterGuts Mini-Motor", "Aslong JGY-370 12 VDC Worm Gearmotor"]
-Show_Assembled = true;
+// For the AC version, we use a "deer" motor.  These are 5 or 6 RPM
+// synchronous motors in a weatherproof housing.  The FrightProps and
+// MonsterGuts deer motors are identical.  There are other sources of
+// deer motors, but watch out for differences.  The dropper works only
+// with motors that turn CLOCKWISE.  Motors that reverse direction
+// when they encounter resistance are incompatible.
+//
+// The deer motor can be mounted using the screws that are already
+// part of the motor housing.  However, I recommend replacing the four
+// mounting screws with M3x14mm roundhead (or flanged head)
+// self-tapping screws.
+//
+// The deer motor will require that 7mm shaft adapter, two M3x6mm
+// machine screws, and two M3 square nuts.
+
+// The DC version was designed for an Aslong JGY-370 12VDC worm
+// gear motor, but nearly any lookalike model will work as long as
+// the mounting hole pattern aligns with the base plate.  A 6 RPM
+// version is recommended, but slower ones can be used.  Ones faster
+// than 10 RPM may not allow enough time for the drop, which can
+// lead to a jam.
+//
+// The JGY motor will requires the 6mm shaft adapter, six M3x6mm
+// machine screws, and two M3 square nuts.
+//
+// The DC version requires soldering wires to the motor terminals.
+// Make sure you have it wired so that it turns CLOCKWISE when
+// power is applied.
+//
+// The DC version can be upgraded with the "slightly smarter" option,
+// which consists of a circuit board, and a mini PIR motion sensor.
+// It requires one more M3x6mm machine screw and square nut.
+//
+// Other than the shaft adapters, the 3D-printed parts are identical
+// for all versions.
+
 Include_Base_Plate = true;
+Include_6mm_Shaft_Adapter = true;
+Include_7mm_Shaft_Adapter = false;
 Include_Drive_Gear = true;
 Include_Spool_Assembly = true;
-Include_Button = false;
 Include_PCB_Model = false;
 
 module __Customizer_Limit__ () {}
@@ -79,8 +113,6 @@ string_d = 0.5;
 // resistant housing.
 deer_shaft_d = 7.0;
 deer_shaft_h = 6.2;
-deer_shaft_screw = "M4";  // machine screw
-deer_shaft_screw_l = 10;
 // The base is a circular area around the shaft that rises above the
 // mounting face of the motor.
 deer_base_d = 20;  // at the face plate.  Tapers down to 17.
@@ -103,8 +135,6 @@ deer_h = 37.6;
 // Key dimensions for the Aslong JGY-370 DC gearmotors (and look alikes).
 jgy_shaft_d = 6.0;
 jgy_shaft_h = 14;
-jgy_shaft_screw = "M3";  // machine screw
-jgy_shaft_screw_l = 8;
 jgy_base_d = 13.2;
 jgy_base_h = 0;
 jgy_mount_screw = "M3";
@@ -607,18 +637,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 //        }
 //    }
 //    
-//    // The button is for tying off the string at the spool.
-//    module button() {
-//        linear_extrude(string_d, convexity=6) {
-//            difference() {
-//                $fs=nozzle_d/2;
-//                circle(d=button_d);
-//                translate([-button_d/5, 0]) circle(d=string_d + nozzle_d);
-//                translate([ button_d/5, 0]) circle(d=string_d + nozzle_d);
-//            }
-//        }
-//    }
-
     module axle() {
         // This generates the spacer, which rises through the base plate,
         // the axle itself, the chamfer at the top, a hollow space inside
@@ -974,28 +992,59 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         "spool diameter:\t", spool_flange_d, " mm\n",
         "plate size:\t", plate_l, " mm x ", plate_w, " mm x ", plate_th, " mm\n"));
 
+    show_assembled = $preview;
+
     if (Include_Base_Plate) {
         color("springgreen") base_plate();
     }
 
     if (Include_PCB_Model) {
-        if (Show_Assembled) {
-            #translate(shaft_to_switch_op) {
+        color("green")
+        if (show_assembled) {
+            translate(shaft_to_switch_op) {
                 translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
                     translate(-pcb_to_switch_op) pcb_model();
                 }
             }
         } else {
-            pcb_model();
+            translate([-((plate_l + pcb_w)/2 + 1), 0, 0] + plate_offset) {
+                rotate([0, 0, 90]) pcb_model();
+            }
+        }
+    }
+
+    if (Include_6mm_Shaft_Adapter) {
+        color("dodgerblue")
+        if (show_assembled) {
+            translate([0, 0, jgy_base_h]) rotate([0, 0, 180/adapter_sides]) {
+                shaft_adapter(jgy_shaft_d, jgy_base_h);
+            }
+        } else {
+            shaft_adapter(jgy_shaft_d, jgy_base_h);
         }
     }
     
+    if (Include_7mm_Shaft_Adapter) {
+        color("purple")
+        if (show_assembled && !Include_6mm_Shaft_Adapter) {
+            translate([0, 0, deer_base_h]) rotate([0, 0, 180/adapter_sides]) {
+                shaft_adapter(deer_shaft_d, deer_base_h);
+            }
+        } else {
+            translate([0, -((plate_w + adapter_d)/2 + 1), 0]) {
+                shaft_adapter(deer_shaft_d, deer_base_h);
+            }
+        }
+    }
+
     if (Include_Drive_Gear) {
-        t = Show_Assembled ?
-            [0, 0, 0] :
-            [plate_offset.x+AG_tips_diameter(drive_gear)/2+1, (plate_w+AG_tips_diameter(drive))/2+1, drive_z1];
-        r = Show_Assembled ? [0, 0, 0] : [180, 0, 0];
-        color("yellow") translate(t) rotate(r) drive_gear();
+        color("yellow")
+        if (show_assembled) {
+            translate([0, 0, drive_z1]) rotate([180, 0, 0]) drive_gear();
+        } else {
+            translate([0, (plate_w + AG_tips_diameter(drive_gear))/2 + 1, 0])
+                drive_gear();
+        }
     }
 
 //    if (Include_Spool_Assembly) {
@@ -1006,13 +1055,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 //        color("dodgerblue") translate(t) rotate(r) spool_assembly();
 //    }
 //
-//    if (Include_Button) {
-//        t = show_assembled ?
-//            [-dx + spool_d/4, spool_d/4, plate_th + spacer_h + AG_thickness(winder) + spool_h] :
-//            [0, 0, 0];
-//        color("orange") translate(t) button();
-//    }
-//    
 //    if (!$preview) {
 //        echo(str(
 //            "\nPRINTING INSTRUCTIONS\n",
