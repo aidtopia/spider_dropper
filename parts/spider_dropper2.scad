@@ -87,6 +87,7 @@ function nut_diameter(nut_w, nut_sides=6, nozzle_d=0.4) =
 
 // Nearly all screws used are M3.
 m3_free_d = 3.4;
+m3_close_d = 3.2;
 m3_head_d = 6.0;
 m3_head_h = 2.4;
 m3_flange_d = 7.0;
@@ -400,7 +401,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     motor_base_d = max(deer_base_d, jgy_base_d);
     motor_base_h = max(deer_base_h, jgy_base_h);
 
-    adapter_d = motor_base_d - 1;
+    adapter_d = motor_base_d - 3;
     adapter_sides = 8;
     assert(adapter_sides % 2 == 0);
     adapter_r = adapter_d/2 * cos(180/adapter_sides);
@@ -512,7 +513,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     module spline_hole() {
-        offset(-nozzle_d/2) offset(5/8*nozzle_d)
+        offset(-nozzle_d/2) offset(9/16*nozzle_d)
             spline_shape(adapter_sides, spline_od, spline_id);
     }
 
@@ -894,7 +895,10 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         nozzle_d=0.4
     ) {
         base_h = drive_z0 - motor_base_h;
-        nut_dx = (motor_shaft_d + m3_sqnut_th)/2 + min_th;
+        // Sink the set screws to ensure they extend deep enough to
+        // secure the flat(s) of the shaft.
+        set_dx = m3_screw_l + motor_shaft_d/2 - 1;
+        nut_dx = (motor_shaft_d/2 + set_dx) / 2;
 
         spline_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
         z=set_screw_z - motor_base_h;
@@ -902,32 +906,65 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         module nut_pocket() {
             pocket_h = z + (m3_sqnut_w + nozzle_d)/2 + 0.01;
             translate([0, 0, -0.01]) {
-                linear_extrude(pocket_h, convexity=4)
-                    offset(nozzle_d/4)
-                        square([m3_sqnut_th, m3_sqnut_w], center=true);
+                linear_extrude(pocket_h, convexity=4) {
+                    offset(nozzle_d/4) {
+                        square([m3_sqnut_th, m3_sqnut_w],
+                           center=true);
+                    }
+                }
+            }
+        }
+
+        module set_screw_recess() {
+            translate([set_dx, 0, 0]) {
+                rotate([0, 90, 0]) {
+                    linear_extrude(adapter_d/2-adapter_r+1) {
+                        circle(d=m3_head_d+nozzle_d);
+                    }
+                }
             }
         }
 
         difference() {
-            rotate([0, 0, 180/adapter_sides]) {
-                clean_cylinder(h=base_h, d=adapter_d, $fn=adapter_sides);
-                translate([0, 0, base_h-0.01]) {
-                    linear_extrude(spline_h + 0.01 - min_th, convexity=6) {
-                        spline_hub();
+            union() {
+                difference() {
+                    clean_cylinder(h=base_h, d=adapter_d, chamfer=-nozzle_d/2);
+                    translate([0, 0, set_screw_z-motor_base_h]) {
+                        set_screw_recess();
+                        rotate([0, 0, 180]) set_screw_recess();
                     }
-                    translate([0, 0, spline_h - min_th]) {
-                        linear_extrude(min_th+0.01, scale=0.98, convexity=6) {
+                }
+
+                rotate([0, 0, 180/adapter_sides]) {
+                    translate([0, 0, base_h-0.01]) {
+                        linear_extrude(spline_h + 0.01 - min_th, convexity=6) {
                             spline_hub();
+                        }
+                        translate([0, 0, spline_h - min_th]) {
+                            linear_extrude(min_th+0.01, scale=0.98, convexity=6) {
+                                spline_hub();
+                            }
                         }
                     }
                 }
             }
+
             clean_cylinder(h=base_h+spline_h, d=motor_shaft_d + nozzle_d/2,
                            chamfer=nozzle_d, clear=0.01, $fs=nozzle_d/2);
             translate([0, 0, set_screw_z - motor_base_h]) {
-                clean_cylinder(h=2*adapter_r, d=m3_free_d, chamfer=nozzle_d,
-                               horizontal=true, clear=1, center=true,
-                               $fs=nozzle_d/2);
+                // For a small tight horizontal bore, the droop across the
+                // top is significant enough to require a custom shape.
+                rotate([0, 90, 0]) {
+                    linear_extrude(adapter_d+0.02, center=true) {
+                        hull() {
+                            circle(d=m3_close_d);
+                            translate([-m3_close_d/2, 0]) {
+                                square([nozzle_d, m3_close_d/2], center=true);
+                            }
+                        }
+                    }
+                }
+
             }
             translate([ nut_dx, 0, 0]) nut_pocket();
             translate([-nut_dx, 0, 0]) nut_pocket();
@@ -944,20 +981,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
         }
     }
-
-//    !union() {
-////        translate([0, 25, 0]) shaft_adapter(deer_shaft_d, deer_base_h);
-//        shaft_adapter(jgy_shaft_d, jgy_base_h);
-//        color("orange") translate([-25, 0, 0]) {
-//            linear_extrude(gear_th, convexity=8) {
-//                rotate([0, 0, 180/adapter_sides])
-//                difference() {
-//                    circle(d=30, $fn=8);
-//                    spline_hole();
-//                }
-//            }
-//        }
-//    }
 
     echo(str("\n",
         "design teeth:\t", AG_tooth_count(model_gear), "\n",
@@ -988,9 +1011,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     if (Include_6mm_Shaft_Adapter) {
-        color("dodgerblue")
+        color("deepskyblue")
         if (show_assembled) {
-            translate([0, 0, jgy_base_h]) rotate([0, 0, 180/adapter_sides]) {
+            translate([0, 0, jgy_base_h]) rotate([0, 0, 180/spline_count]) {
                 shaft_adapter(jgy_shaft_d, jgy_base_h);
             }
         } else {
@@ -999,9 +1022,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
     
     if (Include_7mm_Shaft_Adapter) {
-        color("purple")
+        color("orchid")
         if (show_assembled && !Include_6mm_Shaft_Adapter) {
-            translate([0, 0, deer_base_h]) rotate([0, 0, 180/adapter_sides]) {
+            translate([0, 0, deer_base_h]) rotate([0, 0, 180/spline_count]) {
                 shaft_adapter(deer_shaft_d, deer_base_h);
             }
         } else {
