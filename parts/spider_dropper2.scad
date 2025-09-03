@@ -17,7 +17,7 @@
 // will cause the spool to unwind rapidly (the drop).  When the
 // teeth again engage, the spider will climb back up.
 
-// How far the prop should drop (in inches)?
+// How far should the prop drop (in inches)?
 Drop_Distance = 24; // [14, 18, 24, 30, 36]
 
 // For the AC version, we use a "deer" motor.  These are 5 or 6 RPM
@@ -91,9 +91,9 @@ m3_head_d = 6.0;
 m3_head_h = 2.4;
 m3_flange_d = 7.0;
 m3_nut_w = 5.5;
-m3_nut_h = 2.4;
+m3_nut_th = 2.4;
 m3_sqnut_w = 5.5;
-m3_sqnut_h = 2.3;
+m3_sqnut_th = 2.3;
 
 // The deer motor uses an M4 screw for the hub.
 m4_free_d = 4.5;
@@ -400,8 +400,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     motor_base_d = max(deer_base_d, jgy_base_d);
     motor_base_h = max(deer_base_h, jgy_base_h);
 
-    adapter_d = motor_base_d - 3;
-    echo(str("adapter_d = ", adapter_d));
+    adapter_d = motor_base_d - 1;
     adapter_sides = 8;
     assert(adapter_sides % 2 == 0);
     adapter_r = adapter_d/2 * cos(180/adapter_sides);
@@ -447,18 +446,20 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     // The spline is the shape used to key the shaft adapter to the
     // drive gear.
-    spline_od = adapter_d;
+    spline_od = min(17, adapter_d);
     spline_id = max(
         jgy_shaft_d + 2*min_th,
         deer_shaft_d + 2*min_th,
         spline_od/2
     );
     spline_count = adapter_sides;
+    echo(str("adapter_d = ", adapter_d, "; spline_od = ", spline_od));
 
     spool_turns = actual_drive_teeth / AG_tooth_count(winder_gear);
     spool_d = drop_distance / (spool_turns * PI);  // to bottom of groove
     assert(spool_d > bearing608_od + min_th);
     spool_flange_d = spool_d + 4*string_d*ceil(spool_turns);
+    assert(spool_flange_d/2 <= shaft_to_axle.x - adapter_d/2 - min_th);
     echo(str("spool_turns = ", spool_turns,
              "; spool_d = ", spool_d,
              "; spool_flange_d = ", spool_flange_d));
@@ -556,31 +557,18 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     module spool_assembly() {
         module spool() {
-            module pocket() {
-                module input(nudge=0) {
-                    rotate([0, 90, 0])
-                        translate([0, 0, nudge])
-                            linear_extrude(spool_d/2, convexity=4)
-                                rotate([0, 0, 45])
-                                    square(string_d, center=true);
-                }
-                module output(nudge=0) {
-                    rotate([0, -45, 0])
-                        translate([0, 0, nudge])
-                        linear_extrude(spool_th, convexity=4)
-                            rotate([0, 0, 45])
-                                square(string_d, center=true);
-                }
-                
-                translate([spool_d/2-plate_th, 0, spool_th/2]) {
-                    rotate([0, 0, -45]) {
-                        input();
-                        output();
-                        intersection() {
-                            input(nudge=-(1+cos(45))*string_d);
-                            output(nudge=-(1+cos(45))*string_d);
+            module tube() {
+                translate([spool_d/3, 0, spool_th/2]) {
+                    rotate([90, 0, 0]) {
+                        linear_extrude(spool_flange_d/2, convexity=4) {
+                            rotate([0, 0, 45]) {
+                                square(4*string_d, center=true);
+                            }
                         }
                     }
+                }
+                translate([spool_d/3, 0, min_th]) {
+                    linear_extrude(spool_th) circle(d=20);
                 }
             }
 
@@ -602,11 +590,13 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                         [r1, y0]
                     ]);
                 }
-                // The string is secured to the spool in the pocket.
-                pocket();
+                // The string is secured to the spool by running it through
+                // the tube and tying it off.
+                tube();
+                rotate([0, 0, 180]) tube();
                 translate([0, 0, spool_th])
-                    linear_extrude(2, convexity=6, center=true)
-                        circular_arrow(0.35*spool_flange_d, 100, 260);
+                    linear_extrude(2*nozzle_d, convexity=6, center=true)
+                        circular_arrow(0.35*spool_flange_d, -80, 80);
             }
         }
 
@@ -761,6 +751,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     module pcb_mounting_tab() {
         nut_d = sqrt(2*(m3_sqnut_w*m3_sqnut_w));
         tab_w = max(m3_head_d, nut_d) + 2*min_th;
+        echo(str("tab_w = ", tab_w));
 
         hull() {
             circle(d=tab_w);
@@ -861,7 +852,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
                 // Finally, a nut pocket for the PCB mounting screw.  This
                 // requires incremental bridging for the floating hole.
-                if (pcb_z >= m3_sqnut_h + min_th) {
+                if (pcb_z >= m3_sqnut_th + min_th) {
                     translate([0, 0, pcb_z - min_th - plate_th - 0.01]) {
                         linear_extrude(plate_th+0.01-nozzle_d) {
                             rotate([180, 0, 0]) rotate([0, 0, 90]) {
@@ -903,7 +894,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         nozzle_d=0.4
     ) {
         base_h = drive_z0 - motor_base_h;
-        nut_dx = (motor_shaft_d + m3_sqnut_h)/2 + 2*nozzle_d;
+        nut_dx = (motor_shaft_d + m3_sqnut_th)/2 + min_th;
 
         spline_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
         z=set_screw_z - motor_base_h;
@@ -912,14 +903,14 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             pocket_h = z + (m3_sqnut_w + nozzle_d)/2 + 0.01;
             translate([0, 0, -0.01]) {
                 linear_extrude(pocket_h, convexity=4)
-                    offset(nozzle_d/2)
-                        square([m3_sqnut_h, m3_sqnut_w], center=true);
+                    offset(nozzle_d/4)
+                        square([m3_sqnut_th, m3_sqnut_w], center=true);
             }
         }
 
         difference() {
             rotate([0, 0, 180/adapter_sides]) {
-                    clean_cylinder(h=base_h, d=adapter_d, $fn=adapter_sides);
+                clean_cylinder(h=base_h, d=adapter_d, $fn=adapter_sides);
                 translate([0, 0, base_h-0.01]) {
                     linear_extrude(spline_h + 0.01 - min_th, convexity=6) {
                         spline_hub();
@@ -1021,13 +1012,13 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     if (Include_Spool_Assembly) {
-        echo(str("shaft_to_axle = ", shaft_to_axle));
-        echo(str("spool_assembly_z0 = ", spool_assembly_z0));
         color("orange")
         if (show_assembled) {
             translate(shaft_to_axle) translate([0, 0, spool_assembly_z0]) {
                 spool_assembly();
             }
+        } else {
+            spool_assembly();
         }
     }
 
