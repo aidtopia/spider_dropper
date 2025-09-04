@@ -18,7 +18,10 @@
 // teeth again engage, the spider will climb back up.
 
 // How far should the prop drop (in inches)?
-Drop_Distance = 24; // [14, 18, 24, 30, 36]
+Drop_Distance = 24; // [8:42]
+
+// EXPERIMENTAL: Size of the gear teeth.
+ISO_Module = 1.5; // [0.50:0.25:3.00]
 
 // For the AC version, we use a "deer" motor.  These are 5 or 6 RPM
 // synchronous motors in a weatherproof housing.  The FrightProps and
@@ -329,8 +332,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         jgy_base_h  + jgy_shaft_h
     );
 
-    // The horizontal set screws in the shaft adapters must clear the top
-    // of the plate so that they're accessible.  
+    // The heads of the set screws in the shaft adapters must clear the
+    // top of the plate to be accessible.
     set_screw_z = plate_th + min_th + m3_head_d/2;
     assert(set_screw_z + m3_head_d/2 <= shaft_max_z);
     echo(str("set_screw_z = ", set_screw_z));
@@ -406,16 +409,35 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     assert(adapter_sides % 2 == 0);
     adapter_r = adapter_d/2 * cos(180/adapter_sides);
 
+    // The "slightly smarter" version uses a small PCB that attaches to
+    // the base plate.  One side has a switch whose lever rides in a
+    // track in the drive gear so that it is depressed once per
+    // revolution.
+    shaft_to_switch_op = [-35, 0];
+    track_w = 8;
+
+    assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch_op.x) + track_w/2 + min_th);
+
     // This is the model for the drive gear, which is connected directly
-    // to the motor shaft.
-    model_gear = AG_define_gear(
-        iso_module=1.5,
-        tooth_count=57,
-        thickness=drive_th,
-        helix_angle=15,
-        herringbone=false,
-        name="drive gear"
-    );
+    // to the motor shaft.  It must be at least wide enough to fully
+    // contain the track used for the switch.
+    model_gear =
+        let(
+            min_root_d = 2*(abs(shaft_to_switch_op.x) + track_w/2 + min_th),
+            iso_module = ISO_Module,
+            clearance = 0.25,
+            dedendum = (1 + clearance)*iso_module,
+            teeth = ceil((min_root_d + 2*dedendum) / iso_module)
+        )
+        AG_define_gear(
+            iso_module=iso_module,
+            tooth_count=teeth,
+            clearance=clearance,
+            thickness=drive_th,
+            helix_angle=15,
+            herringbone=false,
+            name="drive gear"
+        );
 
     // The actual drive gear has teeth 4/5 of the way around and is
     // toothless on the remaining fifth.  We use helical teeth for
@@ -433,13 +455,22 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     AG_echo(drive_gear);
 
     // The drive gear turns the winder gear, which is attached to the
-    // spool.
-    winder_gear = AG_define_gear(
-        tooth_count=19,
-        thickness=winder_th,
-        mate=drive_gear
-    );
-    assert(AG_root_diameter(winder_gear) > bearing608_od + min_th);
+    // spool.  We want this one as small as possible to maximize the
+    // gear ratio.
+    winder_gear =
+        let(
+            min_root_d = bearing608_od + wall_th,
+            iso_module = AG_module(drive_gear),
+            dedendum = AG_dedendum(drive_gear),
+            teeth = ceil((min_root_d + 2*dedendum) / iso_module)
+        )
+        AG_define_gear(
+            iso_module=iso_module,
+            tooth_count=teeth,
+            thickness=winder_th,
+            mate=drive_gear,
+            name="winder gear"
+        );
     AG_echo(winder_gear);
 
     shaft_to_axle = [AG_center_distance(drive_gear, winder_gear), 0];
@@ -460,7 +491,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     spool_d = drop_distance / (spool_turns * PI);  // to bottom of groove
     assert(spool_d > bearing608_od + min_th);
     spool_flange_d = spool_d + 4*string_d*ceil(spool_turns);
-    assert(spool_flange_d/2 <= shaft_to_axle.x - adapter_d/2 - min_th);
+    assert(spool_flange_d/2 <= shaft_to_axle.x - adapter_d/2 - m3_head_h - min_th);
     echo(str("spool_turns = ", spool_turns,
              "; spool_d = ", spool_d,
              "; spool_flange_d = ", spool_flange_d));
@@ -498,15 +529,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     honeycomb_size = 14;
     
-    // The "slightly smarter" version uses a small PCB that attaches to
-    // the base plate.  One side has a switch whose lever rides in a
-    // channel of the drive gear so that it is depressed once per
-    // revolution.
-    shaft_to_switch_op = [-35, 0];
-    track_w = 8;
-
-    assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch_op.x) + track_w/2 + min_th);
-
     module spline_hub() {
         offset(nozzle_d/2) offset(-nozzle_d/2)
             spline_shape(spline_count, spline_od, spline_id);
@@ -558,18 +580,43 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     module spool_assembly() {
         module spool() {
-            module tube() {
-                translate([spool_d/3, 0, spool_th/2]) {
-                    rotate([90, 0, 0]) {
-                        linear_extrude(spool_flange_d/2, convexity=4) {
-                            rotate([0, 0, 45]) {
-                                square(4*string_d, center=true);
-                            }
+            module tunnel(l, d=4*string_d, center=false) {
+                rotate([90, 0, 0]) {
+                    linear_extrude(l, convexity=4, center=center) {
+                        rotate([0, 0, 45]) {
+                            square(d, center=true);
                         }
                     }
                 }
-                translate([spool_d/3, 0, min_th]) {
-                    linear_extrude(spool_th) circle(d=20);
+            }
+
+            module tie_off() {
+                tie_th = 1.5*wall_th;
+                hole_d = 4*string_d;
+                min_r = AG_tips_diameter(winder_gear)/2 + min_th;
+                max_r = spool_d/2 - min_th;
+                mid_r = (min_r + max_r)/2;
+                recess_d = min(20, max_r-min_r);
+                translate([mid_r, 0, min_th]) {
+                    linear_extrude(spool_th, convexity=8) {
+                        difference() {
+                            circle(d=recess_d);
+                            square([recess_d, tie_th], center=true);
+                        }
+                    }
+                }
+                translate([mid_r, 0, spool_th/2+nozzle_d]) {
+                    translate([0, -tie_th/2, 0]) tunnel(spool_flange_d/2);
+                    translate([1.5*hole_d, 0, 0]) {
+                        rotate([90, 0, 0]) {
+                            string_hole(tie_th, hole_d);
+                        }
+                    }
+                    translate([-1.5*hole_d, 0, 0]) {
+                        rotate([90, 0, 0]) {
+                            string_hole(tie_th, hole_d);
+                        }
+                    }
                 }
             }
 
@@ -592,19 +639,32 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                     ]);
                 }
                 // The string is secured to the spool by running it through
-                // the tube and tying it off.
-                tube();
-                rotate([0, 0, 180]) tube();
-                translate([0, 0, spool_th])
-                    linear_extrude(2*nozzle_d, convexity=6, center=true)
-                        circular_arrow(0.35*spool_flange_d, -80, 80);
+                // the tube and tying it off in the recess.
+                tie_off();
+                rotate([0, 0, 180]) tie_off();
+                translate([0, 0, spool_th]) {
+                    linear_extrude(2*nozzle_d, convexity=6, center=true) {
+                        circular_arrow(0.35*spool_flange_d, 35, 145);
+                        circular_arrow(0.35*spool_flange_d, 215, 325);
+                    }
+                }
             }
         }
 
         difference() {
             union() {
                 spool();
-                translate([0, 0, spool_th]) AG_gear(winder_gear);
+                translate([0, 0, spool_th]) {
+                    AG_gear(winder_gear);
+                    // Should the string slip off the spool and start wrapping
+                    // around the winder gear, the best chance of recovery is
+                    // if the loop works its way toward the open end.  We'll
+                    // encourage that by adding a cone around the base of the
+                    // winder gear.
+                    tips = AG_tips_diameter(winder_gear) + nozzle_d;
+                    dz = drive_z0 - spool_z1 - nozzle_d;
+                    cylinder(h=dz, d1=tips + dz, d2=tips);
+                }
             }
             clean_cylinder(h=spool_assembly_th, d=bearing608_od,
                            chamfer=nozzle_d, clear=1);
@@ -650,6 +710,19 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         rotate_extrude(convexity=4) polygon(points);
     }
 
+    module string_hole(l=wall_th, d) {
+        rotate_extrude(convexity=4, $fs=nozzle_d/2) {
+            hole_l = l + nozzle_d;
+            hole_d = d + nozzle_d;
+            difference() {
+                translate([0, -hole_l/2])
+                    square([hole_d, hole_l]);
+                translate([hole_d/2 + hole_l, 0])
+                    circle(d=2*hole_l, $fn=24);
+            }
+        }
+    }
+
     // The guide ensures the string wraps onto the spool.
     module guide() {
         th = wall_th;
@@ -669,16 +742,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                         }
                     }
                 }
-                rotate_extrude(convexity=4, $fs=nozzle_d/2) {
-                    hole_th = th + nozzle_d;
-                    hole_d = id + nozzle_d;
-                    difference() {
-                        translate([0, -hole_th/2])
-                            square([hole_d, hole_th]);
-                        translate([hole_d/2 + hole_th, 0])
-                            circle(d=2*hole_th, $fn=48);
-                    }
-                }
+                string_hole(wall_th, d=id);
             }
         }
     }
