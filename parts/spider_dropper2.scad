@@ -64,7 +64,12 @@ Include_6mm_Shaft_Adapter = true;
 Include_7mm_Shaft_Adapter = false;
 Include_Spool_Assembly = true;
 Include_Drive_Gear = true;
+
+// For checking alignment and clearance w/o and actual PCB.
 Include_PCB_Model = false;
+
+// Experimental skirt around the base of the spool to avoid certain types of jams.
+Include_Spool_Guard = false;
 
 module __Customizer_Limit__ () {}
 
@@ -496,10 +501,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
              "; spool_d = ", spool_d,
              "; spool_flange_d = ", spool_flange_d));
 
-    // TODO: The axle needs to snug up tighter against the inner race
-    // of the bearings.  The bounce at the bottom of the drop is much
-    // less severe when the inner race isn't as free to spin around
-    // the axle.
     axle_l = 2*bearing608_th + nozzle_d;
     axle_d = bearing608_id;
 
@@ -710,6 +711,51 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         rotate_extrude(convexity=4) polygon(points);
     }
 
+    module tighter_axle() {
+        rib_count = 8;
+        chamfer = min_th;
+        z0       = 0;
+        z1 = z0 + plate_th;
+        z2 = z1 + spacer_h;
+        z3 = z2 + axle_l;
+        z4 = z3 + chamfer;
+        r0 = 0;
+        r3 = r0 + axle_d/2 - nozzle_d;
+        r1 = r3 - 4*nozzle_d;
+        r4 = z0 + spacer_d/2;
+        r5 = r4 + plate_th/2;
+        profile = [
+            [r0, z0],
+            [r0, z2],
+            [r4, z2],
+            [r4, z1],
+            [r5, z1],
+            [r5, z0]
+        ];
+        rotate_extrude(convexity=4) polygon(profile);
+        
+        r_core = nozzle_d / tan(360/rib_count / 2);
+        
+        r6 = r0 + axle_d/2 + nozzle_d/2;
+        rib = [
+            [r0, z2],
+            [r0, z4],
+            [r_core, z4],
+            [r3, z3],
+            [r6, z3 - chamfer],
+            [r6, z2]
+        ];
+        for (i=[1:rib_count]) {
+            rotate([0, 0, i*360/rib_count]) {
+                rotate([90, 0, 0]) {
+                    linear_extrude(2*nozzle_d, center=true) {
+                        polygon(rib);
+                    }
+                }
+            }
+        }
+    }
+
     module string_hole(l=wall_th, d) {
         rotate_extrude(convexity=4, $fs=nozzle_d/2) {
             hole_l = l + nozzle_d;
@@ -744,6 +790,19 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
                 string_hole(wall_th, d=id);
             }
+        }
+    }
+
+    module spool_guard() {
+        r0 = spool_flange_d/2 + nozzle_d;
+        r1 = r0 + nozzle_d;
+        r2 = r1 + min_th;
+        h = plate_th + spacer_h + 1.5*nozzle_d;
+        rotate_extrude(angle=360, $fa=6) {
+            polygon([
+                [r0, 0], [r2, 0], [r2, plate_th],
+                [r1, h], [r0, h]
+            ]);
         }
     }
 
@@ -942,9 +1001,11 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         }
-        translate(shaft_to_axle) axle();
-        translate([shaft_to_axle.x, -(plate_w - wall_th)/2, guide_z])
-            guide();
+        translate(shaft_to_axle) {
+            tighter_axle();
+            if (Include_Spool_Guard) spool_guard();
+            translate([0, -(plate_w - wall_th)/2, guide_z]) guide();
+        }
 
         // Alternate guide if the user wants the mechanism in the taller
         // orientation.
