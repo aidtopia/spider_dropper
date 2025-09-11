@@ -6,8 +6,8 @@
 	(paper "USLetter")
 	(title_block
 		(title "Slightly Smarter Spider Dropper")
-		(date "2025-08-28")
-		(rev "D")
+		(date "2025-09-11")
+		(rev "E")
 		(company "Adrian McCarthy")
 	)
 	(lib_symbols
