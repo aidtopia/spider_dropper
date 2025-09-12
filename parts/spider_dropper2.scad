@@ -58,6 +58,10 @@ ISO_Module = 1.5; // [0.50:0.25:3.00]
 //
 // Other than the shaft adapters, the 3D-printed parts are identical
 // for all versions.
+//
+// All testing was done with PETG, but PLA should work.
+// The shaft adapter and cap screw require a layer height <= 0.2 mm.
+// All other parts require a layer height <= 0.3 mm.
 
 Include_Base_Plate = true;
 Include_6mm_Shaft_Adapter = true;
@@ -69,8 +73,8 @@ Include_Drive_Gear = true;
 // For checking alignment and clearance w/o and actual PCB.
 Include_PCB_Model = false;
 
-// Experimental skirt around the base of the spool to avoid certain types of jams.
-Include_Spool_Guard = false;
+// Experimental spool guard avoids certain jams, but may need to be omitted if it blocks motor mounting holes at some drop distances.
+Include_Spool_Guard = true;
 
 module __Customizer_Limit__ () {}
 
@@ -396,13 +400,14 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     // The switch must be high enough that the bottom face of the
     // drive gear will activate it.
-    switch_z = min(drive_z0 - switch_down_h - 0.1);
+    switch_z = drive_z0 - switch_down_h + 0.1;
     assert(switch_z <= plate_th + min_th);
     index_depth = switch_up_h - switch_down_h + 0.2;
     assert(index_depth < drive_th / 2);
     pcb_z = switch_z - pcb_th;
     assert(pcb_z >= min_th);
     echo(str("pcb_z = ", pcb_z));
+    echo(str("switch_z = ", switch_z, "; drive_z0 = ", drive_z0));
     pcb_support_h = max(pcb_z + pcb_th + nozzle_d, plate_th);
     
     // HORIZONTAL LAYOUT
@@ -432,15 +437,15 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         spline_od/2
     );
     spline_count = adapter_sides;
-    echo(str("adapter_d = ", adapter_d, "; spline_od = ", spline_od));
+    echo(str("adapter_d = ", adapter_d, "; adapter_r = ", adapter_r));
+    echo(str("spline_od = ", spline_od, "; spline_id = ", spline_id));
 
     // The cap screws into the spline end of the adapter to hold the gear
     // in place.
-    cap_thread_d = inch(1/4);
-    assert(cap_thread_d <= adapter_r - nozzle_d);
-    cap_thread_pitch = inch(1)/20;
-    assert(1.0 <= cap_thread_pitch);  // would require thinner layers
-    assert(cap_thread_pitch <= 2.5);  // would overhang too far
+    cap_thread_d = 8;
+    assert(cap_thread_d >= max(jgy_shaft_d, deer_shaft_d));
+    assert(cap_thread_d + min_th <= spline_id);
+    cap_thread_pitch = 1.25;
     cap_thread_l = 4*cap_thread_pitch;
     cap_head_d = min(1.5*spline_od, 2*abs(shaft_to_switch_op.x));
     cap_head_h = max(2*wall_th, 4);
@@ -482,7 +487,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     AG_echo(drive_gear);
 
     assert(AG_root_diameter(drive_gear) > abs(shaft_to_switch_op.x) + track_w/2 + min_th);
-
 
     // The drive gear turns the winder gear, which is attached to the
     // spool.  We want this one as small as possible to maximize the
@@ -994,6 +998,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     module shaft_adapter(
         motor_shaft_d=deer_shaft_d,
+        motor_shaft_h=deer_shaft_h,
         motor_base_h=deer_base_h,
         nozzle_d=0.4
     ) {
@@ -1004,8 +1009,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         nut_dx = (motor_shaft_d/2 + set_dx) / 2;
 
         spline_h = max(drive_z1 - drive_z0 + nozzle_d, gear_th);
-        assert(cap_thread_l < spline_h - min_th);
-        z=set_screw_z - motor_base_h;
+        assert(motor_shaft_h + cap_thread_l <= base_h + spline_h);
+        z = set_screw_z - motor_base_h;
 
         module nut_pocket() {
             pocket_h = z + (m3_sqnut_w + nozzle_d)/2 + 0.01;
@@ -1031,47 +1036,32 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
         difference() {
             union() {
-                difference() {
-                    clean_cylinder(h=base_h, d=adapter_d, chamfer=-nozzle_d/2);
-                    translate([0, 0, set_screw_z-motor_base_h]) {
-                        set_screw_recess();
-                        rotate([0, 0, 180]) set_screw_recess();
-                    }
-                    clean_cylinder(h=base_h+spline_h,
-                                   d=motor_shaft_d+nozzle_d/2,
-                                   chamfer=nozzle_d, clear=0.01,
-                                   $fs=nozzle_d/2);
-                }
-
+                clean_cylinder(h=base_h, d=adapter_d, chamfer=-nozzle_d/2);
                 rotate([0, 0, 180/adapter_sides]) {
                     translate([0, 0, base_h-0.01]) {
-                        difference() {
-                            union() {
-                                linear_extrude(spline_h+0.01-min_th,
-                                               convexity=6) {
-                                    spline_hub();
-                                }
-                                translate([0, 0, spline_h - min_th]) {
-                                    linear_extrude(min_th+0.01, scale=0.98,
-                                                   convexity=6) {
-                                        spline_hub();
-                                    }
-                                }
-                            }
-                            translate([0, 0, min_th]) {
-                                AT_threads(h=spline_h,
-                                           d=cap_thread_d,
-                                           pitch=cap_thread_pitch,
-                                           tap=true, nozzle_d=nozzle_d,
-                                           $fn=$preview ? 30 : 60);
+                        linear_extrude(spline_h+0.01-min_th) {
+                            spline_hub();
+                        }
+                        translate([0, 0, spline_h-min_th-0.01]) {
+                            linear_extrude(min_th+0.01, scale=0.98) {
+                                spline_hub();
                             }
                         }
                     }
                 }
             }
+            
+            clean_cylinder(h=base_h+spline_h,
+                           d=motor_shaft_d+nozzle_d/2,
+                           chamfer=nozzle_d, clear=0.01,
+                           $fs=nozzle_d/2);
 
-//            clean_cylinder(h=base_h+spline_h, d=motor_shaft_d + nozzle_d/2,
-//                           chamfer=nozzle_d, clear=0.01, $fs=nozzle_d/2);
+            translate([0, 0, set_screw_z-motor_base_h]) {
+                set_screw_recess();
+                rotate([0, 0, 180]) set_screw_recess();
+            }
+
+
             translate([0, 0, set_screw_z - motor_base_h]) {
                 // For a small tight horizontal bore, the droop across the
                 // top is significant enough to require a custom shape.
@@ -1099,6 +1089,15 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                     rotate([0, 0, -90])
                         translate([adapter_r-1.7, -3/2]) square(3);
                 }
+            }
+
+            // Tap threads for the cap screw.
+            translate([0, 0, base_h+spline_h-cap_thread_l-0.01]) {
+                AT_threads(h=cap_thread_l+0.02,
+                           d=cap_thread_d,
+                           pitch=cap_thread_pitch,
+                           tap=true, nozzle_d=nozzle_d,
+                           $fn=$preview ? 30 : 60);
             }
         }
     }
@@ -1148,28 +1147,28 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         color("deepskyblue")
         if (show_assembled) {
             translate([0, 0, jgy_base_h]) rotate([0, 0, 180/spline_count]) {
-                shaft_adapter(jgy_shaft_d, jgy_base_h);
+                shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
             }
         } else {
-            shaft_adapter(jgy_shaft_d, jgy_base_h);
+            shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
         }
     }
     
     if (Include_7mm_Shaft_Adapter) {
-        color("orchid")
+        color("deepskyblue")
         if (show_assembled && !Include_6mm_Shaft_Adapter) {
             translate([0, 0, deer_base_h]) rotate([0, 0, 180/spline_count]) {
-                shaft_adapter(deer_shaft_d, deer_base_h);
+                shaft_adapter(deer_shaft_d, deer_shaft_h, deer_base_h);
             }
         } else {
             translate([0, -((plate_w + adapter_d)/2 + 1), 0]) {
-                shaft_adapter(deer_shaft_d, deer_base_h);
+                shaft_adapter(deer_shaft_d, deer_shaft_h, deer_base_h);
             }
         }
     }
 
     if (Include_Cap_Screw) {
-        color("olive")
+        color("dodgerblue")
         if (show_assembled) {
             translate([0, 0, drive_z1]) rotate([180, 0, 0]) cap_screw();
         } else {
@@ -1197,14 +1196,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 drive_gear();
         }
     }
-
-//    if (!$preview) {
-//        echo(str(
-//            "\nPRINTING INSTRUCTIONS\n",
-//            "\nExport the model and slice it with a 0.2 mm or 0.3 mm layer\n",
-//            "height. It has been tested with PETG, but PLA is probably fine.\n"
-//        ));
-//    }
 }
 
 drop_distance = inch(Drop_Distance);
