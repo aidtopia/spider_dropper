@@ -400,7 +400,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     // The switch must be high enough that the bottom face of the
     // drive gear will activate it.
-    switch_z = drive_z0 - switch_down_h + 0.1;
+    switch_z = drive_z0 - switch_down_h;
     assert(switch_z <= plate_th + min_th);
     index_depth = switch_up_h - switch_down_h + 0.2;
     assert(index_depth < drive_th / 2);
@@ -818,7 +818,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
     
-    module pcb_model() {
+    module pcb_model(limit=switch_hard_stop_h) {
         module switch_model() {
             translate(-switch_op_to_switch) {
                 linear_extrude(switch_h) {
@@ -828,7 +828,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                     polygon([
                         [-switch_l/2+min_th, 0],
                         [-switch_l/2+min_th, switch_h],
-                        [switch_l/2 + 1.6, switch_hard_stop_h],
+                        [switch_l/2 + 1.6, limit],
                         [switch_l/2, 0]
                     ]);
                 }
@@ -1129,16 +1129,17 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     if (Include_PCB_Model) {
+        limit = switch_down_h;
         color("green")
         if (show_assembled) {
             translate(shaft_to_switch_op) {
                 translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
-                    translate(-pcb_to_switch_op) pcb_model();
+                    translate(-pcb_to_switch_op) pcb_model(limit=limit);
                 }
             }
         } else {
             translate([-((plate_l + pcb_w)/2 + 1), 0, 0] + plate_offset) {
-                rotate([0, 0, 90]) pcb_model();
+                rotate([0, 0, 90]) pcb_model(limit=limit);
             }
         }
     }
