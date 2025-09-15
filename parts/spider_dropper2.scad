@@ -70,11 +70,11 @@ Include_Cap_Screw = true;
 Include_Spool_Assembly = true;
 Include_Drive_Gear = true;
 
-// For checking alignment and clearance w/o and actual PCB.
+// For checking alignment and clearance w/o an actual PCB.
 Include_PCB_Model = false;
 
-// Experimental spool guard avoids certain jams, but may need to be omitted if it blocks motor mounting holes at some drop distances.
-Include_Spool_Guard = true;
+// Experimental spool guard (NOT recommended)
+Include_Spool_Guard = false;
 
 module __Customizer_Limit__ () {}
 
@@ -694,7 +694,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     // A larger fudge value makes a tighter fit.  The default value
     // errs toward being a little too loose (which is tolerable)
     // instead of too tight (which can make the part useless).
-    module axle(rib_count=6, fudge=0.085) {
+    module axle(rib_count=5, fudge=0.085) {
         chamfer = wall_th;
         z0 = 0;
         z1 = z0 + plate_th;
@@ -717,24 +717,28 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         ];
         rotate_extrude(convexity=4) polygon(profile);
 
-        r_core = nozzle_d / tan(360/rib_count / 2);
-        r6 = r0 + axle_d/2 + fudge;
-        rib = [
-            [r0, z2],
-            [r0, z4],
-            [r_core, z5],
-            [r3, z4],
-            [r6, z3],
-            [r6, z2]
-        ];
-        for (i=[1:rib_count]) {
-            rotate([0, 0, i*360/rib_count]) {
-                rotate([90, 0, 0]) {
-                    linear_extrude(2*nozzle_d, center=true) {
-                        polygon(rib);
-                    }
+        module rib() {
+            r_core = 1.5*nozzle_d / tan(360/rib_count / 2);
+            r6 = r0 + axle_d/2 + fudge;
+            profile = [
+                [r0, z2],
+                [r0, mid(z2, z3)],
+                [r_core, mid(z3, z4)],
+                [r_core, z5],
+                [mid(r_core, r3), z5],
+                [r3, z4],
+                [r6, z3],
+                [r6-fudge/2, z2]
+            ];
+            rotate([90, 0, 0]) {
+                linear_extrude(2*nozzle_d, center=true) {
+                    polygon(profile);
                 }
             }
+        }
+        
+        for (i=[1:rib_count]) {
+            rotate([0, 0, i*360/rib_count]) rib();
         }
     }
 
@@ -754,8 +758,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     // The guide ensures the string wraps onto the spool.
     module guide() {
         th = wall_th;
-        id = 4*string_d;
-        od = max(3*id, id + 2*min_th);
+        id = 2.5*string_d;
+        od = max(3*id, id + 2*min_th, spool_th);
         base_w = 2*od;
         base_h = plate_th;
 
@@ -903,11 +907,23 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
 
                 // PCB support
-                linear_extrude(pcb_support_h, convexity=8) {
-                    translate(shaft_to_switch_op) {
+                translate(shaft_to_switch_op) {
+                    linear_extrude(pcb_support_h, convexity=8) {
                         rotate([180, 0, 0]) rotate([0, 0, 90]) {
                             translate(-pcb_to_switch_op) {
                                 offset(min_th+nozzle_d) pcb_footprint();
+                            }
+                        }
+                    }
+                    linear_extrude(pcb_support_h+min_th) {
+                        intersection() {
+                            rotate([180, 0, 0]) rotate([0, 0, 90]) {
+                                translate(-pcb_to_switch_op) {
+                                    offset(min_th+nozzle_d) pcb_footprint();
+                                }
+                            }
+                            translate([pcb_to_switch_op.y-pcb_w/2-wall_th, pcb_l/2-pcb_clearance]) {
+                                square([pcb_w+2*wall_th, pcb_clearance+wall_th]);
                             }
                         }
                     }
@@ -928,7 +944,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             // Recess the PCB to hold it at the proper height.
             translate(shaft_to_switch_op) {
                 translate([0, 0, pcb_z]) {
-                    linear_extrude(pcb_support_h+0.02, convexity=8) {
+                    linear_extrude(pcb_support_h-pcb_z+0.01, convexity=8) {
                         rotate([180, 0, 0]) rotate([0, 0, 90]) {
                             translate(-pcb_to_switch_op) {
                                 offset(delta=nozzle_d) pcb_footprint();
@@ -1115,12 +1131,27 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    echo(str("\n",
-        "design teeth:\t", AG_tooth_count(model_gear), "\n",
-        "actual teeth:\t", actual_drive_teeth, "\n",
-        "drive diameter:\t", AG_tips_diameter(drive_gear), " mm\n",
-        "spool diameter:\t", spool_flange_d, " mm\n",
-        "plate size:\t", plate_l, " mm x ", plate_w, " mm x ", plate_th, " mm\n"));
+    module axle_test() {
+        dx = bearing608_od + 1;
+        tests = 1;
+        l = tests*dx;
+        w = 15;
+        for (i=[0:tests-1]) {
+            translate([i*dx, 0, 0]) axle(rib_count=2*i+5, fudge=0.1);
+        }
+        difference() {
+            linear_extrude(min_th, convexity=8) {
+                translate([-dx/2, -w]) offset(2) offset(-2) square([l, w]);
+            }
+            translate([0, 0, min_th/2]) linear_extrude(min_th, convexity=8) {
+                for (i=[0:tests-1]) {
+                    translate([i*dx, -w+min_th]) {
+                        text(str(2*i+5), size=5, halign="center", valign="bottom");
+                    }
+                }
+            }
+        }
+    }
 
     show_assembled = $preview;
 
