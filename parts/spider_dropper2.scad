@@ -17,11 +17,8 @@
 // will cause the spool to unwind rapidly (the drop).  When the
 // teeth again engage, the spider will climb back up.
 
-// How far should the prop drop (in inches)?
+// How far should the prop drop? (inches) ONLY 24 IS SUPPORTED FOR NOW
 Drop_Distance = 24; // [8:42]
-
-// EXPERIMENTAL: Size of the gear teeth.
-ISO_Module = 1.5; // [0.50:0.25:3.00]
 
 // For the AC version, we use a "deer" motor.  These are 5 or 6 RPM
 // synchronous motors in a weatherproof housing.  The FrightProps and
@@ -63,18 +60,16 @@ ISO_Module = 1.5; // [0.50:0.25:3.00]
 // The shaft adapter and cap screw require a layer height <= 0.2 mm.
 // All other parts require a layer height <= 0.3 mm.
 
+Preview_for_Printing = false;
 Include_Base_Plate = true;
+Include_Spool_Assembly = true;
+Include_Drive_Gear = true;
 Include_6mm_Shaft_Adapter = true;
 Include_7mm_Shaft_Adapter = false;
 Include_Cap_Screw = true;
-Include_Spool_Assembly = true;
-Include_Drive_Gear = true;
 
-// For checking alignment and clearance w/o an actual PCB.
+// Not required. Can be used for visualization, checking alignment and clearance w/o an actual PCB.
 Include_PCB_Model = false;
-
-// Experimental spool guard (NOT recommended)
-Include_Spool_Guard = false;
 
 module __Customizer_Limit__ () {}
 
@@ -456,7 +451,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     model_gear =
         let(
             min_root_d = 2*(abs(shaft_to_switch_op.x) + track_w/2 + min_th),
-            iso_module = ISO_Module,
+            iso_module = 1.5,
             clearance = 0.25,
             dedendum = (1 + clearance)*iso_module,
             teeth = ceil((min_root_d + 2*dedendum) / iso_module)
@@ -537,7 +532,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         wall_th +
         max(AG_tips_diameter(drive_gear),
             spool_flange_d + min_th,
-            motor_w) +
+            motor_w, pcb_l) +
         wall_th;
     plate_r = 10;  // radius for rounded corners
     echo(str("plate_w = ", plate_w, "; plate_l = ", plate_l));
@@ -779,19 +774,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    module spool_guard() {
-        r0 = spool_flange_d/2 + nozzle_d;
-        r1 = r0 + nozzle_d;
-        r2 = r1 + min_th;
-        h = plate_th + spacer_h + 1.5*nozzle_d;
-        rotate_extrude(angle=360, $fa=6) {
-            polygon([
-                [r0, 0], [r2, 0], [r2, plate_th],
-                [r1, h], [r0, h]
-            ]);
-        }
-    }
-
     module pcb_footprint() {
         // The KiCad PCB design uses a left-handed coordinate system,
         // considers the origin to be the corner closes to the power
@@ -1001,7 +983,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
         translate(shaft_to_axle) {
             axle();
-            if (Include_Spool_Guard) spool_guard();
             translate([0, -(plate_w - wall_th)/2, guide_z]) guide();
         }
 
@@ -1153,10 +1134,15 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    show_assembled = $preview;
+    show_assembled = $preview && !Preview_for_Printing;
 
     if (Include_Base_Plate) {
-        color("springgreen") base_plate();
+        color("springgreen")
+        if (show_assembled) {
+            base_plate();
+        } else {
+            translate(-plate_offset + [plate_l/2, plate_w/2]) base_plate();
+        }
     }
 
     if (Include_PCB_Model) {
@@ -1169,7 +1155,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         } else {
-            translate([-((plate_l + pcb_w)/2 + 1), 0, 0] + plate_offset) {
+            translate([plate_l + 1 + cap_head_d + 1 + pcb_w/2, plate_w - pcb_l/2, 0]) {
                 rotate([0, 0, 90]) pcb_model(limit=limit);
             }
         }
@@ -1182,7 +1168,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
             }
         } else {
-            shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
+            translate([plate_l + 1 + cap_head_d/2, plate_w - 1 - adapter_d/2]) {
+                shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
+            }
         }
     }
     
@@ -1193,7 +1181,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 shaft_adapter(deer_shaft_d, deer_shaft_h, deer_base_h);
             }
         } else {
-            translate([0, -((plate_w + adapter_d)/2 + 1), 0]) {
+            translate([plate_l + 1 + cap_head_d/2, plate_w - adapter_d - 1 - cap_head_d - 1 - adapter_d/2]) {
                 shaft_adapter(deer_shaft_d, deer_shaft_h, deer_base_h);
             }
         }
@@ -1204,7 +1192,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         if (show_assembled) {
             translate([0, 0, drive_z1]) rotate([180, 0, 0]) cap_screw();
         } else {
-            translate([(adapter_d + cap_head_d)/2+1, 0, cap_head_h]) cap_screw();
+            translate([plate_l + 1 + cap_head_d/2, plate_w - adapter_d - 1 - cap_head_d/2, cap_head_h]) {
+                cap_screw();
+            }
         }
     }
 
@@ -1215,7 +1205,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 spool_assembly();
             }
         } else {
-            spool_assembly();
+            spool_r = spool_flange_d/2;
+            translate([AG_tips_diameter(drive_gear) + 1 + spool_r, plate_w + 1 + spool_r]) spool_assembly();
         }
     }
 
@@ -1224,8 +1215,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         if (show_assembled) {
             translate([0, 0, drive_z1]) rotate([180, 0, 0]) drive_gear();
         } else {
-            translate([0, (plate_w + AG_tips_diameter(drive_gear))/2 + 1, 0])
-                drive_gear();
+            tips_r = AG_tips_diameter(drive_gear)/2;
+            translate([tips_r, plate_w + tips_r + 1, 0]) drive_gear();
         }
     }
 }
