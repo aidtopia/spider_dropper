@@ -504,7 +504,7 @@
       "plot": "gerbers/",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "spider_dropper_pcb.stl",
       "svg": "",
       "vrml": ""
     },
