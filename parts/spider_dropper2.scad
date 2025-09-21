@@ -71,6 +71,12 @@ Include_Cap_Screw = true;
 // Not required. Can be used for visualization, checking alignment and clearance w/o an actual PCB.
 Include_PCB_Model = false;
 
+// Not required. Useful for pushing a bearing out of a mechanism.
+Include_Bearing_Tool = false;
+
+// Not required. Helpful for holding the switch in place when soldering it to the PCB
+Include_Soldering_Jig = false;
+
 module __Customizer_Limit__ () {}
 
 use <aidgear.scad>
@@ -399,11 +405,12 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     assert(switch_z <= plate_th + min_th);
     index_depth = switch_up_h - switch_down_h + 0.2;
     assert(index_depth < drive_th / 2);
-    pcb_z = switch_z - pcb_th;
-    assert(pcb_z >= min_th);
-    echo(str("pcb_z = ", pcb_z));
+    pcb_z1 = switch_z;
+    pcb_z0 = pcb_z1 - pcb_th;
+    assert(pcb_z0 >= min_th);
+    echo(str("pcb_z0 = ", pcb_z0));
     echo(str("switch_z = ", switch_z, "; drive_z0 = ", drive_z0));
-    pcb_support_h = max(pcb_z + pcb_th + nozzle_d, plate_th);
+    pcb_support_h = max(pcb_z1 + nozzle_d, plate_th) + min_th + nozzle_d;
     
     // HORIZONTAL LAYOUT
     motor_w = max(deer_w, jgy_w);
@@ -684,57 +691,47 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                            chamfer=nozzle_d, clear=1);
         }
     }
-    
-    // The fudge factor is for tuning in a tight fit after shrinkage.
-    // A larger fudge value makes a tighter fit.  The default value
-    // errs toward being a little too loose (which is tolerable)
-    // instead of too tight (which can make the part useless).
-    module axle(rib_count=5, fudge=0.085) {
-        chamfer = wall_th;
+
+    // The actual diameter of the printed axle is a tiny bit smaller than
+    // specified because of material shrinkage.  Use `fudge` to get closer
+    // to the intended size in order to get a tight fit with the bearing.
+    module axle(fudge=0.01) {
+        // This generates the spacer, which rises through the base plate,
+        // the axle itself, the chamfer at the top, a hollow space inside
+        // that makes the axle stronger because it generates more
+        // perimeters, and a conical indentation at the top end for
+        // alignment and support from and upper plate.
+        recess_d = 4;
+        recess_h = recess_d/2;
+        chamfer = 1;
         z0 = 0;
         z1 = z0 + plate_th;
         z2 = z1 + spacer_h;
         z3 = z2 + axle_l;
         z4 = z3 + chamfer;
-        z5 = z4 + min_th;
         r0 = 0;
-        r3 = r0 + axle_d/2 - 2*nozzle_d;
+        r3 = r0 + axle_d/2;
         r1 = r3 - 4*nozzle_d;
+        r2 = r0 + recess_d/2;
         r4 = z0 + spacer_d/2;
         r5 = r4 + plate_th/2;
-        profile = [
+        points = [
             [r0, z0],
-            [r0, z2],
+            [r0, mid(z0, z1)],
+            [r1, z1 + 2*(r1 - r0)],
+            [r1, z4 - recess_h - 1 - (r1 - r0)],
+            [r0, z4 - recess_h - 1],
+            [r0, z4 - recess_h],
+            [r2, z4],
+            [r3-chamfer, z4],
+            [r3+fudge, z3],
+            [r3, z2],
             [r4, z2],
             [r4, z1],
             [r5, z1],
             [r5, z0]
         ];
-        rotate_extrude(convexity=4) polygon(profile);
-
-        module rib() {
-            r_core = 1.5*nozzle_d / tan(360/rib_count / 2);
-            r6 = r0 + axle_d/2 + fudge;
-            profile = [
-                [r0, z2],
-                [r0, mid(z2, z3)],
-                [r_core, mid(z3, z4)],
-                [r_core, z5],
-                [mid(r_core, r3), z5],
-                [r3, z4],
-                [r6, z3],
-                [r6-fudge/2, z2]
-            ];
-            rotate([90, 0, 0]) {
-                linear_extrude(2*nozzle_d, center=true) {
-                    polygon(profile);
-                }
-            }
-        }
-        
-        for (i=[1:rib_count]) {
-            rotate([0, 0, i*360/rib_count]) rib();
-        }
+        rotate_extrude(convexity=4) polygon(points);
     }
 
     module string_hole(l=wall_th, d) {
@@ -804,23 +801,59 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
     
-    module pcb_model(limit=switch_hard_stop_h) {
-        module switch_model() {
-            translate(-switch_op_to_switch) {
-                linear_extrude(switch_h) {
-                    square([switch_l, switch_w], center=true);
+    module pcb_bridge() {
+        translate(shaft_to_switch_op) {
+            rotate([0, 0, 90]) translate(-pcb_to_switch_op) {
+                intersection() {
+                    linear_extrude(pcb_support_h) {
+                        rotate([0, 180, 0]) {
+                            offset(min_th+nozzle_d) pcb_footprint();
+                        }
+                    }
+                    rotate([90, 0, 0])
+                    linear_extrude(pcb_w+2*(min_th+nozzle_d), center=true,
+                                   convexity=6) {
+                        translate([pcb_l/2, 0])
+                        polygon([
+                            [-(pcb_clearance+nozzle_d),  pcb_support_h],
+                            [-(pcb_clearance+nozzle_d),  pcb_z1+pcb_clearance+nozzle_d],
+                            [0,               pcb_z1],
+                            [0,               0],
+                            [min_th+nozzle_d, 0],
+                            [min_th+nozzle_d, pcb_support_h]
+                        ]);
+                    }
                 }
-                rotate([90, 0, 0]) linear_extrude(3, center=true) {
-                    polygon([
-                        [-switch_l/2+min_th, 0],
-                        [-switch_l/2+min_th, switch_h],
-                        [switch_l/2 + 1.6, limit],
-                        [switch_l/2, 0]
-                    ]);
+            }
+            // A triangle atop the bridge to meet the one on the board.
+            translate([0, (pcb_l+nozzle_d)/2, pcb_support_h-0.01]) {
+                rotate([0, 0, 90]) translate(-pcb_to_switch_op) {
+                    linear_extrude(nozzle_d+0.01) {
+                        s = 1 + nozzle_d;
+                        polygon([[s, 0], [-s, s], [-s, -s]]);
+                    }
                 }
             }
         }
+    }
+
+    module switch_model(limit=switch_hard_stop_h) {
+        translate(-switch_op_to_switch) {
+            linear_extrude(switch_h) {
+                square([switch_l, switch_w], center=true);
+            }
+            rotate([90, 0, 0]) linear_extrude(3, center=true) {
+                polygon([
+                    [-switch_l/2+min_th, 0],
+                    [-switch_l/2+min_th, switch_h],
+                    [switch_l/2 + 1.6, limit],
+                    [switch_l/2, 0]
+                ]);
+            }
+        }
+    }
         
+    module pcb_model(limit=switch_hard_stop_h) {
         translate([0, 0, pcb_th]) rotate([0, 180, 0]) {
             color("green")
             difference() {
@@ -834,8 +867,23 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
             // The switch is on the opposite side
-            rotate([0, 180, 0]) color("white") {
-                translate(pcb_to_switch_op) switch_model();
+            color("white")
+            rotate([0, 180, 0]) {
+                translate(pcb_to_switch_op) switch_model(limit);
+            }
+        }
+    }
+
+    module pcb_kicad_model(limit=switch_hard_stop_h) {
+        translate([0, 0, pcb_th]) rotate([0, 180, 0]) {
+            color("green")
+            import("../schematics/spider_dropper/spider_dropper_pcb.stl",
+                   center=true, convexity=8);
+            if ($preview) {
+                color("white")
+                rotate([0, 180, 0]) {
+                    translate(pcb_to_switch_op) switch_model(limit);
+                }
             }
         }
     }
@@ -863,8 +911,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                     cutaway(outline=min_th) {
                         union() {
                             translate(plate_offset) {
-                                bounded_honeycomb(plate_l, plate_w, honeycomb_size,
-                                                  min_th, center=true) {
+                                bounded_honeycomb(plate_l, plate_w,
+                                                  honeycomb_size, min_th,
+                                                  center=true) {
                                     footprint();
                                 }
                                 outline(-wall_th) footprint();
@@ -897,18 +946,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                             }
                         }
                     }
-                    linear_extrude(pcb_support_h+min_th) {
-                        intersection() {
-                            rotate([180, 0, 0]) rotate([0, 0, 90]) {
-                                translate(-pcb_to_switch_op) {
-                                    offset(min_th+nozzle_d) pcb_footprint();
-                                }
-                            }
-                            translate([pcb_to_switch_op.y-pcb_w/2-wall_th, pcb_l/2-pcb_clearance]) {
-                                square([pcb_w+2*wall_th, pcb_clearance+wall_th]);
-                            }
-                        }
-                    }
                 }
             }
 
@@ -925,8 +962,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
             // Recess the PCB to hold it at the proper height.
             translate(shaft_to_switch_op) {
-                translate([0, 0, pcb_z]) {
-                    linear_extrude(pcb_support_h-pcb_z+0.01, convexity=8) {
+                translate([0, 0, pcb_z0]) {
+                    linear_extrude(pcb_support_h-pcb_z0+0.01, convexity=8) {
                         rotate([180, 0, 0]) rotate([0, 0, 90]) {
                             translate(-pcb_to_switch_op) {
                                 offset(delta=nozzle_d) pcb_footprint();
@@ -956,8 +993,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
                 // Finally, a nut pocket for the PCB mounting screw.  This
                 // requires incremental bridging for the floating hole.
-                if (pcb_z >= m3_sqnut_th + min_th) {
-                    translate([0, 0, pcb_z - min_th - plate_th - 0.01]) {
+                if (pcb_z0 >= m3_sqnut_th + min_th) {
+                    translate([0, 0, pcb_z0 - min_th - plate_th - 0.01]) {
                         linear_extrude(plate_th+0.01-nozzle_d) {
                             rotate([180, 0, 0]) rotate([0, 0, 90]) {
                                 translate(pcb_to_mount_screw-pcb_to_switch_op) {
@@ -981,6 +1018,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         }
+
         translate(shaft_to_axle) {
             axle();
             translate([0, -(plate_w - wall_th)/2, guide_z]) guide();
@@ -991,6 +1029,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         translate([plate_offset.x + (plate_l-wall_th)/2, 0, guide_z]) {
             rotate([0, 0, 90]) guide();
         }
+
+        // Capture the end of the PCB with a little bridge.
+        pcb_bridge();
     }
 
     module shaft_adapter(
@@ -1114,21 +1155,83 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     module axle_test() {
         dx = bearing608_od + 1;
-        tests = 1;
-        l = tests*dx;
-        w = 15;
+        tests = 3;
+        tab_size = 15;
         for (i=[0:tests-1]) {
-            translate([i*dx, 0, 0]) axle(rib_count=2*i+5, fudge=0.1);
-        }
-        difference() {
-            linear_extrude(min_th, convexity=8) {
-                translate([-dx/2, -w]) offset(2) offset(-2) square([l, w]);
-            }
-            translate([0, 0, min_th/2]) linear_extrude(min_th, convexity=8) {
-                for (i=[0:tests-1]) {
-                    translate([i*dx, -w+min_th]) {
-                        text(str(2*i+5), size=5, halign="center", valign="bottom");
+            fudge = 0.01 + 0.01*i;
+            translate([i*dx, 0, 0]) {
+                axle(fudge=fudge);
+                difference() {
+                    linear_extrude(min_th, convexity=8) {
+                        translate([-dx/2, -tab_size]) {
+                            offset(2) offset(-2) square([dx, tab_size]);
+                        }
                     }
+                    translate([0, -tab_size+min_th, min_th/2]) {
+                        linear_extrude(min_th, convexity=8) {
+                            text(str("+", fudge), size=5, halign="center", valign="bottom");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    module bearing_tool() {
+        $fs = nozzle_d/2;
+        difference() {
+            union() {
+                clean_cylinder(h=bearing608_th, d=bearing608_od-nozzle_d, chamfer=-nozzle_d);
+                clean_cylinder(h=2*bearing608_th, d=bearing608_id-nozzle_d, chamfer=-nozzle_d);
+            }
+            clean_cylinder(h=2*bearing608_th, d=4*nozzle_d, chamfer=nozzle_d, clear=1);
+        }
+    }
+
+    // A jig to hold the switch in the place while soldering it to the PCB.
+    module soldering_jig() {
+        tool_h = switch_hard_stop_h + pcb_th;
+
+        module switch_footprint() {
+            lever_w = 3.5;
+            overhang = 2.5;
+            left    = -(switch_l/2 - 5.08);  // biased to center on the NC pin
+            right   = left + switch_l;
+            top     = switch_w/2;
+            bottom  = top - switch_w;
+            mid_high = lever_w/2;
+            mid_low  = mid_high-lever_w;
+            polygon([
+                [left, top],
+                [left, mid_high],
+                [left-overhang, mid_high],
+                [left-overhang, mid_low],
+                [left, mid_low],
+                [left, bottom],
+                [right, bottom],
+                [right, top]
+            ]);
+        }
+
+        difference() {
+            union() {
+                linear_extrude(tool_h, convexity=6) {
+                    difference() {
+                        offset(min_th) pcb_footprint();
+                        offset(-pcb_clearance) pcb_footprint();
+                    }
+                    translate(pcb_to_mount_screw) pcb_mounting_tab();
+                    translate(pcb_to_switch_op) {
+                        difference() {
+                            offset(min_th) switch_footprint();
+                            offset(delta=nozzle_d/2) switch_footprint();
+                        }
+                    }
+                }
+            }
+            translate([0, 0, tool_h-pcb_th]) {
+                linear_extrude(pcb_th+0.01, convexity=6) {
+                    offset(nozzle_d/2) pcb_footprint();
                 }
             }
         }
@@ -1145,18 +1248,45 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
+    if (Include_Spool_Assembly) {
+        color("orange")
+        if (show_assembled) {
+            translate(shaft_to_axle) translate([0, 0, spool_assembly_z0]) {
+                spool_assembly();
+            }
+        } else {
+            spool_r = spool_flange_d/2;
+            translate([AG_tips_diameter(drive_gear) + 1 + spool_r, plate_w + 1 + spool_r]) spool_assembly();
+        }
+    }
+
+    if (Include_Drive_Gear) {
+        color("yellow")
+        if (show_assembled) {
+            translate([0, 0, drive_z1]) rotate([180, 0, 0]) drive_gear();
+        } else {
+            tips_r = AG_tips_diameter(drive_gear)/2;
+            translate([tips_r, plate_w + tips_r + 1, 0]) drive_gear();
+        }
+    }
+
     if (Include_PCB_Model) {
         limit = switch_down_h;
-        color("green")
         if (show_assembled) {
             translate(shaft_to_switch_op) {
-                translate([0, 0, pcb_z]) rotate([0, 0, 90]) {
-                    translate(-pcb_to_switch_op) pcb_model(limit=limit);
+                translate([0, 0, pcb_z0]) rotate([0, 0, 90]) {
+                    translate(-pcb_to_switch_op) {
+                        //pcb_model(limit=limit);
+                        pcb_kicad_model();
+                    }
                 }
             }
         } else {
             translate([plate_l + 1 + cap_head_d + 1 + pcb_w/2, plate_w - pcb_l/2, 0]) {
-                rotate([0, 0, 90]) pcb_model(limit=limit);
+                rotate([0, 0, 90]) {
+                    pcb_model(limit=limit);
+                    pcb_kicad_model();
+                }
             }
         }
     }
@@ -1198,29 +1328,25 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    if (Include_Spool_Assembly) {
-        color("orange")
+    if (Include_Soldering_Jig) {
         if (show_assembled) {
-            translate(shaft_to_axle) translate([0, 0, spool_assembly_z0]) {
-                spool_assembly();
-            }
+            soldering_jig();
         } else {
-            spool_r = spool_flange_d/2;
-            translate([AG_tips_diameter(drive_gear) + 1 + spool_r, plate_w + 1 + spool_r]) spool_assembly();
+            translate([plate_l+1+cap_head_d+1+min_th+pcb_w/2, plate_w/2, 0]) {
+                rotate([0, 0, 90]) soldering_jig();
+            }
         }
     }
 
-    if (Include_Drive_Gear) {
-        color("yellow")
+    if (Include_Bearing_Tool) {
         if (show_assembled) {
-            translate([0, 0, drive_z1]) rotate([180, 0, 0]) drive_gear();
+            bearing_tool();
         } else {
-            tips_r = AG_tips_diameter(drive_gear)/2;
-            translate([tips_r, plate_w + tips_r + 1, 0]) drive_gear();
+            r = max(bearing608_od, cap_head_d)/2;
+            translate([plate_l+1+r, r, 0]) bearing_tool();
         }
     }
 }
 
 drop_distance = inch(Drop_Distance);
-
 spider_dropper(drop_distance=drop_distance);
