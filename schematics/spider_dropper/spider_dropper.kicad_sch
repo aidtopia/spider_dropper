@@ -6,7 +6,7 @@
 	(paper "USLetter")
 	(title_block
 		(title "Slightly Smarter Spider Dropper")
-		(date "2025-09-27")
+		(date "2025-10-14")
 		(rev "E")
 		(company "Adrian McCarthy")
 	)
@@ -5042,7 +5042,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1N4148"
+		(property "Value" "1N4001"
 			(at 143.002 65.9821 90)
 			(effects
 				(font
@@ -5051,7 +5051,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal"
+		(property "Footprint" "Diode_THT:D_DO-41_SOD81_P7.62mm_Horizontal"
 			(at 140.97 64.77 0)
 			(effects
 				(font
