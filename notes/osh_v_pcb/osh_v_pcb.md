@@ -101,7 +101,7 @@ Since OSH Park manufactures in the U.S., there are no tariffs or duties.
 
 PCBWay charges $5 for 5 or 10 copies of a small PCB.
 
-My previous PCBWay orders were tariff and duty-free because they were below the $800 _de minimus_.  President Trump eliminated the _de minimus_ exemption and (without constitutional authority) raised the tariff rates.
+My previous PCBWay orders were tariff and duty-free because they were below the $800 _de minimis_.  President Trump eliminated the _de minimis_ exemption and (without constitutional authority) raised the tariff rates.
 
 For this order, the tariffs and duties added to $8.  But that's not the only additional cost with the elimination of the exemption.  I also paid $7 for DHL's DTP Service.  (I believe DTP stands for Duties and Tariffs Prepaid.)  The DTP service transfers the prepaid tariff to the appropriate government department and handles the paperwork.  PCBWay's order flow has options to not prepay the tariff and to omit the DTP service, leaving it up to the customer to figure out how to pay the tariffs to get their order released from whatever port it arrives in.
 
@@ -166,7 +166,7 @@ Conclusion:  Support was excellent.
 
 ## Conclusion
 
-Previously, I have always chosen PCBWay for my hobby PCBs.  With rising shipping costs, elimination of the _de minimus_ exemption, and the addition of foreign transaction fees, it seemed worth considering a U.S. vendor.
+Previously, I have always chosen PCBWay for my hobby PCBs.  With rising shipping costs, elimination of the _de minimis_ exemption, and the addition of foreign transaction fees, it seemed worth considering a U.S. vendor.
 
 OSH Park was the only U.S. vendor I knew of that seemed accessible to low-quantity hobbyists.  (Later, I was reminded of Digikey's DKRed service that sounds very similar to OSH Park's.)
 
