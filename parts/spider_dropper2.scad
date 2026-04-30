@@ -74,8 +74,11 @@ Include_PCB_Model = false;
 // Not required. Useful for pushing a bearing out of a mechanism.
 Include_Bearing_Tool = false;
 
-// Not required. Helpful for holding the switch in place when soldering it to the PCB
+// Not required. Helpful for holding the switch in place when soldering it to the PCB.
 Include_Soldering_Jig = false;
+
+// If available, use thin square nuts for a slightly strong shaft adapter.
+Nut_Thickness = 2.3; // [2.3:Regular, 1.8:Thin]
 
 module __Customizer_Limit__ () {}
 
@@ -106,10 +109,13 @@ m3_close_d = 3.2;
 m3_head_d = 6.0;
 m3_head_h = 2.4;
 m3_flange_d = 7.0;
-m3_nut_w = 5.5;
-m3_nut_th = 2.4;
 m3_sqnut_w = 5.5;
-m3_sqnut_th = 2.3;
+// A standard square nut is nominally 2.4mm thick, but we treat it as
+// 2.3mm because we don't have much space and the fudge factors for
+// the pockets will make up for it.  A thin square nut is 1.8mm, which
+// allows the shaft adapters to be a little stronger.  We let the user
+// choose which type of nuts they have using the Customizer.
+m3_sqnut_th = Nut_Thickness;
 
 // The deer motor uses an M4 screw for the hub.
 m4_free_d = 4.5;
