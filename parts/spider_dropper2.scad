@@ -43,7 +43,7 @@ Drop_Distance = 24; // [8:42]
 // lead to a jam.
 //
 // The JGY motor will requires the 6mm shaft adapter, six M3x6mm
-// machine screws, and two M3 square nuts.
+// machine screws, and two M3 square nuts (thin nuts recommended).
 //
 // The DC version requires soldering wires to the motor terminals.
 // Make sure you have it wired so that it turns CLOCKWISE when
@@ -77,8 +77,8 @@ Include_Bearing_Tool = false;
 // Not required. Helpful for holding the switch in place when soldering it to the PCB.
 Include_Soldering_Jig = false;
 
-// If available, use thin square nuts for a slightly strong shaft adapter.
-Nut_Thickness = 2.3; // [2.3:Regular, 1.8:Thin]
+// If available, use thin square nuts for a slightly stronger shaft adapter.
+Nut_Type = 2.4; // [2.4:Regular, 1.8:Thin, 4:Heatset Insert]
 
 module __Customizer_Limit__ () {}
 
@@ -115,7 +115,10 @@ m3_sqnut_w = 5.5;
 // the pockets will make up for it.  A thin square nut is 1.8mm, which
 // allows the shaft adapters to be a little stronger.  We let the user
 // choose which type of nuts they have using the Customizer.
-m3_sqnut_th = Nut_Thickness;
+m3_sqnut_th = min(Nut_Type, 2.3);
+
+// Ruthex M3Sx4mm heatset threaded inserts
+m3_heatset_d = 4.0;
 
 // The deer motor uses an M4 screw for the hub.
 m4_free_d = 4.5;
@@ -212,6 +215,16 @@ switch_down_h = 8.4 - 0.8;  // switch is definitely down
 switch_hard_stop_h = switch_down_h - 0.6;  // lowest point ever allowed
 switch_w = 5.8;
 switch_l = 12.8;
+
+// Preserves the height for a small horizontal bore.
+module bridged_teardrop(d, nozzle_d=0.4) {
+    hull() {
+        circle(d=d);
+        translate([-d/2, 0]) {
+            square([nozzle_d, d/2], center=true);
+        }
+    }
+}
 
 module circular_arrow(r, theta0=0, theta1=360, th=1) {
     dir = sign(theta1 - theta0);
@@ -1067,7 +1080,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         }
-
+        
         module set_screw_recess() {
             translate([set_dx, 0, 0]) {
                 rotate([0, 90, 0]) {
@@ -1106,23 +1119,20 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
 
 
+            grub_d = Nut_Type <= 2.4 ? m3_close_d : m3_heatset_d;
             translate([0, 0, set_screw_z - motor_base_h]) {
                 // For a small tight horizontal bore, the droop across the
-                // top is significant enough to require a custom shape.
+                // top is significant, so we use bridged_teardrop.
                 rotate([0, 90, 0]) {
-                    linear_extrude(adapter_d+0.02, center=true) {
-                        hull() {
-                            circle(d=m3_close_d);
-                            translate([-m3_close_d/2, 0]) {
-                                square([nozzle_d, m3_close_d/2], center=true);
-                            }
-                        }
+                    linear_extrude(adapter_d+1, center=true) {
+                        bridged_teardrop(d=grub_d, nozzle_d=nozzle_d);
                     }
                 }
-
             }
-            translate([ nut_dx, 0, 0]) nut_pocket();
-            translate([-nut_dx, 0, 0]) nut_pocket();
+            if (Nut_Type <= 2.4) {
+                translate([ nut_dx, 0, 0]) nut_pocket();
+                translate([-nut_dx, 0, 0]) nut_pocket();
+            }
 
             // Little slots allow insertion of a prying tool in case the
             // fit between the gear and the spline is too tight.
@@ -1159,12 +1169,11 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    module axle_test() {
-        dx = bearing608_od + 1;
-        tests = 3;
+    module axle_test(tests=3) {
+        dx = bearing608_od + 2;
         tab_size = 15;
         for (i=[0:tests-1]) {
-            fudge = 0.01 + 0.01*i;
+            fudge = 0.01 + 0.005*i;
             translate([i*dx, 0, 0]) {
                 axle(fudge=fudge);
                 difference() {
@@ -1242,6 +1251,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
         }
     }
+
+    //!axle_test(tests=4);
 
     show_assembled = $preview && !Preview_for_Printing;
 
