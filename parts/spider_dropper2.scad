@@ -118,7 +118,7 @@ m3_sqnut_w = 5.5;
 m3_sqnut_th = min(Nut_Type, 2.3);
 
 // Ruthex M3Sx4mm heatset threaded inserts
-m3_heatset_d = 4.0;
+m3_heatset_d = 3.9;
 
 // The deer motor uses an M4 screw for the hub.
 m4_free_d = 4.5;
@@ -221,7 +221,7 @@ module bridged_teardrop(d, nozzle_d=0.4) {
     hull() {
         circle(d=d);
         translate([-d/2, 0]) {
-            square([nozzle_d, d/2], center=true);
+            square([nozzle_d, d/3], center=true);
         }
     }
 }
@@ -444,7 +444,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     shaft_to_switch_op = [-35, 0];
     track_w = 8;
 
-    adapter_d = motor_base_d - 3;
+    adapter_d = motor_base_d - 2;
     adapter_sides = 8;
     assert(adapter_sides % 2 == 0);
     adapter_r = adapter_d/2 * cos(180/adapter_sides);
@@ -847,7 +847,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             // A triangle atop the bridge to meet the one on the board.
             translate([0, (pcb_l+nozzle_d)/2, pcb_support_h-0.01]) {
                 rotate([0, 0, 90]) translate(-pcb_to_switch_op) {
-                    linear_extrude(nozzle_d+0.01) {
+                    linear_extrude(1.5*nozzle_d+0.01) {
                         s = 1 + nozzle_d;
                         polygon([[s, 0], [-s, s], [-s, -s]]);
                     }
@@ -1117,7 +1117,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 set_screw_recess();
                 rotate([0, 0, 180]) set_screw_recess();
             }
-
 
             grub_d = Nut_Type <= 2.4 ? m3_close_d : m3_heatset_d;
             translate([0, 0, set_screw_z - motor_base_h]) {
