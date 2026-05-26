@@ -1,17 +1,10 @@
-# Stupidly Simple Spider Dropper
+# Stupidly Simple Spider Dropper<br>User Guide
 
-by Adrian McCarthy<br>
-October 2025<br>
-
-| Parameter | Value |
-| :-------- | :---- |
-| Drop Distance | 24 inches (from highest to lowest) |
-| Power         | 12V DC, peak current less than 0.5 amps |
-| Edition       | SSSD DC with Slightly Smarter upgrade |
+Adrian McCarthy (2025)
 
 ## Setup
 
-1.  Hang the mechanism from above using zip ties through the openings at the very edge of the honeycomb plate.  (If it can swing a little bit, that's actually good.)  You can hang it in "landscape" or "portrait" orientation to suit your space, just make sure the string runs through the guide on the edge closest to the floor.
+1.  Hang the mechanism from above using zip ties through the openings at the very edge of the honeycomb plate.  (If it can swing a little bit, that's actually good.)  You can hang it in "landscape" or "portrait" orientation to suit your space, just make sure the string runs through the guide on the edge closest to the floor.  Make sure the hooks or zip ties do not interfere with the mechanism.
 
 ![orientations](orientations.png "Orientation Options")
 
@@ -29,7 +22,7 @@ When you first apply power, the mechanism will run up to one full cycle until th
 
 When the motion sensor detects someone, the spider will drop and then climb back up to the standby position.  The entire cycle takes about 10 seconds.  The cycle repeats when motion is detected again.  If there's constant motion, the cycle will just keep running.
 
-Secure the motion sensor to something rigid.  If you attach it to a fence that gets bumped or that shakes in the wind, you'll get false triggers.  The sensor housing has slots to accommodate zip ties.
+Secure the motion sensor to something rigid.  The housing has slots that accommodate zip ties for this purpose.  If you attach it to a fence that gets bumped or that shakes in the wind, you'll get false triggers.  The sensor housing has slots to accommodate zip ties.
 
 The cap over the motion sensor can be unscrewed and swapped for alternate ones that change the detection zone.  You probably want to keep the one with the smallest hole.  If that's still too sensitive, you can place one piece of cellophane tape (e.g., Scotch tape) across the small hole.  A good way to limit the detection zone is to mount the sensor overhead, and looking straight down.
 
