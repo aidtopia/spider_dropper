@@ -74,8 +74,11 @@ Include_PCB_Model = false;
 // Not required. Useful for pushing a bearing out of a mechanism.
 Include_Bearing_Tool = false;
 
-// Not required. Helpful for holding the switch in place when soldering it to the PCB.
+// Not required. Helpful for holding the switch in place when soldering it to the Slightly Smarter PCB.
 Include_Soldering_Jig = false;
+
+// Not required. Helpful for bending leads when soldering the Slightly Smarter circuit.
+Include_Pin_Bender = false;
 
 // If available, use thin square nuts for a slightly stronger shaft adapter.
 Nut_Type = 2.4; // [2.4:Regular, 1.8:Thin, 4:Heatset Insert]
@@ -85,6 +88,7 @@ module __Customizer_Limit__ () {}
 use <aidgear.scad>
 use <aidthread.scad>
 use <honeycomb.scad>
+use <pin_bender.scad>
 
 function inch(x) = x * 25.4;
 function thou(x) = inch(x/1000);
@@ -1250,7 +1254,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             }
         }
     }
-
+    
     //!axle_test(tests=4);
 
     show_assembled = $preview && !Preview_for_Printing;
@@ -1297,7 +1301,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
         } else {
-            translate([plate_l+1+cap_head_d+1+pcb_w+2*min_th+1+pcb_w/2, plate_w-pcb_l/2, 0]) {
+            translate([plate_l+1+cap_head_d+1+min_th+pcb_w/2, plate_w/2, 0]) {
                 rotate([0, 0, 90]) {
                     pcb_model(limit=limit);
                     //pcb_kicad_model();
@@ -1349,8 +1353,20 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 rotate([0, 0, 90]) soldering_jig();
             }
         } else {
-            translate([plate_l+1+cap_head_d+1+min_th+pcb_w/2, plate_w/2, 0]) {
+            translate([plate_l+1+cap_head_d+1+pcb_w+2*min_th+2+pcb_w/2, plate_w/2, 0]) {
                 rotate([0, 0, 90]) soldering_jig();
+            }
+        }
+    }
+
+    if (Include_Pin_Bender) {
+        if (show_assembled) {
+            translate([plate_l-plate_offset.x+1, pcb_l/2+2*min_th+1, 0]) {
+                pin_bender();
+            }
+        } else {
+            translate([plate_l+1+cap_head_d+1+pcb_w+2*min_th+2+pcb_w/2, plate_w/2+pcb_l/2+2*min_th+1, 0]) {
+                pin_bender();
             }
         }
     }
