@@ -1,4 +1,6 @@
 *.stl
+*.gcode
+*.bgcode
 *.kicad_sch-bak
 schematics/spider_dropper/spider_dropper-backups
 schematics/spider_dropper/fp-info-cache

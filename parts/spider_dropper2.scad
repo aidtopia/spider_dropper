@@ -67,6 +67,7 @@ Include_Drive_Gear = true;
 Include_6mm_Shaft_Adapter = true;
 Include_7mm_Shaft_Adapter = false;
 Include_Cap_Screw = true;
+Include_PIR_Housing = false;
 
 // Not required. Can be used for visualization, checking alignment and clearance w/o an actual PCB.
 Include_PCB_Model = false;
@@ -89,6 +90,7 @@ use <aidgear.scad>
 use <aidthread.scad>
 use <honeycomb.scad>
 use <pin_bender.scad>
+use <pir_mini_housing.scad>
 
 function inch(x) = x * 25.4;
 function thou(x) = inch(x/1000);
@@ -1343,6 +1345,16 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         } else {
             translate([plate_l + 1 + cap_head_d/2, plate_w - adapter_d - 1 - cap_head_d/2, cap_head_h]) {
                 cap_screw();
+            }
+        }
+    }
+
+    if (Include_PIR_Housing) {
+        if (show_assembled) {
+            translate([0, plate_w/2+25, 0]) PIR_housing(cap="snoot", nozzle_d=nozzle_d);
+        } else {
+            translate([plate_l+1+cap_head_d+1+pcb_w+2*min_th+2+pcb_w/2, plate_w+1+spool_flange_d/2, 0]) {
+                color("purple") PIR_housing(cap="snoot", nozzle_d=nozzle_d);
             }
         }
     }
