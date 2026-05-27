@@ -792,7 +792,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     module pcb_footprint() {
         // The KiCad PCB design uses a left-handed coordinate system,
-        // considers the origin to be the corner closes to the power
+        // considers the origin to be the corner closer to the power
         // connector, and treats the component side as the front.
         // Note that the switch is on the opposite side from the other
         // components.
@@ -894,16 +894,16 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     module pcb_kicad_model(limit=switch_hard_stop_h) {
+        // If the KiCad model fails to load or appears out of date with
+        // the latest PCB layout, execute
+        // ../schematics/spider_dropper/stl_models/regen_stls.bat
         translate([0, 0, pcb_th]) rotate([0, 180, 0]) {
             color("green")
-            import("../schematics/spider_dropper/spider_dropper_pcb.stl",
+            import("../schematics/spider_dropper/stl_models/pcb_green.stl",
                    center=true, convexity=8);
-            if ($preview) {
-                color("white")
-                rotate([0, 180, 0]) {
-                    translate(pcb_to_switch_op) switch_model(limit);
-                }
-            }
+            color("white")
+            import("../schematics/spider_dropper/stl_models/pcb_white.stl",
+                   center=true, convexity=8);
         }
     }
 
@@ -1292,16 +1292,15 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             translate(shaft_to_switch_op) {
                 translate([0, 0, pcb_z0]) rotate([0, 0, 90]) {
                     translate(-pcb_to_switch_op) {
-                        //pcb_model(limit=limit);
                         pcb_kicad_model();
                     }
                 }
             }
         } else {
-            translate([plate_l + 1 + cap_head_d + 1 + pcb_w/2, plate_w - pcb_l/2, 0]) {
+            translate([plate_l+1+cap_head_d+1+pcb_w+2*min_th+1+pcb_w/2, plate_w-pcb_l/2, 0]) {
                 rotate([0, 0, 90]) {
                     pcb_model(limit=limit);
-                    pcb_kicad_model();
+                    //pcb_kicad_model();
                 }
             }
         }
@@ -1346,7 +1345,9 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     if (Include_Soldering_Jig) {
         if (show_assembled) {
-            soldering_jig();
+            translate([plate_l-plate_offset.x+1, 0, 0]) {
+                rotate([0, 0, 90]) soldering_jig();
+            }
         } else {
             translate([plate_l+1+cap_head_d+1+min_th+pcb_w/2, plate_w/2, 0]) {
                 rotate([0, 0, 90]) soldering_jig();
