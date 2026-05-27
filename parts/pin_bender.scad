@@ -1,6 +1,8 @@
-// Pin Bender for TO-220AB MOSFET to lie horizontally on board.
+// Pin bending tool for Slightly Smarter circuit.
+// Bend leads of TO-220AB package (like MOSTFET) to lie horizontally on board.
+// Bend leads of resistors and diodes to PCB spacing
 
-module TO_220AB_bender() {
+module pin_bender() {
     body_l      = 15.24;  // including tab
     body_w      = 10.54;
     body_th     = 4.69;
@@ -22,11 +24,36 @@ module TO_220AB_bender() {
     tool_l = body_l + pin_upper_l + pin_th;
     tool_th = 10;
     tool_r = 2;  // rounding of corners
-    grip_l = 8;
+    grip_l = 12;
     grip_th = 2;
+    axial_l = 7.6;  // lead spacing for resistors and diodes
+    axial_d = 2.7;  // approximate diameter of resistors and diodes
+    resistor_l = 6.5;
 
     post_th = pin_offset + pin_th;
     post_d = hole_d - 0.1;
+
+    module grip() {
+        difference() {
+            linear_extrude(grip_th, convexity=8) {
+                offset(r=-tool_r, $fn=24) offset(delta= tool_r)
+                offset(r= tool_r, $fn=24) offset(delta=-tool_r)
+                    polygon([
+                        [ tool_w/2, 0],
+                        [ tool_w/2, tool_l],
+                        [ axial_l/2, tool_l + 1/3*grip_l],
+                        [ axial_l/2, tool_l +     grip_l],
+                        [-axial_l/2, tool_l +     grip_l],
+                        [-axial_l/2, tool_l + 1/3*grip_l],
+                        [-tool_w/2, tool_l],
+                        [-tool_w/2, 0]
+                    ]);
+            }
+            translate([0, tool_l + 2/3*grip_l, grip_th]) rotate([0, 90, 0]) {
+                cylinder(d=axial_d, h=resistor_l, center=true, $fn=24);
+            }
+        }
+    }
 
     module tool() {
         intersection() {
@@ -46,13 +73,7 @@ module TO_220AB_bender() {
                 }
             }
         }
-
-        linear_extrude(grip_th, convexity=8) {
-            offset(r=tool_r, $fn=24) offset(delta=-tool_r) hull() {
-                translate([-tool_w/2, 0]) square(tool_w, tool_l);
-                translate([0, tool_l+grip_l/4]) circle(r=grip_l, $fn=48);
-            }
-        }
+        grip();
     }
 
     module cavity() {
@@ -101,4 +122,4 @@ module TO_220AB_bender() {
     translate([0, hole_offset, tool_th-post_th]) post();
 }
 
-TO_220AB_bender();
+pin_bender();
