@@ -89,6 +89,7 @@ module __Customizer_Limit__ () {}
 use <aidgear.scad>
 use <aidthread.scad>
 use <honeycomb.scad>
+use <jgy_motor_model.scad>
 use <pin_bender.scad>
 use <pir_mini_housing.scad>
 
@@ -1312,10 +1313,12 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
+    drive_angle = 180/adapter_sides;
+
     if (Include_6mm_Shaft_Adapter) {
         color("deepskyblue")
         if (show_assembled) {
-            translate([0, 0, jgy_base_h]) rotate([0, 0, 180/spline_count]) {
+            rotate([0, 0, drive_angle]) translate([0, 0, jgy_base_h]) {
                 shaft_adapter(jgy_shaft_d, jgy_shaft_h, jgy_base_h);
             }
         } else {
@@ -1328,7 +1331,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     if (Include_7mm_Shaft_Adapter) {
         color("deepskyblue")
         if (show_assembled && !Include_6mm_Shaft_Adapter) {
-            translate([0, 0, deer_base_h]) rotate([0, 0, 180/spline_count]) {
+            rotate([0, 0, drive_angle]) translate([0, 0, deer_base_h]) {
                 shaft_adapter(deer_shaft_d, deer_shaft_h, deer_base_h);
             }
         } else {
@@ -1390,6 +1393,11 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             r = max(bearing608_od, cap_head_d)/2;
             translate([plate_l+1+r, r, 0]) bearing_tool();
         }
+    }
+
+    if (show_assembled) {
+        color("silver")
+        jgy_motor(drive_angle);
     }
 }
 
