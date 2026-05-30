@@ -9,6 +9,6 @@ REM necessary to generate the STLs from KiCAD's PCB Editor and to grab the new
 REM command lines.  The command line interface doesn't offer a "board center
 REM origin" option.
 
-"kicad-cli.exe" pcb export stl --subst-models --no-components --user-origin='149.900000x108.300000mm' -f -o "%~dp0\pcb_green.stl" "%~dp0..\spider_dropper.kicad_pcb"
+kicad-cli pcb export stl --subst-models --no-components --user-origin='149.900000x108.300000mm' -f -o "%~dp0\pcb_green.stl" "%~dp0..\spider_dropper.kicad_pcb"
 
-"kicad-cli.exe" pcb export stl --subst-models --no-board-body --include-silkscreen --user-origin='149.900000x108.300000mm' -f -o "%~dp0\pcb_white.stl" "%~dp0..\spider_dropper.kicad_pcb"
+kicad-cli pcb export stl --subst-models --no-board-body --include-silkscreen --user-origin='149.900000x108.300000mm' -f -o "%~dp0\pcb_white.stl" "%~dp0..\spider_dropper.kicad_pcb"
