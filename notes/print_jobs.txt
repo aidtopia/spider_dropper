@@ -1,0 +1,15 @@
+sssd_ac_coarse          (base plate, drive, spool, bearing tool)
+sssd_dc_coarse          (base plate, drive, spool, bearing tool)
+sssd_up_coarse          (base plate, drive, spool, bearing tool, soldering jig)
+
+sssd_ac_fine            (7mm adapter, cap screw)
+sssd_dc_fine            (6mm adapter, cap screw)
+sssd_up_fine            (6mm adapter, cap screw, pin bender, PIR housing)
+
+sssd_ac_thin_nut_fine   (7mm adapter, cap screw)
+sssd_dc_thin_nut_fine   (6mm adapter, cap screw)
+sssd_up_thin_nut_fine   (6mm adapter, cap screw, pin bender, PIR housing)
+
+sssd_ac_heatset_fine    (7mm adapter, cap screw)
+sssd_dc_heatset_fine    (6mm adapter, cap screw)
+sssd_up_heatset_fine    (6mm adapter, cap screw, pin bender, PIR housing)
