@@ -7,41 +7,38 @@ All project source files and documentation are available at https://github.com/a
 
 ## Three Models
 
-There are three models of the spider dropper.  Make sure you know which kit you have.
+Make sure you know which kit you have.
 
 * Stupidly Simple Spider Dropper AC `#SSSDAC`
 
-  This model requires the fewest part and uses a "reindeer" motor that plugs in to regular household power.  Both Fright Props and Monster Guts sell these as "small prop motors."
+  This model requires the fewest part and uses a "reindeer" motor that plugs in to regular household power.
 
 * Stupidly Simple Spider Dropper DC `#SSSDDC`
 
-  This is the same idea, for haunters that prefer to run their props with DC power.  It's designed around a widely available, inexpensive 12-volt DC gearmotor.  The kit does not include a power supply because you probably already have one.  Requires soldering two connections, making it about as simple as the AC version.
+  This model uses a 12-volt DC gearmotor.is the same idea, for haunters that prefer to run their props with DC power.
 
 * Slightly Smarter Spider Dropper Upgrade `#SSSDUP`
 
-  This is the DC version of the dropper plus some electronics to transform it from a continuously cycling effect to one that triggers on motion.  Assembly requires soldering some components to a circuit board (through hole, not surface) and using a cable to connect it to an inexpensive PIR module.
-
-Skip any instructions tagged for a model different than the one you're building.  Sections with no tag apply to all models.
+  Uses the DC gearmotor plus some electronics to transform it from a continuously cycling effect to one that triggers on motion.
 
 ## Safety
 
-* The kit contains small parts that could be a choking hazard.
+* This kit contains small parts that could be a choking hazard.
 * Children should assemble the kit or use the spider dropper only under adult supervision.
 * Some parts may contain hazardous substances.  In particular, the circuit boards contain lead.  Wash your hands with soap and water after handling.
 * Soldering irons, heat guns, and other tools used in assembly have their own risks.  Take appropriate precautions.
 * Intended for indoor use.  (`#SSSDAC` uses a motor in a weather resistant housing, so it may withstand light exposure to the elements.)
-* Do not use if the power cord or power supply is damaged.
-* `#SSSDAC` uses household electric current.  To reduce the risk of electric shock, never open the weather-resistant motor housing.
-* `#SSSDDC` and `#SSSDUP` require a 12 VDC power supply.  Use an ETL- or UL-listed power adapter with a current rating of at least 250 mA.
-* Do not operate unattended.  If the mechanism jams, the motor could overheat.
+* `#SSSDAC`:  To reduce the risk of electric shock, never open the weather-resistant motor housing.  Do not use if the power cord is damaged.
+* `#SSSDDC` and `#SSSDUP`:  Use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
 * Refer to the User Guide for important precautions regarding the setup and operation of the spider dropper.
-* Disposal:  The circuit board and soldered components, including the PIR motion module, should be treated as e-waste.  If undamaged, the motor can be re-used in another project.  Otherwise it too should be treated as e-waste.  Printed parts may be recyclable but won't be accepted by most collection programs.
+* Disposal:  The circuit board and soldered components, including the PIR motion module, should be treated as e-waste.  The motor can be re-used in another project or disposed as e-waste.  Printed parts may be recyclable but won't be accepted by most collection programs.
 
 ## Tools
 
 | Tool                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
 | Philips #1 screwdriver         | required  | required  | required  |
+| Philips #2 screwdriver         | required  |           |           |
 | wire cutters                   | required  | required  | required  |
 | soldering iron                 |           | required  | required  |
 | wire stripper                  |           | required  | required  |
@@ -63,20 +60,18 @@ These additional tools can be helpful for attaching the spider.
 
 For detailed specifications and possible sources for the parts, check the spreadsheet in the project files on Github.
 
-Parts tagged with `#3D` are ones you can print with a 3D printer.  See Tips for the Printable Parts.
+Parts tagged with `#3D` are ones you can print with a 3D printer.
 
 **NorCal Haunters**:  The Make & Take kit does _not_ include a power supply for `#SSSDDC` or `#SSSDUP`.  Some will be available at the event for testing.  In your haunt, you will need an AC to DC power adapter that delivers 12 volts and is rated for at least 250mA.
 
 | Part                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
-| "reindeer" motor               |     1     |           |           |
-| M3x16mm sheet metal screws     |     4     |           |           |
-| 7mm shaft adapter `#3D`        |     1     |           |           |
-| JGY-370 12VDC motor 6 RPM      |           |     1     |     1     |
+| motor                          |"reindeer" |  JGY-370  |  JGY-370  |
+| shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
 | 2-wire motor "pigtail"         |           |  barrel   |  JST XH   |
-| 6mm shaft adapter `#3D`        |           |     1     |     1     |
-| M3 threaded insert<sup>\*<sup> |     1     |     1     |     1     |
-| M3x6mm machine screws          |     1     |     5     |     6     |
+| M3 threaded insert\*           |     1     |     1     |     1     |
+| M3×16mm sheet metal screws     |     4     |           |           |
+| M3×6mm machine screws          |     2     |     6     |     7     |
 | base plate `#3D`               |     1     |     1     |     1     |
 | spool assembly `#3D`           |     1     |     1     |     1     |
 | 608 (skateboard) bearing       |     2     |     2     |     2     |
@@ -89,13 +84,13 @@ Parts tagged with `#3D` are ones you can print with a 3D printer.  See Tips for 
 | medium zip ties (for hanging)  |     2     |     2     |     2     |
 | 12VDC power supply             |           | not incl. | not incl. |
 
-<sup>\*</sup> There are three options for the threaded insert.  Choose the one that matches your shaft adapter (or choose the shaft adapter to match your insert).  Any option works well for a small toy spider.  For anything heavier, choose the highest one available to you.
+\* There are three options for the threaded insert.  Choose the one that matches your shaft adapter (or choose the shaft adapter to match your insert).  Any option works well for a small toy spider.  For anything heavier, choose the highest one available to you.
 
 * M3s×5mm heat-set insert
 * M3 _thin_ square nut (~1.8mm thick)
 * M3 _regular_ square nut (~2.4mm thick)
 
-Note that `#SSSDUP` requires an M3 square nut in addition to whichever part you use for the threaded insert.
+Note that `#SSSDUP` requires one M3 square nut in addition to whichever threaded insert you use for the shaft adapter.
 
 **Norcal Haunters:**  I've pre-installed heat-set threaded inserts in the shaft adapters in your Make & Take kits.
 
@@ -118,7 +113,7 @@ The `#SSSDUP` is the `#SSSDDC` _plus_ a circuit and a sensor.
 |        1 | 2-pin JST XH (male) connector (PTH mount)      |
 |        1 | 3-pin JST XH (male) connector (PTH mount)      |
 |        1 | ZX40E20C01 microswitch                         |
-|        1 | additional M3x5mm machine screw                |
+|        1 | additional M3×5mm machine screw                |
 |        1 | additional M3 square nut (thin or regular)     |
 
 `#SSSDUP`:  Sensor Parts
@@ -135,49 +130,45 @@ The `#SSSDUP` is the `#SSSDDC` _plus_ a circuit and a sensor.
 
 ## Assembly
 
-### Print the Printable Parts
+Perform the steps in order, using the checkboxes to keep track of your progress.  Remember to skip steps that are tagged for models other than the one you're building.
 
-**NorCal Haunters:** The Make & Take kits come with the printed parts, so you may proceed to the next section.
+**NorCal Haunters:**  Some steps have been done in advance in the Make & Take kits, so those checkboxes have been pre-checked.
+
+### Print the Printable Parts
 
 The project source files on GitHub include the OpenSCAD sources for generating the 3D models as STL files.  The pre-generated models will be available on Printables. [TODO]
 
-The 3D parts are designed to be printed with a 0.4mm nozzle.  They've all been tested with Prusa MK3S+ and CORE One+ using both PLA and PETG.  None of them require supports.
+The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  They've all been tested with Prusa MK3S+ and CORE One+.  PLA works fine, but prefer PETG for a more durable mechanism.  You probably want to choose black or another dark color.  Illustrations here use brighter colors for clarity.
 
-The hexagonal pattern of the base plate has several advantages for the design, but it can make be challenging to print on some printers.  Make sure you have your first-layer settings dialed in.
+The hexagonal pattern of the base plate has several advantages for the design, but it can be challenging to print on some printers.  Make sure you have your first-layer settings dialed in.
 
-Recommendations:
+- [x] Print the coarse parts (layer height 0.2mm to 0.3mm)
+    - [x] base plate
+    - [x] drive gear
+    - [x] spool assembly
+    - [x] bearing tool (optional)
+    - [x] `#SSSDUP` soldering jig (optional)
 
-* Prefer PETG instead of PLA for a more durable mechanism.
+![Print layout for coarse parts](coarse_parts_small.png)
 
-* The shaft adapter and hub screw should be printed together to ensure a good fit.
 
-* I recommend printing the shaft adapter with 100% infill, especially if you're using the version with the heat-set insert.
+- [x] Print the fine parts (layer height <0.2mm, 100% infill, quality over speed)
+    - [x] shaft adapter and hub screw
+    - [x] `#SSSDUP` sensor housing and cap
+    - [x] `#SSSDUP` pin-bending tool (optional)
 
-* Parts without threads (base plate, drive gear, spool assembly, optional tools) can be printed with a larger layer height of 0.3mm for speed.
-
-* Parts with threads (shaft adapter, hub screw, sensor housing) should be printed with a layer height of 0.2mm or smaller.  Choose quality over speed for these parts.
-
-* Test fit threaded parts before assembly.  Tightening and loosening them a few times will wear away any imperfections in the printing of the threads.
-
-Print:
-
-- [x] base plate
-- [x] drive gear
-- [x] spool assembly
-- [x] shaft adapter and hub screw (100% infill, layers <= 0.2mm, quality over speed)
-- [x] bearing tool (optional)
-- [x] `#SSSDUP` sensor housing and cap
-- [x] `#SSSDUP` soldering jig (optional)
+![Print layout for fine parts](fine_parts_small.png)
 
 ### Prepare the Shaft Adapter
-
-Note that the shaft adapter comes in two sizes, one for the reindeer motor and one for the DC motors.  Hereafter, "shaft adapater" means whichever one is appropriate for your model.
 
 The adapter is the weak link in the mechanics.  Should the mechanism jam, the adapter will likely deform, allowing the motor to run freely to prevent an overload.  If this happens, print a new adapter to replace the deformed one.
 
 - [ ] Test fit the 3D-printed hub screw in the top of the adapter to break out any stringiness or imperfections with the threads.
-- [x] Insert the appropriate nut or heat-set insert into the shaft adapter.
-- [ ] Screw one M3x6mm screw into the adapter.  (This is the "set screw.")
+
+> Tip: If your motor's shaft is flattened on two sides, then do each of the next steps twice.
+
+- [x] Insert nut(s) or heat-set insert(s) into the shaft adapter.
+- [x] Screw M3×6mm screw(s) into the adapter (finger tight for now).
 
 **NorCal Haunters:** Heat-set inserts have been pre-installed in the Make & Take kits.
 
@@ -185,34 +176,31 @@ The adapter is the weak link in the mechanics.  Should the mechanism jam, the ad
 
 #### `#SSSDAC`
 
+- [ ] Remove any crank or hub that came with the motor.
 - [ ] Confirm the reindeer motor turns clockwise and does not auto-reverse if obstructed.
-- [ ] Remove the four mounting screws from the motor.  [See diagram.]
+- [ ] Remove the screws from the four mounting posts.  [See diagram.]
 
-> Do not remove any of the other screws that secure the weather resistent housing.
+> Tip:  The mounting posts look very similar the ones used to hold the motor housing clamped shut.  Be careful to remove the screws from only the mounting posts and not the other clamping posts.
 
 #### `#SSSDDC` or `#SSSDUP`
-
-Some motors come with a red dot next to one terminal.  This may or may not indicate the correct polarization for this project, so check it first.
 
 - [ ] Temporarily connect 12VDC to the terminals of the DC motor.
 - [ ] If it turns counterclockwise, reverse the polarity of the power.
 - [ ] If it turns clockwise, mark the terminal connected to the red wire.
-- [ ] Disconnect the power.
 
-For `#SSSDDC`, the pigtail has a barrel connector that fits the output of your power supply.  For `#SSSDUP`, the pigtail has a small plastic connector that will plug into the circuit board.
+> Note:  Some motor manufacturers mark one terminal with a red dot, but that's not always reliable for this project.  Don't skip these steps.
 
 - [ ] Slip a short length of heatshrink tubing onto each of the pigtail wires.
 - [ ] Solder the red wire of the pigtail to the marked terminal.
 - [ ] Solder the black wire to the other terminal.
 - [ ] Slide the tubing over the exposed connections and shrink them down.
 
-#### All Models
+### Install the Motor
 
-- [ ] Remove any crank or hub that came with the motor.
 - [ ] Loosen the shaft adapter screw until no part of it is visible in the shaft bore.
 - [ ] Slip the shaft adapter over the motor shaft as far down as it will go.
 - [ ] Twist the adapter until the set screw is perpendicular to the flat side of the motor shaft.
-- [ ] Tighten the set screw against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down as you tighten.
+- [ ] Tighten the set screw against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down on the shaft as you tighten.
 - [ ] With the motor shaft pointing up, slip the base plate over the motor so the shaft adapter fits through the largest hole.
 - [ ] Align the motor mounting holes on the base plate with the ones on the motor.
 
@@ -246,7 +234,7 @@ It must be positioned flat against the board with the lever toward the middle of
 > Tip:  You can 3D print a jig that holds the microswitch in the correct position while soldering.  Fit the switch into position on the board, and slide the jig over the switch until the board is flush with the jig.  Turn them both over so the jig is beneath the board and set it flat on your worksurface. Solder one terminal of the switch while applying some downward pressure to keep the board against the jig and the switch lever compressed.  Check that the switch is straight and parallel before soldering the other two terminals.
 
 - [ ] Place the circuit onto the base plate with the components on the motor side the switch on the axle side.
-- [ ] Secure the circuit board with an M3x6mm screw and a square nut in the pocket.
+- [ ] Secure the circuit board with an M3×6mm screw and a square nut in the pocket.
 
 > Tip:  Match the triangular arrow printed on the board and to the one embossed on the build plate to get the correct orientation.  Slide that edge of the board under the lip first.
 
