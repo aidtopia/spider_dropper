@@ -92,7 +92,7 @@ Preview_for_Printing = false;
 Preview_Motor = false;
 
 // Turns the motor shaft when previewing the assembly.
-Rotation_Angle = 360*$t; // [0:360]
+Rotation_Angle = 0; // [0:360]
 
 module __Customizer_Limit__ () {}
 
