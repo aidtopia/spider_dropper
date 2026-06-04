@@ -9,3 +9,5 @@ schematics/spider_dropper/*.lck
 notes/IMG*.jpeg
 notes/P*.JPG
 notes/P*.jpg
+video/frame*.png
+video/video.mp4
