@@ -1294,12 +1294,26 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             fully_wound = 360*spool_turns;
             drop_until = 330;
             drop_rate = fully_wound / (330-driven_until);
+
+            // The winder is slightly thicker than the drive gear
+            // to ensure there's clearance when assembled.  If they
+            // were aligned at the bottom, this wouldn't be a
+            // problem, but they're aligned at the tops, so the
+            // winder needs to twist a tiny bit to ensure the
+            // teeth mesh in the preview.
+            delta_th =
+                AG_thickness(winder_gear) - AG_thickness(drive_gear);
+            helix_correction = AG_helix_twist(winder_gear, delta_th);
+
             angle =
-                Rotation_Angle < driven_until
-                    ? ratio * Rotation_Angle : // winding
-                Rotation_Angle < drop_until
-                    ? fully_wound - drop_rate*(Rotation_Angle - driven_until)
-                    : 0;
+                helix_correction +
+                (
+                    Rotation_Angle < driven_until
+                        ? ratio * Rotation_Angle : // winding
+                    Rotation_Angle < drop_until
+                        ? fully_wound - drop_rate*(Rotation_Angle - driven_until)
+                        : 0
+                );
             t = [shaft_to_axle.x, shaft_to_axle.y, spool_assembly_z0];
             translate(t) {
                 rotate([0, 0, angle]) {
