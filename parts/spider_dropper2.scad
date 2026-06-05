@@ -332,6 +332,17 @@ module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, hori
     rotate(r) rotate_extrude(convexity=4) polygon(points);
 }
 
+module bearing608_model(center=false) {
+    translate([0, 0, center ? 0 : bearing608_th/2]) {
+        difference() {
+            clean_cylinder(h=bearing608_th, d=bearing608_od,
+                           chamfer=-0.5, center=true);
+            clean_cylinder(h=bearing608_th+0.01, d=bearing608_id,
+                           chamfer=0.5, center=true);
+        }
+    }
+}
+
 // Makes a star-shaped polygon of count points.
 module spline_shape(count, od, id) {
     assert(count >= 3);
@@ -1277,26 +1288,33 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     if (Include_Spool_Assembly) {
-        color("orange")
         if (show_assembled) {
             ratio = drive_teeth / AG_tooth_count(winder_gear);
             driven_until = 360*actual_drive_teeth/drive_teeth;
             fully_wound = 360*spool_turns;
             drop_until = 330;
-            drop_rate =  fully_wound / (330-driven_until);
+            drop_rate = fully_wound / (330-driven_until);
             angle =
                 Rotation_Angle < driven_until
                     ? ratio * Rotation_Angle : // winding
                 Rotation_Angle < drop_until
                     ? fully_wound - drop_rate*(Rotation_Angle - driven_until)
                     : 0;
-            translate(shaft_to_axle) translate([0, 0, spool_assembly_z0]) {
-                rotate([0, 0, angle])
-                    spool_assembly();
+            t = [shaft_to_axle.x, shaft_to_axle.y, spool_assembly_z0];
+            translate(t) {
+                rotate([0, 0, angle]) {
+                    color("orange") spool_assembly();
+                    color("silver") {
+                        bearing608_model();
+                        translate([0, 0, bearing608_th])
+                            bearing608_model();
+                    }
+                }
             }
         } else {
             spool_r = spool_flange_d/2;
-            translate([AG_tips_diameter(drive_gear) + 1 + spool_r, plate_w + 1 + spool_r]) spool_assembly();
+            t = [AG_tips_diameter(drive_gear)+1+spool_r, plate_w+1+spool_r];
+            color("orange") translate(t) spool_assembly();
         }
     }
 
