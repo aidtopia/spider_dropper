@@ -92,7 +92,7 @@ Preview_for_Printing = false;
 Preview_Motor = false;
 
 // Turns the motor shaft when previewing the assembly.
-Rotation_Angle = 0; // [0:360]
+Motor_Angle = 0; // [0:360]
 
 module __Customizer_Limit__ () {}
 
@@ -1289,34 +1289,56 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     if (Include_Spool_Assembly) {
         if (show_assembled) {
-            ratio = drive_teeth / AG_tooth_count(winder_gear);
-            driven_until = 360*actual_drive_teeth/drive_teeth;
-            fully_wound = 360*spool_turns;
-            drop_until = 330;
-            drop_rate = fully_wound / (330-driven_until);
+            // When the spool is free-wheeling and the spider has
+            // dropped, the tunnel through spool will point straight
+            // down.
+            min_r = AG_tips_diameter(winder_gear)/2 + min_th;
+            max_r = spool_d/2 - min_th;
+            tunnel_offset = (min_r + max_r)/2;
+            free_angle = -acos(tunnel_offset/max_r);
+
+            // When the gears are engaged, the winder may need to
+            // twist to ensure the teeth interleave.
+            tooth_angle = 360.0 / AG_tooth_count(winder_gear);
+            free_tooth = free_angle / tooth_angle;
+            mesh_correction =
+                tooth_angle*round(free_tooth) - free_angle;
 
             // The winder is slightly thicker than the drive gear
             // to ensure there's clearance when assembled.  If they
             // were aligned at the bottom, this wouldn't be a
-            // problem, but they're aligned at the tops, so the
-            // winder needs to twist a tiny bit to ensure the
-            // teeth mesh in the preview.
+            // problem, but they're aligned at the tops and they're
+            // helical gears.  So, whenever the gears are engaged,
+            // the winder needs to twist a bit to allow the teeth
+            // to mesh properly.
             delta_th =
                 AG_thickness(winder_gear) - AG_thickness(drive_gear);
             helix_correction = AG_helix_twist(winder_gear, delta_th);
 
-            angle =
-                helix_correction +
+            total_correction = mesh_correction + helix_correction;
+
+            ratio = drive_teeth / AG_tooth_count(winder_gear);
+            drive_until = 360*actual_drive_teeth/drive_teeth;
+            fully_wound = 360*spool_turns;
+            drop_until = 330;
+            drop_rate = fully_wound / (330-drive_until);
+            drive_tooth_angle = 360.0 / AG_tooth_count(drive_gear);
+            reengage_at = 360 - 2*drive_tooth_angle;
+
+            winder_angle =
+                free_angle +
                 (
-                    Rotation_Angle < driven_until
-                        ? ratio * Rotation_Angle : // winding
-                    Rotation_Angle < drop_until
-                        ? fully_wound - drop_rate*(Rotation_Angle - driven_until)
-                        : 0
+                    Motor_Angle <= drive_until
+                        ? ratio * Motor_Angle + total_correction :
+                    Motor_Angle < drop_until
+                        ? fully_wound - drop_rate*(Motor_Angle - drive_until) :
+                    Motor_Angle < reengage_at
+                        ? 0
+                        : total_correction
                 );
             t = [shaft_to_axle.x, shaft_to_axle.y, spool_assembly_z0];
             translate(t) {
-                rotate([0, 0, angle]) {
+                rotate([0, 0, winder_angle]) {
                     color("orange") spool_assembly();
                     color("silver") {
                         bearing608_model();
@@ -1335,7 +1357,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     if (Include_Drive_Gear) {
         color("yellow")
         if (show_assembled) {
-            translate([0, 0, drive_z1]) rotate([0, 0, -Rotation_Angle]) rotate([180, 0, 0]) drive_gear();
+            translate([0, 0, drive_z1]) rotate([0, 0, -Motor_Angle]) rotate([180, 0, 0]) drive_gear();
         } else {
             tips_r = AG_tips_diameter(drive_gear)/2;
             translate([tips_r, plate_w + tips_r + 1, 0]) drive_gear();
@@ -1372,7 +1394,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         color("deepskyblue")
         if (show_assembled) {
             translate([0, 0, motor_base_h]) {
-                rotate([0, 0, -Rotation_Angle])
+                rotate([0, 0, -Motor_Angle])
                     shaft_adapter(motor_shaft_d, motor_shaft_h, motor_base_h);
             }
         } else {
@@ -1385,7 +1407,7 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     if (Include_Hub_Screw) {
         color("dodgerblue")
         if (show_assembled) {
-            translate([0, 0, drive_z1]) rotate([0, 0, -Rotation_Angle]) {
+            translate([0, 0, drive_z1]) rotate([0, 0, -Motor_Angle]) {
                 rotate([180, 0, 0]) hub_screw();
             }
         } else {
@@ -1440,9 +1462,13 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
 
     if (show_assembled && Preview_Motor) {
         if (Motor_Type == "JGY-370") {
-            color("silver") rotate([0, 0, 90]) jgy_motor(-Rotation_Angle-90);
+            color("silver") rotate([0, 0, 90]) {
+                jgy_motor(-Motor_Angle-90);
+            }
         } else if (Motor_Type == "Reindeer") {
-            color("lightgrey") rotate([0, 0, 90]) deer_motor(-Rotation_Angle-90);
+            color("lightgrey") rotate([0, 0, 90]) {
+                deer_motor(-Motor_Angle-90);
+            }
         }
     }
 }

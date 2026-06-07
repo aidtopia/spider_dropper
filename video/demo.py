@@ -5,7 +5,7 @@ import math
 import subprocess
 
 def generate_frame(n, angle=0):
-    command = f"openscad -o frame{n:05d}.png -D \"Rotation_Angle={angle}\" -D \"Motor_Type=\"\"Reindeer\"\"\" -D \"Preview_Motor=true\" --camera 20,-150,400,20,0,0 --imgsize=1920,1080 --colorscheme=\"Tomorrow Night\" ..\parts\spider_dropper2.scad"
+    command = f"openscad -o frame{n:05d}.png -D \"Motor_Angle={angle}\" -D \"Motor_Type=\"\"Reindeer\"\"\" -D \"Preview_Motor=true\" --camera 20,-150,400,20,0,0 --imgsize=1920,1080 --colorscheme=\"Tomorrow Night\" ..\parts\spider_dropper2.scad"
     print(f"$ {command}\n")
     result = subprocess.run(command, capture_output=True)
     if result.returncode != 0:
