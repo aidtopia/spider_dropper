@@ -4,32 +4,27 @@ Adrian McCarthy (2026) for the [Northern California Haunters Group](https://www.
 
 All project source files and documentation are available at https://github.com/aidtopia/spider_dropper.
 
-
 ## Three Models
 
-Make sure you know which kit you have.
+There are three models of the Stupidly Simple Spider Dropper.
 
-* Stupidly Simple Spider Dropper AC `#SSSDAC`
+| Name                             |   Tag     |  Motor   |     Effect       | Soldering |
+| :------------------------------- | :-------: | :------: | :--------------: | :-------: |
+| Stupidy Simple Spider Dropper AC | `#SSSDAC` | reindeer |    continuous    |   none    |
+| Stupidy Simple Spider Dropper DC | `#SSSDDC` |  12V DC  |    continuous    |  2 wires  |
+| SSSD w/ Slightly Smarter Upgrade | `#SSSDUP` |  12V DC  | motion triggered |  circuit  |
 
-  This model requires the fewest part and uses a "reindeer" motor that plugs in to regular household power.
-
-* Stupidly Simple Spider Dropper DC `#SSSDDC`
-
-  This model uses a 12-volt DC gearmotor.is the same idea, for haunters that prefer to run their props with DC power.
-
-* Slightly Smarter Spider Dropper Upgrade `#SSSDUP`
-
-  Uses the DC gearmotor plus some electronics to transform it from a continuously cycling effect to one that triggers on motion.
+Make sure you know which kit you have.  Much of the assembly is the same for all three.  Instructions specific to a certain model will be tagged.
 
 ## Safety
 
 * This kit contains small parts that could be a choking hazard.
-* Children should assemble the kit or use the spider dropper only under adult supervision.
+* Children should assemble or use the spider dropper only under adult supervision.
 * Some parts may contain hazardous substances.  In particular, the circuit boards contain lead.  Wash your hands with soap and water after handling.
 * Soldering irons, heat guns, and other tools used in assembly have their own risks.  Take appropriate precautions.
-* Intended for indoor use.  (`#SSSDAC` uses a motor in a weather resistant housing, so it may withstand light exposure to the elements.)
-* `#SSSDAC`:  To reduce the risk of electric shock, never open the weather-resistant motor housing.  Do not use if the power cord is damaged.
-* `#SSSDDC` and `#SSSDUP`:  Use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
+* Intended for indoor use.
+* Do not use if the power cord is damaged.
+* For the DC models, use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
 * Refer to the User Guide for important precautions regarding the setup and operation of the spider dropper.
 * Disposal:  The circuit board and soldered components, including the PIR motion module, should be treated as e-waste.  The motor can be re-used in another project or disposed as e-waste.  Printed parts may be recyclable but won't be accepted by most collection programs.
 
@@ -37,36 +32,33 @@ Make sure you know which kit you have.
 
 | Tool                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
-| Philips #1 screwdriver         | required  | required  | required  |
-| Philips #2 screwdriver         | required  |           |           |
+| philips #1 screwdriver         |           | required  | required  |
+| philips #2 screwdriver         | required  |           |           |
 | wire cutters                   | required  | required  | required  |
 | soldering iron                 |           | required  | required  |
 | wire stripper                  |           | required  | required  |
 | heat gun (heat-shrink tubing)  |           |recommended|recommended|
 | needle nose pliers or tweezers |recommended|recommended|recommended|
-| crimping pliers (Dupont)       |           |           | required  |
-| crimping pliers (JST XH)       |           |           | required  |
+| crimping pliers (Dupont)       |           |           | required\*|
+| crimping pliers (JST XH)       |           |           | required\*|
 | small adjustable wrench        |           |           |recommended|
 | bearing removal tool `#3D`     | optional  | optional  | optional  |
 | soldering jig `#3D`            |           |           | optional  |
+| measuring tape or ruler        |recommended|recommended|recommended|
+| drill with 1/8" (3mm) bit      |recommended|recommended|recommended|
+| hot glue gun (w/ black glue)   |recommended|recommended|recommended|
 
-These additional tools can be helpful for attaching the spider.
+Tools tagged with `#3D` are ones you can print with a 3D printer.
 
-* measuring tape or ruler
-* drill with 1/8" bit
-* hot glue gun (preferably with black glue)
+\* **Norcal Haunters:** Crimping pliers are not required for Make & Take kits.
 
 ## Parts
 
 For detailed specifications and possible sources for the parts, check the spreadsheet in the project files on Github.
 
-Parts tagged with `#3D` are ones you can print with a 3D printer.
-
-**NorCal Haunters**:  The Make & Take kit does _not_ include a power supply for `#SSSDDC` or `#SSSDUP`.  Some will be available at the event for testing.  In your haunt, you will need an AC to DC power adapter that delivers 12 volts and is rated for at least 250mA.
-
 | Part                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
-| motor                          |"reindeer" |  JGY-370  |  JGY-370  |
+| motor                          | reindeer  |  JGY-370  |  JGY-370  |
 | shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
 | 2-wire motor "pigtail"         |           |  barrel   |  JST XH   |
 | M3 threaded insert\*           |     1     |     1     |     1     |
@@ -84,23 +76,25 @@ Parts tagged with `#3D` are ones you can print with a 3D printer.
 | medium zip ties (for hanging)  |     2     |     2     |     2     |
 | 12VDC power supply             |           | not incl. | not incl. |
 
+Parts tagged with `#3D` are ones you can print with a 3D printer.
+
 \* There are three options for the threaded insert.  Choose the one that matches your shaft adapter (or choose the shaft adapter to match your insert).  Any option works well for a small toy spider.  For anything heavier, choose the highest one available to you.
 
-* M3s×5mm heat-set insert
+* M3×5mm heat-set theaded insert
 * M3 _thin_ square nut (~1.8mm thick)
 * M3 _regular_ square nut (~2.4mm thick)
 
 Note that `#SSSDUP` requires one M3 square nut in addition to whichever threaded insert you use for the shaft adapter.
 
-**Norcal Haunters:**  I've pre-installed heat-set threaded inserts in the shaft adapters in your Make & Take kits.
+**Norcal Haunters:**  Heat-set threaded inserts have been pre-installed in the shaft adapters in the Make & Take kits.
 
----
+**Norcal Haunters:**  The Make & Take kit does _not_ include a power supply for `#SSSDDC` or `#SSSDUP`.  Some will be available at the event for testing.  In your haunt, you will need an AC-to-DC power adapter that delivers 12 volts and is rated for at least 250mA.
 
-#### Slightly Smarter Upgrade
+### Additional Parts (`#SSSDUP` only)
 
-The `#SSSDUP` is the `#SSSDDC` _plus_ a circuit and a sensor.
+The Slightly Smarter upgrade adds a circuit board and sensor.
 
-`#SSSDUP`: Circuit Parts
+#### `#SSSDUP`: Circuit Parts
 
 | Quantity | Part                                           |
 | -------: | :--------------------------------------------- |
@@ -116,7 +110,7 @@ The `#SSSDUP` is the `#SSSDDC` _plus_ a circuit and a sensor.
 |        1 | additional M3×5mm machine screw                |
 |        1 | additional M3 square nut (thin or regular)     |
 
-`#SSSDUP`:  Sensor Parts
+#### `#SSSDUP`:  Sensor Parts
 
 | Quantity | Part                                           |
 | -------: | :--------------------------------------------- |
@@ -132,7 +126,7 @@ The `#SSSDUP` is the `#SSSDDC` _plus_ a circuit and a sensor.
 
 Perform the steps in order, using the checkboxes to keep track of your progress.  Remember to skip steps that are tagged for models other than the one you're building.
 
-**NorCal Haunters:**  Some steps have been done in advance in the Make & Take kits, so those checkboxes have been pre-checked.
+**Norcal Haunters:**  Some steps have been done in advance in the Make & Take kits, so those checkboxes have been pre-checked.
 
 ### Print the Printable Parts
 
@@ -159,88 +153,106 @@ The hexagonal pattern of the base plate has several advantages for the design, b
 
 ![Print layout for fine parts](fine_parts_small.png)
 
-### Prepare the Shaft Adapter
-
-The adapter is the weak link in the mechanics.  Should the mechanism jam, the adapter will likely deform, allowing the motor to run freely to prevent an overload.  If this happens, print a new adapter to replace the deformed one.
-
-- [ ] Test fit the 3D-printed hub screw in the top of the adapter to break out any stringiness or imperfections with the threads.
-
-> Tip: If your motor's shaft is flattened on two sides, then do each of the next steps twice.
-
-- [x] Insert nut(s) or heat-set insert(s) into the shaft adapter.
-- [x] Screw M3×6mm screw(s) into the adapter (finger tight for now).
-
-**NorCal Haunters:** Heat-set inserts have been pre-installed in the Make & Take kits.
-
 ### Prepare the Motor
 
-#### `#SSSDAC`
+#### Prepare the Reindeer Motor (`#SSSDAC`)
 
-- [ ] Remove any crank or hub that came with the motor.
 - [ ] Confirm the reindeer motor turns clockwise and does not auto-reverse if obstructed.
-- [ ] Remove the screws from the four mounting posts.  [See diagram.]
+- [ ] Remove any crank or hub that came with the motor.
+- [ ] Remove the screws from the four mounting posts.
 
-> Tip:  The mounting posts look very similar the ones used to hold the motor housing clamped shut.  Be careful to remove the screws from only the mounting posts and not the other clamping posts.
+> Tip:  The mounting posts look very similar the ones used to hold the motor housing clamped shut.  Be careful to remove only the screws from the mounting posts.
 
-#### `#SSSDDC` or `#SSSDUP`
+![Locations of Reindeer Motor Mounting Posts](deer_motor_mounts_small.png)
 
-- [ ] Temporarily connect 12VDC to the terminals of the DC motor.
+
+#### Prepare the DC Motor (`#SSSDDC` or `#SSSDUP`)
+
+- [ ] Temporarily connect 12 volts DC to the terminals of the motor.
 - [ ] If it turns counterclockwise, reverse the polarity of the power.
-- [ ] If it turns clockwise, mark the terminal connected to the red wire.
+- [ ] If it turns clockwise, mark the terminal connected to the positive (red) wire.
 
-> Note:  Some motor manufacturers mark one terminal with a red dot, but that's not always reliable for this project.  Don't skip these steps.
+> Note:  Some motor manufacturers mark one terminal with a red dot, but that's not always reliable for this project.  Double check using the steps above.
 
 - [ ] Slip a short length of heatshrink tubing onto each of the pigtail wires.
 - [ ] Solder the red wire of the pigtail to the marked terminal.
 - [ ] Solder the black wire to the other terminal.
 - [ ] Slide the tubing over the exposed connections and shrink them down.
 
-### Install the Motor
+### Attach the Shaft Adapter
 
-- [ ] Loosen the shaft adapter screw until no part of it is visible in the shaft bore.
+- [ ] Test fit the 3D-printed hub screw in the top of the adapter to break out any stringiness or imperfections with the threads.
+
+> If your motor's shaft is flattened on two sides, then do each of the next steps twice.
+>
+> - [x] Insert nut(s) or heat-set insert(s) into the shaft adapter.
+> - [x] Screw M3×6mm screw(s) into the adapter (finger tight for now).
+
+- [ ] Loosen the shaft adapter screw(s) until the shaft bore is clear.
 - [ ] Slip the shaft adapter over the motor shaft as far down as it will go.
 - [ ] Twist the adapter until the set screw is perpendicular to the flat side of the motor shaft.
-- [ ] Tighten the set screw against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down on the shaft as you tighten.
+- [ ] Tighten the set screw(s) against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down on the shaft as you tighten.
+
+### Install the Motor
+
 - [ ] With the motor shaft pointing up, slip the base plate over the motor so the shaft adapter fits through the largest hole.
 - [ ] Align the motor mounting holes on the base plate with the ones on the motor.
 
-#### `#SSSDAC`
+#### For the Reindeer Motor
 
 - [ ] Use 4 M3×16mm self-tapping screws to attach the motor to the base plate.
 
 > Tip:  Work carefully and screw them in slowly while applying firm pressure.  Repeated insertions of the self-tapping screws will wear out the plastic.
 
-#### `#SSSDDC` and `#SSSDUP`
+![Progress:  Motor Attached](progress_motor_attached_deer_small.png)
 
-- [ ] Use 4 M3×6mm machine screws to secure the motor to the base plate.
+#### For the DC Motor
+
+- [ ] Use 4 M3×6mm machine screws to fasten the motor to the base plate.
+
+![Progress:  Motor Attached](progress_motor_attached_dc_small.png)
 
 ### Solder the Slightly Smarter Circuit (`#SSSDUP` only)
+
+![Bare circuit board](pcb_front_small.png)
+
+> Tip: The optional pin bender tool (`#3D`) can help bend the leads in the right place to insert some components into the circuit board.
 
 - [ ] Solder the 100K resistor (brown/black/yellow) at R1.
 - [ ] Solder the 1N4001 diode at D1 with the striped end as marked on the board.
 - [ ] Trim the excess leads.
-- [ ] Carefully bend the legs of the MOSFET by 90 degrees and solder at Q1 (see diagram).
+- [ ] Carefully bend the legs of the MOSFET by 90 degrees and solder at Q1 (see picture).
 - [ ] Solder the 3- and 2-pin JST XH connectors at J1 and J3, respectively. Match the orientation to the markings on the board.
 - [ ] Solder the PTC fuse at F1, being careful not to overheat it.
 - [ ] Trim the excess leads.
 - [ ] Solder the barrel connector at J1.
 
-The microswitch will be installed on the opposite side of the board from all the other components.
+![Populated circuit board](pcb_front_populated_small.png)
 
-It must be positioned flat against the board with the lever toward the middle of the board as indicated.
+> Note: The microswitch will be installed on the opposite side of the board from all the other components.  It must be positioned flat against the board with the lever toward the middle of the board as indicated.
+
+![Bare circuit board](pcb_back_small.png)
 
 - [ ] Solder the microswitch into position.
 
-> Tip:  You can 3D print a jig that holds the microswitch in the correct position while soldering.  Fit the switch into position on the board, and slide the jig over the switch until the board is flush with the jig.  Turn them both over so the jig is beneath the board and set it flat on your worksurface. Solder one terminal of the switch while applying some downward pressure to keep the board against the jig and the switch lever compressed.  Check that the switch is straight and parallel before soldering the other two terminals.
+> Tip:  Use the soldering jig (`#3D`) to hold the microswitch in the correct position while soldering.  Fit it the switch into position on the board, and slide the jig over the switch until the board is flush with the jig.  Turn them both over so the jig is beneath the board and set it flat on your worksurface. Solder one terminal of the switch while applying some downward pressure to keep the board against the jig and the switch lever compressed.  Check that the switch is straight and parallel before soldering the other two terminals.
+
+![Switch installed on back of circuit board](pcb_back_populated_small.png)
+
+### Attach the Circuit Board (`#SSSDUP` only)
 
 - [ ] Place the circuit onto the base plate with the components on the motor side the switch on the axle side.
-- [ ] Secure the circuit board with an M3×6mm screw and a square nut in the pocket.
+> Tip:  Match the triangular arrow printed on the board to the one embossed on the build plate to get the correct orientation.  Slide that edge of the board under the lip first.
 
-> Tip:  Match the triangular arrow printed on the board and to the one embossed on the build plate to get the correct orientation.  Slide that edge of the board under the lip first.
+- [ ] Secure the circuit board with an M3×6mm screw at H1 and a square nut in the pocket underneath.
+- [ ] Plug the motor pigtail into the 2-pin connector on the circuit board.
+- [ ] Use a small zip tie to secure the pigtail to the base plate as shown. TODO
+
+![Progress:  Slightly Smarter circuit installed](progress_pcb_attached_small.png)
 
 ### Make the Sensor Cable (`#SSSDUP` only)
 
-**NorCal Haunters**:  The Make & Take kits have the sensor cable mostly pre-made.  You're welcome.
+**Norcal Haunters**:  The Make & Take kits have pre-made sensor cable mostly pre-made.  You're welcome.
 
 - [x] Slide a 1- to 2-inch section of heat shrink tubing onto the cable.  Do not shrink it yet.
 - [x] Remove about 1.5 inches of the jacket from one end of the cable, being careful not to nick the insulation on the wires inside.
@@ -248,26 +260,29 @@ It must be positioned flat against the board with the lever toward the middle of
 - [x] Crimp the JST XH pins (female) onto the wires.
 - [x] Insert the pins into the JST XH housing in RED/YELLOW/BLACK order, starting with RED closest to the notch in the housing.
 - [x] Shrink the tubing over the cable jacket, near where you cut it away.  This will provide some additional cushion when you later cinch it down with a cable tie.
-
 - [x] Slide another 1- to 2-inch section of heat shrink tubing onto the cable from this end.
 - [x] Remove about 1.5 inches of the jacket from the other end of the cable.
 - [x] Strip about 2 mm from the tips of each of the exposed wires.
 - [x] Crimp the Dupont-style pins (female) onto the wires.  Do not yet put them into the connector housing.
 - [x] Shrink the tubing so that the center of the length is 2 inches from the tips of the Dupont pins.  This will provide some cushion where the cable gland clamps the cable.
 
-- [ ] Remove the flat nut from a cable gland.  You won't need it.
+### Connect the Motion Sensor (`#SSSDUP` only)
+
+- [ ] Remove the flat nut from the cable gland.  You won't need it.
 - [ ] Screw the gland into the back of the 3D-printed sensor housing.
 
-> Tip:  Imperfections in the print could make screwing the gland to the housing difficult.  Tighten and loosen a few times to clear out the threads.  A small adjustable wrench can be useful for holding the gland.
+> Tip:  Imperfections in the print could make screwing the gland to the housing difficult.  Tighten and loosen the gland to the housing a few times to clear out the threads.  A small adjustable wrench can be useful for holding the gland.
 
 - [ ] Remove the round nut from the cable gland.
 - [ ] Slip the Dupont pins into the rounded end and let the nut slide up the cable.
-- [ ] Feed the Dupont pins into the gland.  Be careful not to dislodge the rubber seal held at the tips of the fins.
-- [ ] When the pins extend out the top of the sensor housing, insert them into the Dupont connector housing in RED/YELLOW/BLACK order, starting at either end.
+- [ ] Feed the Dupont pins into the gland.
 
+> Tip:  Be careful not to dislodge the rubber seal held at the tips of the fins in the cable gland.
+
+- [ ] When the pins extend out the top of the sensor housing, insert them into the Dupont connector housing in RED/YELLOW/BLACK order, starting at either end.
 - [ ] Insert the PIR sensor module into the Dupont connector, ensuring that the pin marked `+` or `VIN` corresponds to the RED wire.
 
-> Tip:  If the dome pops off the PIR module, be careful not to touch the exposed sensor.  Replace the dome and hold it in place until it's secured into the housing.
+> Tip:  If the dome pops off the PIR module, be careful not to touch the exposed sensor.  Replace the dome and hold it in place until the module is secured in the housing.
 
 - [ ] Push gently on the dome of the PIR module until the brim is flat against the rim of the housing.
 
@@ -283,10 +298,12 @@ It must be positioned flat against the board with the lever toward the middle of
 - [ ] Position the wide face of the spool over the bearing and press down firmly until the bearing is inside the bore.
 - [ ] Repeat with the second bearing.
 
-Both bearings should be aligned and flush with the spool at both ends of the bore.  If not, you can use the bearing removal tool to pop the bearings out and try again.
+> Note: Both bearings should be aligned and flush with the spool at both ends of the bore.  If not, you can use the bearing removal tool to pop the bearings out and try again.
 
 - [ ] Slide the spool onto the axle so that the wider part is closer to the base plate.
 - [ ] Check that the spool can spin and that it doesn't wobble or rub the plate.
+
+![Progress:  Spool installed](progress_spool_installed_small.png)
 
 ### Install the Drive Gear
 
@@ -297,9 +314,13 @@ Both bearings should be aligned and flush with the spool at both ends of the bor
 
 The hub screw ensures the drive gear won't work its way off of the shaft adapter, and the drive gear, in turn, ensures the spool won't work off of its axle.
 
+![Progress:  Drive gear installed](progress_gear_installed_small.png)
+
 ### Attach the Fishing Line
 
 The base plate has two string guides at the edges near the spool.  Decide whether you will hang the mechanism horizontally or vertically.  You will use the guide that's below the spool when hanging.
+
+![Locate the string guide for your orientation](orientations.png)
 
 - [ ] Feed one end of the fishing line through the guide toward the spool.
 - [ ] Thread the fishing line into one of the holes along the edge of the spool.
@@ -308,11 +329,13 @@ The base plate has two string guides at the edges near the spool.  Decide whethe
 - [ ] Tie the line with a double knot.
 - [ ] Ensure the string remains entirely within the recessed part of the spool.
 
+![Line Routing](string_path_small.png)
+
 ### Prepare the Spider
 
 To make the toy spider hang realistically ...
 
-- [ ] Trim a short zip tie about 1/2 to 3/4" down from the end with the loop.
+- [ ] Trim a short zip tie about 1/2" to 3/4" down from the end with the loop.
 - [ ] Select a drill bit that's as wide as the zip tie.  It's better to err too small than too large.
 - [ ] Carefully drill a hole in the back of the abdomen (just below the spinnerets) of the spider toward its center of mass.  The hole needn't be longer than the trimmed zip tie.
 - [ ] Dip the zip tie in a blob of hot glue (use the black "cosplay" glue if you can).
@@ -327,17 +350,15 @@ There must be at least 24 inches of line between the bottom of the string guide 
 - [ ] Keeping some tension on the string, wind the spool 2.5 revolutions in the direction shown by the arrows.  If the spider reaches the guide before you complete the turns, the spider was tied too high.
 - [ ] Trim the excess fishing line.
 
-### Final Connections `#SSSDUP`
+### Final Connections (`#SSSDUP` only)
 
-- [ ] Plug the motor pigtail into the 2-pin connector on the circuit board.
-- [ ] Use a small zip tie to secure the pigtail to the base plate as shown.
 - [ ] Plug the sensor into the 3-pin connector on the circuit board.
-- [ ] Use a small zip tie to secure the cable to the base plate as shown.
+- [ ] Use a small zip tie to secure the cable to the base plate as shown. TODO
 
 ### Test the Mechanism
 
-- [ ] Suspend the mechanism as shown in the diagram.
-- [ ] Allow the spool to fully unwind and that spider to dangle.
+- [ ] Suspend the mechanism from above with two zip ties, as shown in the landscape/portrait diagram above.
+- [ ] Allow the spool to fully unwind and the spider to dangle.
 - [ ] Connect the power.
 
 `#SSSDAC` and `#SSSDDC`:  The spider should rise and then drop suddenly.  The cycle should repeat continuously.
