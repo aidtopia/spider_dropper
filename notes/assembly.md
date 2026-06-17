@@ -151,7 +151,7 @@ The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  T
 - [ ] Strip about 5 mm (3/8 inch) from the red wire and solder it to the marked terminal.
 - [ ] Strip about 5 mm (3/8 inch) from the black wire and solder it to the other terminal.
 - [ ] Slide the individual tubes over the exposed connections and shrink them down.
-- [ ] Slide the larger tubing so that the center of it is about 35 mm (3 inches) from the connector and shrink it down.
+- [ ] Slide the larger tubing so that the center of it is about 35 mm (1-3/8 inches) from the connector and shrink it down.
 
 ![Motor pigtail](motor_pigtail_small.png)
 
@@ -231,17 +231,15 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 **Norcal Haunters**:  The Make & Take kits have pre-made sensor cables.  You're welcome.
 
-- [x] Slide an approximately 30 mm (1.25-inch) section of heat shrink tubing over the cable.  Do not shrink it yet.
 - [x] Remove about 25 mm (1 inch) of the jacket from one end of the cable, being careful not to nick the insulation on the wires inside.
 - [x] Strip about 2 mm from the tips of each of the exposed wires.
 - [x] Crimp the JST XH pins (female) onto the wires.
 - [x] Insert the pins into the JST XH housing in **RED/YELLOW/BLACK** order, starting with RED closest to the notch in the housing.
-- [x] Shrink the tubing over the cable jacket, near where you cut it away.  This will provide some additional cushion when you later cinch it down with a cable tie.
-- [x] Slide another 1- to 2-inch section of heat shrink tubing onto the cable from this end.
+- [x] Slide an approximately 25 mm (1 inch) length of heat-shrink tubing over the cable and shrink it down approximately 75 mm (1-3/8 inch) back from the JST connector.
 - [x] Remove about 25 mm (1 inch) of the jacket from the other end of the cable.
 - [x] Strip about 2 mm from the tips of each of the exposed wires.
 - [x] Crimp the Dupont-style pins (female) onto the wires.  Do not put them into the connector housing yet.
-- [x] Shrink the tubing so that the center of the length is 40 mm (1-5/8 inches) from the tips of the Dupont pins.  This will provide some cushion where the cable gland clamps the cable.
+- [x] Slide another 25 mm (1 inch) length of heat shrink tubing over the cable and shrink it down approximately 50 mm (2 inches) 1- to 2-inch section of heat shrink tubing onto the cable from this end.
 
 ### Connect the Motion Sensor (`#SSSDUP` only)
 
