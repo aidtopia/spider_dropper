@@ -138,6 +138,12 @@ m3_sqnut_th = min(Nut_Type, 2.3);
 // Ruthex M3Sx4mm heatset threaded inserts
 m3_heatset_d = 3.9;
 
+// Well, only M3 except that the shaft screw for the deer motor is M4.
+m4_free_d = 4.5;
+m4_close_d = 4.3;
+m4_head_d = 8.0;
+m4_head_h = 3.1;
+
 // Widely available "skateboard" bearings.
 bearing608_od = 22;
 bearing608_id = 8;
@@ -309,24 +315,28 @@ module track(r, track_w=1) {
     }
 }
 
-module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=0, horizontal=false, clear=0, center=false) {
+module clean_cylinder(h=1, r=undef, d=undef, d1=undef, d2=undef, chamfer=undef, chamfer1=undef, chamfer2=undef, horizontal=false, clear=0, center=false) {
     diameter = !is_undef(r) ? 2*r : !is_undef(d) ? d : 1;
     diameter1 = !is_undef(d1) ? d1 : diameter;
     diameter2 = !is_undef(d2) ? d2 : diameter;
     r1 = diameter1/2;
     r2 = diameter2/2;
     assert(r1 > 0 && r2 > 0);
+    ch1 = !is_undef(chamfer1) ? chamfer1 :
+          !is_undef(chamfer)  ? chamfer : 0;
+    ch2 = !is_undef(chamfer2) ? chamfer2 :
+          !is_undef(chamfer)  ? chamfer : 0;
     z1 = center ? -h/2 : 0;
     z2 = z1 + h;
     points = [
         [0, z1-clear],
         [0, z2+clear],
-        [r2+chamfer, z2+clear],
-        [r2+chamfer, z2],
-        [r2, z2-abs(chamfer)],
-        [r1, z1+abs(chamfer)],
-        [r1+chamfer, z1],
-        [r1+chamfer, z1-clear]
+        [r2+ch2, z2+clear],
+        [r2+ch2, z2],
+        [r2, z2-abs(ch2)],
+        [r1, z1+abs(ch1)],
+        [r1+ch1, z1],
+        [r1+ch1, z1-clear]
     ];
     r = horizontal ? [0, -90, 0] : [0, 0, 0];
     rotate(r) rotate_extrude(convexity=4) polygon(points);
@@ -472,25 +482,29 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     track_w = 8;
 
     adapter_d = motor_base_d - 2;
-    adapter_sides = 8;
+    adapter_sides = 10;
     assert(adapter_sides % 2 == 0);
     adapter_r = adapter_d/2 * cos(180/adapter_sides);
 
     // The spline is the shape used to key the shaft adapter to the
     // drive gear.
     spline_od = min(17, adapter_d);
-    spline_id = max(motor_shaft_d + 2*min_th, spline_od/2);
+    spline_id = max(
+        motor_shaft_d + 2*min_th,
+        (9/8)*m4_head_d + 2*min_th,
+        spline_od/2
+    );
     spline_count = adapter_sides;
     echo(str("adapter_d = ", adapter_d, "; adapter_r = ", adapter_r));
     echo(str("spline_od = ", spline_od, "; spline_id = ", spline_id));
 
     // The hub screws into the spline end of the adapter to hold the gear
     // in place.
-    hub_thread_d = 8;
+    hub_thread_d = 9.5;
     assert(hub_thread_d >= max(jgy_shaft_d, deer_shaft_d));
     assert(hub_thread_d + min_th <= spline_id);
-    hub_thread_pitch = 1.25;
-    hub_thread_l = 4*hub_thread_pitch;
+    hub_thread_pitch = 1.0;
+    hub_thread_l = 3*hub_thread_pitch;
     hub_head_d = min(1.5*spline_od, 2*abs(shaft_to_switch_op.x));
     hub_head_h = max(2*wall_th, 4);
 
@@ -1079,9 +1093,12 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
     }
 
     module shaft_adapter(
-        motor_shaft_d=deer_shaft_d,
-        motor_shaft_h=deer_shaft_h,
-        motor_base_h=deer_base_h,
+        motor_shaft_d,
+        motor_shaft_h,
+        motor_base_h,
+        shaft_screw_head_d,
+        shaft_screw_head_h,
+        shaft_screw_free_d,
         nozzle_d=0.4
     ) {
         base_h = drive_z0 - motor_base_h;
@@ -1131,10 +1148,36 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 }
             }
             
-            clean_cylinder(h=base_h+spline_h,
-                           d=motor_shaft_d+nozzle_d/2,
-                           chamfer=nozzle_d, clear=0.01,
-                           $fs=nozzle_d/2);
+            union() {
+                clean_cylinder(h=base_h+nozzle_d,
+                               d=motor_shaft_d+nozzle_d/2,
+                               chamfer1=nozzle_d, chamfer2=-nozzle_d,
+                               clear=0.01, $fs=nozzle_d/2);
+                // Passthrough for shaft screw.
+                translate([0, 0, base_h+nozzle_d]) {
+                    // sequential bridge
+                    linear_extrude(0.2, convexity=8) intersection() {
+                        square([motor_shaft_d, shaft_screw_free_d], center=true);
+                        circle(d=motor_shaft_d-nozzle_d,
+                               $fs=nozzle_d/2);
+                    }
+                    clean_cylinder(h=min_th, d=shaft_screw_free_d,
+                                   chamfer2=nozzle_d, clear=0.01,
+                                   $fs=nozzle_d/2);
+                    translate([0, 0, min_th]) {
+                        clean_cylinder(h=spline_h, d=shaft_screw_head_d,
+                                       $fs=nozzle_d/2);
+                    }
+                }
+                // Tap threads for the hub screw.
+                translate([0, 0, base_h+spline_h-hub_thread_l-0.01]) {
+                    AT_threads(h=hub_thread_l+0.02,
+                               d=hub_thread_d,
+                               pitch=hub_thread_pitch,
+                               tap=true, nozzle_d=nozzle_d,
+                               $fn=$preview ? 30 : 60);
+                }
+            }
 
             translate([0, 0, set_screw_z-motor_base_h]) {
                 set_screw_recess();
@@ -1156,25 +1199,6 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                 translate([-nut_dx, 0, 0]) nut_pocket();
             }
 
-            // Little slots allow insertion of a prying tool in case the
-            // fit between the gear and the spline is too tight.
-            translate([0, 0, base_h-min_th]) {
-                linear_extrude(min_th + 0.01, convexity=4) {
-                    rotate([0, 0, 90])
-                        translate([adapter_r-1.7, -3/2]) square(3);
-                    rotate([0, 0, -90])
-                        translate([adapter_r-1.7, -3/2]) square(3);
-                }
-            }
-
-            // Tap threads for the hub screw.
-            translate([0, 0, base_h+spline_h-hub_thread_l-0.01]) {
-                AT_threads(h=hub_thread_l+0.02,
-                           d=hub_thread_d,
-                           pitch=hub_thread_pitch,
-                           tap=true, nozzle_d=nozzle_d,
-                           $fn=$preview ? 30 : 60);
-            }
         }
     }
     
@@ -1183,11 +1207,14 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
             clean_cylinder(h=hub_head_h, d=hub_head_d, chamfer=-nozzle_d,
                            $fn=6);
         }
-        translate([0, 0, -0.01]) {
+        translate([0, 0, -0.01]) difference() {
             AT_threads(h=hub_thread_l+0.01,
                        d=hub_thread_d, pitch=hub_thread_pitch,
                        tap=false, nozzle_d=nozzle_d,
                        $fn=$preview ? 30 : 60);
+            clean_cylinder(h=m4_head_h+0.02,
+                           d=m4_head_d-nozzle_d, chamfer1=-min_th,
+                           $fs=nozzle_d/2);
         }
     }
 
@@ -1391,15 +1418,25 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
                         Motor_Type == "Reindeer" ? deer_shaft_d : 0;
         motor_shaft_h = Motor_Type == "JGY-370"  ? jgy_shaft_h  :
                         Motor_Type == "Reindeer" ? deer_shaft_h : 0;
+        shaft_screw_head_d = Motor_Type == "JGY-370"  ? m3_head_d :
+                             Motor_Type == "Reindeer" ? m4_head_d : 0;
+        shaft_screw_head_h = Motor_Type == "JGY-370"  ? m3_head_h :
+                             Motor_Type == "Reindeer" ? m4_head_h : 0;
+        shaft_screw_free_d = Motor_Type == "JGY-370"  ? m3_free_d :
+                             Motor_Type == "Reindeer" ? m4_free_d : 0;
         color("deepskyblue")
         if (show_assembled) {
             translate([0, 0, motor_base_h]) {
                 rotate([0, 0, -Motor_Angle])
-                    shaft_adapter(motor_shaft_d, motor_shaft_h, motor_base_h);
+                    shaft_adapter(motor_shaft_d, motor_shaft_h,
+                                  motor_base_h, shaft_screw_head_d,
+                                  shaft_screw_head_h, shaft_screw_free_d);
             }
         } else {
             translate([plate_l+1+hub_head_d/2, plate_w-1-adapter_d/2]) {
-                shaft_adapter(motor_shaft_d, motor_shaft_h, motor_base_h);
+                shaft_adapter(motor_shaft_d, motor_shaft_h, motor_base_h,
+                              shaft_screw_head_d, shaft_screw_head_h,
+                              shaft_screw_free_d);
             }
         }
     }
