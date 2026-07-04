@@ -119,11 +119,11 @@ The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  T
 
 - [x] Print the coarse parts (layer height 0.2mm to 0.3mm)
 
-![Print layout for coarse parts](coarse_parts_small.png)
+![Print layout for coarse parts](coarse_parts.png)
 
 - [x] Print the fine parts (layer height <0.2mm, 100% infill, quality over speed)
 
-![Print layout for fine parts](fine_parts_small.png)
+![Print layout for fine parts](fine_parts.png)
 
 ### Prepare the Motor
 
@@ -131,12 +131,14 @@ The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  T
 
 - [ ] Confirm the reindeer motor turns clockwise and does not auto-reverse if obstructed.
 - [ ] Remove any crank or hub that came with the motor.
+
+> Tip:  Retain the shaft screw for later.  If your motor is missing the shaft screw, you'll need an M4x10mm machine screw.
+
 - [ ] Remove the screws from the four mounting posts.
 
 > Tip:  The mounting posts look very similar the ones used to hold the motor housing clamped shut.  Be careful to remove only the screws from the mounting posts.
 
 ![Locations of Reindeer Motor Mounting Posts](deer_motor_mounts_small.png)
-
 
 #### Prepare the DC Motor (`#SSSDDC` or `#SSSDUP`)
 
@@ -165,6 +167,16 @@ The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  T
 - [ ] Rotate the adapter until the set screw is perpendicular to the flat side of the motor shaft.
 - [ ] Tighten the set screw(s) against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down on the shaft as you tighten.
 
+> Note:  The set screws ensure the adapter rotates with the motor shaft.  In the next step, you'll install a shaft screw, which ensures the adapter doesn't work its way off the end of the shaft.
+
+#### For the Reindeer Motor (`#SSSDAC`)
+
+- [ ] Insert the shaft screw you retained earlier through the top of the adapter and screw into the end of the motor shaft.  If you don't have the original shaft screw, you can substitute an M4×10mm replacement.
+
+#### For the DC Motor (`#SSSDDC` or `#SSSDUP`)
+
+- [ ] Insert an M3×6mm machine screw through the top of the adapter and screw it into the end of the motor shaft.
+
 ### Install the Motor
 
 - [ ] With the motor shaft pointing up, slip the base plate over the motor so the shaft adapter passes through the largest hole.
@@ -176,13 +188,13 @@ The 3D parts are designed to be printed with a 0.4mm nozzle without supports.  T
 
 > Tip:  Work carefully and screw them in slowly while applying firm pressure.  Repeated insertions of the self-tapping screws will wear out the plastic.
 
-![Progress:  Motor Attached](progress_motor_attached_deer_small.png)
+![Progress:  Motor Attached](progress_motor_attached_deer.png)
 
 #### For the DC Motor (`#SSSDDC` or `#SSSDUP`)
 
 - [ ] Use 4 M3×6mm machine screws to fasten the motor to the base plate.
 
-![Progress:  Motor Attached](progress_motor_attached_dc_small.png)
+![Progress:  Motor Attached](progress_motor_attached_dc.png)
 
 ### Solder the Slightly Smarter Circuit (`#SSSDUP` only)
 

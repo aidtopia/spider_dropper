@@ -1,14 +1,6 @@
 // Stupidly Simple Spider Dropper
 // Adrian McCarthy 2023-02-25
 
-// 2025-08-16:
-// This is an experimental redesign based on the idea of putting the
-// gears out farther from the base plate than the spool.  I'm hoping
-// this makes it possible to better secure the drive gear to the
-// motor shaft.  It should also reduce the torque caused by the
-// hanging weight, since that'll extend fom closer to the center of
-// mass.
-
 // The assembly is hung overhead.  A string secured to the spool
 // passes through the guide and holds a toy spider.  A slow motor
 // turns the big gear, which winds the spool, raising the spider.
