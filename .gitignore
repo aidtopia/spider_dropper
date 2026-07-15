@@ -6,6 +6,7 @@ schematics/spider_dropper/spider_dropper-backups
 schematics/spider_dropper/fp-info-cache
 schematics/*/gerbers/*
 schematics/spider_dropper/*.lck
+norcal_haunters
 notes/IMG*.jpeg
 notes/P*.JPG
 notes/P*.jpg

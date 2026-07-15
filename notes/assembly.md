@@ -1,8 +1,19 @@
-# Stupidly Simple Spider Dropper<br>Assembly Instructions
+# Stupidly Simple Spider Dropper<br>Assembly Instructions<br>DRAFT
 
 Adrian McCarthy 2026 for the [Northern California Haunters Group](https://www.norcalhaunters.com/)
 
 Source files and documentation available at https://github.com/aidtopia/spider_dropper.
+
+## Safety
+
+* This kit contains small parts that could pose a choking hazard.
+* Some parts may contain small amounts of lead and/or other toxic substances.  Wash hands after handling.
+* Soldering irons, heat guns, and other tools used in assembly have their own risks.  Take appropriate precautions.
+* Children should assemble or use the spider dropper only under adult supervision.
+* Intended for indoor use.
+* For the DC models, use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
+* Refer to the User Guide for important precautions regarding the setup and operation of the spider dropper.
+* Disposal:  The circuit boards and soldered components are e-waste.  The printed parts may be recyclable, but few collection programs will accept them.
 
 ## Three Models
 
@@ -13,17 +24,6 @@ Make sure you know which model you are building.  Much of the assembly is the sa
 | Stupidy Simple Spider Dropper AC | `#SSSDAC` | reindeer |    continuous    |   none    |
 | Stupidy Simple Spider Dropper DC | `#SSSDDC` |  12V DC  |    continuous    |  2 wires  |
 | SSSD w/ Slightly Smarter Upgrade | `#SSSDUP` |  12V DC  | motion triggered |  circuit  |
-
-## Safety
-
-* This kit contains small parts that could pose a choking hazard.
-* Some parts may contain lead and/or other toxic substances.  Wash hands after handling.
-* Soldering irons, heat guns, and other tools used in assembly have their own risks.  Take appropriate precautions.
-* Children should assemble or use the spider dropper only under adult supervision.
-* Intended for indoor use.
-* For the DC models, use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
-* Refer to the User Guide for important precautions regarding the setup and operation of the spider dropper.
-* Disposal:  The circuit board and soldered components, including the PIR motion module, should be treated as e-waste.  The printed parts _may_ be recyclable but few collection programs will accept them.
 
 ## Tools
 
@@ -45,20 +45,20 @@ Make sure you know which model you are building.  Much of the assembly is the sa
 | drill with 1/8" (3mm) bit      |recommended|recommended|recommended|
 | hot glue gun (w/ black glue)   |recommended|recommended|recommended|
 
+Use only manual screwdrivers for this project.
+
 Tools tagged with `#3D` are ones you can print with a 3D printer.  (Subject to change in California pending AB 2047.)
 
 \* **Norcal Haunters:** Crimping pliers are not required for Make & Take kits.
 
 ## Parts
 
-For detailed specifications and possible sources for the parts, check the spreadsheet in the project repository on Github.
-
 | Part                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
 | motor                          | reindeer  |  JGY-370  |  JGY-370  |
 | shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
 | 2-wire motor "pigtail"         |           |  barrel   |  JST XH   |
-| [M3 threaded insert](#threaded-inserts) | 1 |    1     |     1     |
+| [M3 threaded insert](#threaded-inserts) | 2 |    1     |     1     |
 | M3×16mm sheet metal screws     |     4     |           |           |
 | M3×6mm machine screws          |     2     |     6     |     7     |
 | base plate `#3D`               |     1     |     1     |     1     |
@@ -75,9 +75,11 @@ For detailed specifications and possible sources for the parts, check the spread
 
 Parts tagged `#3D` are ones you can print with a 3D printer.  (Subject to change in California per AB 2047.)
 
+For detailed specifications and possible sources for the parts, check the spreadsheet in the project repository on Github.
+
 #### Threaded Inserts
 
-There are three options for the threaded insert.  You must match the insert type to the shaft adapter type.  (Note that `#SSSDUP` requires one M3 square nut in addition to whichever inserts are used for the shaft adapter.)
+There are three options for the threaded insert above.  You must match the insert type to the shaft adapter type.  (Note that `#SSSDUP` requires one M3 square nut in addition to whichever inserts are used for the shaft adapter.)
 
 | Threaded Insert                        | Notes                       |
 | :------------------------------------- | :-------------------------- |
@@ -88,8 +90,6 @@ There are three options for the threaded insert.  You must match the insert type
 **Norcal Haunters:**  Heat-set threaded inserts have been pre-installed in the shaft adapters in the Make & Take kits.
 
 ### Additional Parts (`#SSSDUP` only)
-
-The Slightly Smarter upgrade adds a circuit board and sensor.
 
 | Qty | Circuit Part                    | | Qty | Sensor Part                |
 | --: | :------------------------------ |-| --: | :------------------------- |
@@ -111,7 +111,7 @@ Perform the steps in order, using the checkboxes to keep track of your progress.
 
 **Norcal Haunters:**  Some steps have been performed in advance in the Make & Take kits, so those checkboxes have been pre-checked.
 
-### Print the Printable Parts
+### Print the Printable
 
 The project source files on GitHub include the OpenSCAD sources for generating the 3D models as STL files.  The pre-generated models will be available on Printables. [TODO]
 
@@ -168,7 +168,7 @@ The 3D parts are designed to be printed with a 0.4&nbsp;mm nozzle without suppor
 - [x] Insert M3×6mm screw(s) partway into the adapter.
 - [ ] Slip the shaft adapter over the motor shaft as far down as it will go.
 - [ ] Rotate the adapter until the set screw is perpendicular to the flat side of the motor shaft.
-- [ ] Tighten the set screw(s) against the shaft as tightly as you can with a manual screwdriver.  Ensure the shaft adapter remains all the way down on the shaft as you tighten.
+- [ ] Tighten the set screw(s) against the shaft, ensuring the adapter remains all the way down the shaft.
 
 > Note:  The set screws ensure the adapter rotates with the motor shaft.  In the next step, you'll install a shaft screw to ensure the adapter doesn't work its way off the end of the shaft.
 
@@ -182,22 +182,10 @@ The 3D parts are designed to be printed with a 0.4&nbsp;mm nozzle without suppor
 
 ### Install the Motor
 
-- [ ] With the motor shaft pointing up, slip the base plate over the motor so the shaft adapter passes through the largest hole.
-- [ ] Align the motor mounting holes on the base plate with the ones on the motor.
+- [ ] Place the build plate on the face of the motor as shown.
+- [ ] Attach the motor with four screws as shown.
 
-#### For the Reindeer Motor (`#SSSDAC`)
-
-- [ ] Use 4 M3×16mm self-tapping screws to attach the motor to the base plate.
-
-> Tip:  Work carefully and screw them in slowly while applying firm pressure.  Repeated insertions of the self-tapping screws will wear out the plastic.
-
-![Progress:  Motor Attached](progress_motor_attached_deer.png)
-
-#### For the DC Motor (`#SSSDDC` or `#SSSDUP`)
-
-- [ ] Use 4 M3×6mm machine screws to fasten the motor to the base plate.
-
-![Progress:  Motor Attached](progress_motor_attached_dc.png)
+![Mounting the motor to the base plate.](mounting_the_motor.png)
 
 ### Solder the Slightly Smarter Circuit (`#SSSDUP` only)
 
@@ -243,7 +231,9 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 ![Progress:  Slightly Smarter circuit installed](progress_pcb_attached.png)
 
 - [ ] Plug the motor pigtail into the 2-pin connector on the circuit board.
-- [ ] Use a small zip tie to secure the pigtail to the base plate as shown. TODO
+- [ ] Secure the pigtail to the base plate with a small zip tie as shown.
+
+![Motor Pigtail Secured with zip tie](pigtail_secured.jpg)
 
 ### Make the Sensor Cable (`#SSSDUP` only)
 
@@ -261,6 +251,8 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ### Connect the Motion Sensor (`#SSSDUP` only)
 
+![Motion Sensor Assembly](sensor_assembly_exploded.jpg)
+
 - [ ] Remove the flat nut from the cable gland.  You won't need it.
 - [ ] Screw the gland into the back of the 3D-printed sensor housing.
 
@@ -272,18 +264,28 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 > Tip:  Be careful not to dislodge the rubber seal held at the tips of the fins in the cable gland.
 
-- [ ] When the pins extend out the top of the sensor housing, insert them into the Dupont connector body in **RED/YELLOW/BLACK** order, starting at either end.
+![Progress: Cable through sensor housing](sensor_assembly_dupont.jpg)
+
+- [ ] When the pins extend out the top of the sensor housing, insert them into the Dupont connector body in **RED/YELLOW/BLACK** order.
+
+!["+" pin goes to red wire](sensor_assembly_cable_terminated.jpg)
+
 - [ ] Insert the PIR sensor module into the Dupont connector, ensuring that the **pin marked `+` or `VIN` corresponds to the RED wire**.
 
 > Tip:  If the dome pops off the PIR module, be careful not to touch the exposed sensor.  Replace the dome and hold it in place until the module is secured in the housing.
 
 - [ ] Push gently on the dome of the PIR module until the brim is flat against the rim of the housing.
 
-> Tip:  Do not pull the module into the housing from the cable, as that may loosen the connection.
+> Tip:  You'll need to guide the excess cable out through the gland as you push the sensor into the housing, but do not pull the cable so hard that it could pull the connector from the sensor module.
+
+![Brim of sensor dome is flat against the rim of the housing](sensor_assembly_brim_to_rim.jpg)
 
 - [ ] Screw the cap onto the sensor housing.  When tightened, it pinches the brim of the dome, holding the module secure inside the housing.
 - [ ] Slide the round nut up the cable and back onto the cable gland and hand tighten.
-- [ ] Set the sensor and cable aside for now.
+
+![Completed sensor assembly](sensor_assembly_completed.jpg)
+
+- [ ] Set the sensor cable aside for now.
 
 ### Install the Spool
 
