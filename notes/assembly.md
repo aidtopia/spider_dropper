@@ -372,4 +372,4 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 
 Congratulations!  You've completed assembly of the Stupidly Simple Spider Dropper.
 
-Please consult the User Guide for tips on setting up and operating the spider dropper in your haunt.  In particular, it has important information on avoiding and dealing with a jam.
+Consult the User Guide to learn how to set up and operate your spider dropper safely.
