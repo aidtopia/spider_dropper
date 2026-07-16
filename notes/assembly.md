@@ -201,7 +201,7 @@ The 3D parts are designed to be printed with a 0.4&nbsp;mm nozzle without suppor
 
 - [ ] Carefully bend the legs of the MOSFET back by 90° and then solder the MOSFET at Q1.
 
-![MOSFET soldered to board after bending the leads 90 degrees](pcb_mosfet_pins_alt.png)
+![MOSFET soldered to board after bending the leads 90 degrees](pcb_mosfet_pins.png)
 
 - [ ] Solder the 3- and 2-pin JST XH connectors at J1 and J3, respectively. Match the orientation to the markings on the board.
 - [ ] Solder the PTC fuse at F1, being careful not to overheat it.
@@ -324,7 +324,7 @@ The base plate has two string guides at the edges near the spool.  Decide whethe
 - [ ] Tie the line to itself.
 - [ ] Ensure the string remains entirely within the recessed part of the spool.
 
-![Line Routing](string_path_small.png)
+![Line Routing](string_path.png)
 
 ### Prepare the Spider
 
@@ -336,6 +336,8 @@ To make the toy spider hang realistically ...
 - [ ] Dip the zip tie in a blob of hot glue (use the black "cosplay" glue if you can).
 - [ ] Insert the zip tie into the hole so that only the loop protrudes.  Ideally the glue should fill any gap between the zip tie and the sides of the hole.
 - [ ] Allow the hot glue to cool, then check that zip tie is secure.
+
+![Prepare the spider](spider_prep.jpg)
 
 ### Attach the Spider
 
