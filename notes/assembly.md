@@ -44,9 +44,9 @@ Make sure you know which model you are building.  Much of the assembly is the sa
 | drill with 1/8" (3mm) bit      |recommended|recommended|recommended|
 | hot glue gun (w/ black glue)   |recommended|recommended|recommended|
 
-Use only manual screwdrivers for this project.
-
 Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in California pending AB 2047.)
+
+Use only manual screwdrivers for this project.
 
 \* **Norcal Haunters:** Crimping pliers are not required for Make & Take kits.
 
@@ -141,17 +141,14 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 - [ ] If it turns counterclockwise, reverse the polarity.
 - [ ] If it turns clockwise, mark the terminal connected to the positive (red) wire.
 - [ ] Disconnect the motor from the power.
+- [ ] Slip ~25&nbsp;mm (1&nbsp;inch) length of heat-shrink tubing over the pigtail wires.  Do not shrink it yet.
+- [ ] Slip ~10&nbsp;mm (3/8&nbsp;inch) of heat-shrink tubing onto each of the pigtail wires.
+- [ ] Strip about ~5&nbsp;mm (3/16&nbsp;inch) from the red wire and solder it to the marked terminal.
+- [ ] Strip ~5&nbsp;mm (3/16&nbsp;inch) from the black wire and solder it to the other terminal.
+- [ ] Shrink the individual tubes over the exposed connections.
+- [ ] Shrink the larger tubing so that the center of it is ~75&nbsp;mm (3&nbsp;inches) from the connector.
 
-> Note:  Some motors are pre-marked with a red dot, but always double check using the steps above.
-
-- [ ] Slip an approximately 25 mm (1 inch) length of heat-shrink tubing over the pigtail wires.  Do not shrink it yet.
-- [ ] Slip a short length of heat-shrink tubing onto each of the pigtail wires.
-- [ ] Strip about 5 mm (3/8 inch) from the red wire and solder it to the marked terminal.
-- [ ] Strip about 5 mm (3/8 inch) from the black wire and solder it to the other terminal.
-- [ ] Slide the individual tubes over the exposed connections and shrink them down.
-- [ ] Slide the larger tubing so that the center of it is about 75 mm (3 inches) from the connector and shrink it down.
-
-![Motor pigtail](motor_pigtail.png)
+![Motor pigtail](motor_pigtails.png)
 
 ### Attach the Shaft Adapter
 
@@ -219,15 +216,15 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 **Norcal Haunters**:  The Make & Take kits have pre-made sensor cables.  You're welcome.
 
-- [x] Remove about 25 mm (1 inch) of the jacket from one end of the cable, being careful not to nick the insulation on the wires inside.
-- [x] Strip about 2 mm from the tips of each of the exposed wires.
+- [x] Remove ~25&nbsp;mm (1&nbsp;inch) of the jacket from one end of the cable.
+- [x] Strip ~2&nbsp;mm from the tips of each of the exposed wires.
 - [x] Crimp the JST XH pins (female) onto the wires.
-- [x] Insert the pins into the JST XH housing in **RED/YELLOW/BLACK** order, starting with RED closest to the notch in the housing.
-- [x] Slide an approximately 25 mm (1 inch) length of heat-shrink tubing over the cable and shrink it down approximately 75 mm (3 inch) back from the JST connector.
-- [x] Remove about 25 mm (1 inch) of the jacket from the other end of the cable.
-- [x] Strip about 2 mm from the tips of each of the exposed wires.
+- [x] Insert the pins into the JST XH housing in **RED/YELLOW/BLACK** order, with RED next to the notch in the housing.
+- [x] Slide ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the cable and shrink it ~75&nbsp;mm (3&nbsp;inches) from the connector.
+- [x] Remove ~25&nbsp;mm (1&nbsp;inch) of the jacket from the other end of the cable.
+- [x] Strip ~2&nbsp;mm from the tips of each of the exposed wires.
 - [x] Crimp the Dupont-style pins (female) onto the wires.  Do not put them into the connector housing yet.
-- [x] Slide another 25 mm (1 inch) length of heat shrink tubing over the cable and shrink it down approximately 50 mm (2 inches) from the tips of the pins.
+- [x] Slide ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the cable and shrink it ~50&nbsp;mm (2&nbsp;inches) from the tips of the pins.
 
 ### Connect the Motion Sensor (`#SSSDUP` only)
 
@@ -299,7 +296,7 @@ The base plate has two string guides at the edges near the spool.  Decide whethe
 
 - [ ] Feed one end of the monofilament through the guide toward the spool.
 - [ ] Thread the monofilament into one of the holes along the edge of the spool.
-- [ ] Loop the monofilament the two holes in the bar that divides the recess.
+- [ ] Loop the monofilament through the two holes in the bar that divides the recess.
 - [ ] Tie the line to itself.
 - [ ] Trm the excess and ensure the knot remains entirely within the recess.
 
@@ -314,7 +311,7 @@ To make the toy spider hang realistically ...
 - [ ] Carefully drill a hole in the back of the spider's abdomen (near the spinnerets) and toward its center of mass.  The hole needn't be deeper than the trimmed zip tie is long.
 - [ ] Dip the zip tie in a blob of hot glue (use the black "cosplay" glue if you can).
 - [ ] Insert the zip tie into the hole so that only the loop protrudes.  Ideally the glue should fill any gap between the zip tie and the sides of the hole.
-- [ ] Allow the hot glue to cool, then check that zip tie is secure.
+- [ ] Allow the hot glue to cool, then check that the zip tie is secure.
 
 ![Prepare the spider](spider_prep.jpg)
 

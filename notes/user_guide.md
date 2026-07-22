@@ -2,7 +2,7 @@
 
 Adrian McCarthy 2026 for the [Northern California Haunters Group](https://www.norcalhaunters.com/)
 
-Source files and documentation available at https://github.com/aidtopia/spider_dropper.
+Source files and documentation available at https://github.com/aidtopia/spider_dropper
 
 ## Setup
 
