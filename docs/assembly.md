@@ -124,12 +124,10 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ### Prepare the Reindeer Motor (`#SSSDAC` only)
 
-- [ ] Plug in the reindeer motor.
-- [ ] Confirm it turns clockwise and does not auto-reverse if obstructed.
-- [ ] Unplug the motor.
+- [ ] Confirm the motor turns clockwise and does not auto-reverse if obstructed.
 - [ ] Remove any crank or hub that came with the motor.
 
-> Tip:  Retain the shaft screw for later.  If you need to replace the shaft screw, use an M4×10mm machine screw.
+> Tip:  Retain the shaft screw for later.  If you need to replace it, use an M4×10mm machine screw.
 
 - [ ] Remove the screws from the four mounting posts.
 
@@ -141,7 +139,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 - [ ] If it turns counterclockwise, reverse the polarity.
 - [ ] If it turns clockwise, mark the terminal connected to the positive (red) wire.
 - [ ] Disconnect the motor from the power.
-- [ ] Slip ~25&nbsp;mm (1&nbsp;inch) length of heat-shrink tubing over the pigtail wires.  Do not shrink it yet.
+- [ ] Slip ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the pigtail wires.  Do not shrink it yet.
 - [ ] Slip ~10&nbsp;mm (3/8&nbsp;inch) of heat-shrink tubing onto each of the pigtail wires.
 - [ ] Strip about ~5&nbsp;mm (3/16&nbsp;inch) from the red wire and solder it to the marked terminal.
 - [ ] Strip ~5&nbsp;mm (3/16&nbsp;inch) from the black wire and solder it to the other terminal.
@@ -152,13 +150,13 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ### Attach the Shaft Adapter
 
-- [x] Insert the appropriate nut or heat-set insert into the side of the shaft adapter.
+- [x] Install the appropriate nut or heat-set insert into the side of the shaft adapter.
 - [x] Screw an M3×6mm screw just far enough to engage the threads.
 - [x] If your motor's shaft is flattened on two sides, repeat the previous steps.
 
 ![Attaching the shaft adapter](attach_adapter.png)
 
-- [ ] Slip the shaft adapter over the motor shaft as far as it will go.
+- [ ] Slip the shaft adapter over the motor shaft as far down as it will go.
 - [ ] Align the set screw(s) with the flat side(s) of the motor shaft and tighten.
 - [ ] Screw the shaft screw through the top of the adapter and into the end of the shaft.  
 
@@ -172,14 +170,11 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ![Bare circuit board](pcb_front.png)
 
-> Tip: Use the pin bender (`#3D`) for the leads of the resistor and diode.
+> Tip: Use the pin bender (`#3D`) to bend the leads of the resistor, diode, and MOSFET.
 
 - [ ] Solder the 100KΩ resistor (brown/black/yellow) at R1.
 - [ ] Solder the 1N4001 diode at D1 with the striped end as marked on the board.
 - [ ] Trim the excess leads.
-
-> Tip: Use the pin bender (`#3D`) to bend the legs of the MOSFET.
-
 - [ ] Carefully bend the legs of the MOSFET back by 90° and then solder the MOSFET at Q1.
 
 ![MOSFET soldered to board after bending the leads 90 degrees](pcb_mosfet_pins.png)
@@ -200,7 +195,7 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ### Attach the Circuit Board (`#SSSDUP` only)
 
-- [ ] Place the circuit onto the base plate with the components on the motor side the switch on the axle side.
+- [ ] Place the circuit onto the base plate with the components on the motor side and the switch on the axle side.
 > Tip:  Match the triangular arrow printed on the board to the one embossed on the build plate to get the correct orientation.  Slide that edge of the board under the lip first.
 
 - [ ] Secure the circuit board with an M3×6mm screw at H1 and a square nut in the pocket underneath.
@@ -214,13 +209,14 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ### Make the Sensor Cable (`#SSSDUP` only)
 
-**Norcal Haunters**:  The Make & Take kits have pre-made sensor cables.  You're welcome.
-
-- [x] Remove ~25&nbsp;mm (1&nbsp;inch) of the jacket from one end of the cable.
+- [x] Remove ~50&nbsp;mm (2&nbsp;inches) of the jacket from one end of the cable.
 - [x] Strip ~2&nbsp;mm from the tips of each of the exposed wires.
 - [x] Crimp the JST XH pins (female) onto the wires.
 - [x] Insert the pins into the JST XH housing in **RED/YELLOW/BLACK** order, with RED next to the notch in the housing.
 - [x] Slide ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the cable and shrink it ~75&nbsp;mm (3&nbsp;inches) from the connector.
+
+![Sensor cable](sensor_cable.png)
+
 - [x] Remove ~25&nbsp;mm (1&nbsp;inch) of the jacket from the other end of the cable.
 - [x] Strip ~2&nbsp;mm from the tips of each of the exposed wires.
 - [x] Crimp the Dupont-style pins (female) onto the wires.  Do not put them into the connector housing yet.
@@ -334,6 +330,10 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 
 ### Test the Mechanism
 
+- [ ] Check the alignment by viewing the mechanism from the edge, as shown.
+
+![Alignment check](alignment.png)
+
 - [ ] Hang the mechanism from above with two zip ties, as shown.
 
 ![Suspension Points](hanging.png)
@@ -341,9 +341,9 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 - [ ] Allow the spool to fully unwind and the spider to dangle.
 - [ ] Connect the power.
 
-`#SSSDAC` and `#SSSDDC`:  The spider should rise and then drop suddenly.  The cycle should repeat continuously.
+`#SSSDAC`/`#SSSDDC`:  The spider should rise and then drop suddenly.  The cycle should repeat continuously.
 
-`#SSSDUP`:  The spider should rise to its highest point, and then stop until the sensor detects motion.  When that happens, the spider will drop suddenly, and then rise again.
+`#SSSDUP`:  The spider should rise to its highest point, and then stop until the sensor detects motion.  When that happens, the spider will drop suddenly and then rise again.
 
 - [ ] Confirm the line winds in an orderly fashion around the spool.
 - [ ] Confirm the drive gear doesn't rub against the spool.
