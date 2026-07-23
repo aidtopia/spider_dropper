@@ -80,11 +80,11 @@ Parts tagged `#3D` can be printed with a 3D printer.  (Subject to change in Cali
 
 There are three options for threaded inserts.  You must match the insert type to the shaft adapter type.  (Note that `#SSSDUP` requires one M3 square nut in addition to whichever inserts are used for the shaft adapter.)
 
-| Threaded Insert                        | Notes                       |
-| :------------------------------------- | :-------------------------- |
-| M3×5mm heat-set theaded insert         | Necessary for heavier props |
-| M3 _thin_ square nut (~1.8mm thick)    | Preferred over _regular_    |
-| M3 _regular_ square nut (~2.4mm thick) | OK for toy spider           |
+| Threaded Insert                              | Notes                       |
+| :------------------------------------------- | :-------------------------- |
+| M3S×4mm heat-set theaded insert              | Necessary for heavier props |
+| M3 _thin_ square nut (~1.8&nbsp;mm thick)    | Preferred over _regular_    |
+| M3 _regular_ square nut (~2.4&nbsp;mm thick) | OK for toy spider           |
 
 **Norcal Haunters:**  Heat-set threaded inserts have been pre-installed in the Make & Take kits.
 
