@@ -5,58 +5,59 @@ Adrian McCarthy 2026 for the [Northern California Haunters Group](https://www.no
 Source files and documentation available at https://github.com/aidtopia/spider_dropper<br>
 STL files will be available on `https:\\printables.com\` [TODO]
 
+## Three Models
+
+Make sure you know which model you are building.  Much of the assembly is the same for all three, but instructions specific to certain models will be tagged.
+
+| Model                             |   Tag     |  Motor   |   Effect       | Soldering |
+| :-------------------------------- | :-------: | :------: | :------------: | :-------: |
+| Stupidly Simple Spider Dropper AC | `#SSSDAC` | reindeer |   continuous   |   none    |
+| Stupidly Simple Spider Dropper DC | `#SSSDDC` |  12V DC  |   continuous   |  2 wires  |
+| SSSD w/ Slightly Smarter Upgrade  | `#SSSDUP` |  12V DC  |motion triggered|  circuit  |
+
 ## Safety
 
 * This kit contains small parts that could pose a choking hazard.
 * Some parts may contain small amounts of lead and/or other toxic substances.  Wash hands after handling.
 * Soldering irons, heat guns, and other tools used in assembly have their own risks.  Take appropriate precautions.
 * Children should assemble or use the spider dropper only under adult supervision.
-* Intended for indoor use.
 * For the DC models, use an ETL- or UL-listed 12 volt DC power adapter with a current rating of at least 250 mA.
 * Refer to the User Guide for important precautions regarding the setup and operation of the spider dropper.
-* Disposal:  The circuit boards and soldered components are e-waste.  The printed parts may be recyclable, but few collection programs will accept them.
-
-## Three Models
-
-Make sure you know which model you are building.  Much of the assembly is the same for all three, but instructions specific to certain models will be tagged.
-
-| Model                            |   Tag     |  Motor   |     Effect       | Soldering |
-| :------------------------------- | :-------: | :------: | :--------------: | :-------: |
-| Stupidy Simple Spider Dropper AC | `#SSSDAC` | reindeer |    continuous    |   none    |
-| Stupidy Simple Spider Dropper DC | `#SSSDDC` |  12V DC  |    continuous    |  2 wires  |
-| SSSD w/ Slightly Smarter Upgrade | `#SSSDUP` |  12V DC  | motion triggered |  circuit  |
+* Disposal:  The circuit boards and soldered components are e-waste.
 
 ## Tools
 
 | Tool                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
-| phillips screwdriver           | \#1 & \#2 |    \#1    |   \#1     |
+| Phillips screwdriver           | \#0 & \#1 |    \#0    |   \#0     |
 | small wire cutter              | required  | required  | required  |
-| wire stripper                  |           | required  | required  |
+| wire stripper (22 AWG)         |           | required  | required  |
 | soldering iron                 |           | required  | required  |
-| heat gun                       |           |recommended|recommended|
+| heat gun (heat-shrink tubing)  |           |recommended|recommended|
 | needle nose pliers or tweezers |recommended|recommended|recommended|
 | crimping pliers (Dupont)       |           |           | required\*|
 | crimping pliers (JST XH)       |           |           | required\*|
 | bearing removal tool `#3D`     | optional  | optional  | optional  |
 | soldering jig `#3D`            |           |           | optional  |
+| pin bender `#3D`               |           |           | optional  |
 | measuring tape or ruler        |recommended|recommended|recommended|
 | drill with 1/8" (3mm) bit      |recommended|recommended|recommended|
 | hot glue gun (w/ black glue)   |recommended|recommended|recommended|
 
-Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in California pending AB 2047.)
+\* **Norcal Haunters:** Crimping pliers are not required for the Make & Take kits.
+
 
 Use only manual screwdrivers for this project.
 
-\* **Norcal Haunters:** Crimping pliers are not required for Make & Take kits.
+Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in California pending AB 2047.)
 
 ## Parts
 
 | Part                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
 | :----------------------------- | :-------: | :-------: | :-------: |
 | motor                          | reindeer  |  JGY-370  |  JGY-370  |
-| shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
 | 2-wire motor "pigtail"         |           |  barrel   |  JST XH   |
+| shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
 | [M3 threaded inserts](#threaded-inserts) |2|     1     |     1     |
 | M3×16mm sheet metal screws     |     4     |           |           |
 | M3×6mm machine screws          |     2     |     6     |     7     |
@@ -67,18 +68,17 @@ Use only manual screwdrivers for this project.
 | hub screw `#3D`                |     1     |     1     |     1     |
 | monofilament (fishing line)    |  3+ feet  |  3+ feet  |  3+ feet  |
 | toy spider                     |     1     |     1     |     1     |
-| M3 square nut                  |           |           |     1     |
 | 4" zip ties                    |     1     |     2     |     2     |
 | 8" zip ties                    |     2     |     2     |     3     |
 | 12VDC power supply             |           | not incl. | not incl. |
 
-For detailed specifications and possible sources for the parts, check the spreadsheet in the project repository on Github.
+For detailed part specifications and possible sources, check the spreadsheet in the project repository on Github.
 
 Parts tagged `#3D` can be printed with a 3D printer.  (Subject to change in California pending AB 2047.)
 
 #### Threaded Inserts
 
-There are three options for threaded inserts.  You must match the insert type to the shaft adapter type.  (Note that `#SSSDUP` requires one M3 square nut in addition to whichever inserts are used for the shaft adapter.)
+There are three options for threaded inserts.  You must match the insert type to the shaft adapter type.
 
 | Threaded Insert                              | Notes                       |
 | :------------------------------------------- | :-------------------------- |
@@ -92,17 +92,19 @@ There are three options for threaded inserts.  You must match the insert type to
 
 | Qty | Circuit Part                    | | Qty | Sensor Part                |
 | --: | :------------------------------ |-| --: | :------------------------- |
-|   1 | Slightly Smarter circuit board  | |   1 | mini PIR motion sensor     |
-|   1 | PJ-044AH barrel connector       | |   1 | PIR housing `#3D`          |
-|   1 | 250 mA PTC resettable fuse      | |   1 | PIR cap (snoot) `#3D`      |
-|   1 | 100Kohm resistor                | |   1 | PG7 cable gland            |
-|   1 | 1N4001 diode                    | |   1 | 3-wire 22-26 AWG cable     |
-|   1 | IRLZ3FN n-channel MOSFET        | |   3 | Dupont-style female pins   |
-|   1 | 2-pin JST XH (male) connector   | |   1 | Dupont-style 3-pin housing |
-|   1 | 3-pin JST XH (male) connector   | |   3 | JST XH header female pins  |
+|   1 | Slightly Smarter circuit board  | |   1 | HC-SR312 PIR motion sensor |
+|   1 | 100Kohm resistor                | |   1 | PIR housing `#3D`          |
+|   1 | 1N4001 diode                    | |   1 | PIR cap (snoot) `#3D`      |
+|   1 | IRLZ3FN n-channel MOSFET        | |   1 | PG7 cable gland            |
+|   1 | 2-pin JST XH (male) connector   | |   1 | 3-wire 22-26 AWG cable     |
+|   1 | 3-pin JST XH (male) connector   | |   3 | Dupont-style female pins   |
+|   1 | 250 mA PTC resettable fuse      | |   1 | Dupont-style 3-pin housing |
+|   1 | PJ-044AH barrel connector       | |   3 | JST XH header female pins  |
 |   1 | ZX40E20C01 microswitch          | |   1 | JST XH 3-pin housing       |
-|   1 | additional M3×6mm machine screw | |     |                            |
 |   1 | additional M3 square nut        | |     |                            |
+
+ 
+
 
 ## Assembly
 
@@ -114,41 +116,37 @@ Perform these steps in order, using the checkboxes to keep track of your progres
 
 Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for durability.
 
-- [x] Print the coarse parts (layer height 0.2&nbsp;mm to 0.3&nbsp;mm)
+- [x] Print the coarse parts
 
 ![Print layout for coarse parts](coarse_parts.png)
 
-- [x] Print the fine parts (layer height 0.15&nbsp;mm, 100% infill, quality over speed)
+- [x] Print the fine parts
 
 ![Print layout for fine parts](fine_parts.png)
 
 ### Prepare the Reindeer Motor (`#SSSDAC` only)
 
 - [ ] Confirm the motor turns clockwise and does not auto-reverse if obstructed.
-- [ ] Remove any crank or hub that came with the motor.
-
-> Tip:  Retain the shaft screw for later.  If you need to replace it, use an M4×10mm machine screw.
-
+- [ ] Remove any crank or hub that came with the motor. Retain the shaft screw for later.
 - [ ] Remove the screws from the four mounting posts.
 
 ![Locations of Reindeer Motor Mounting Posts](deer_motor_mounts.png)
 
 ### Prepare the DC Motor (`#SSSDDC` or `#SSSDUP`)
 
-- [ ] Temporarily connect 12 volts DC to the terminals of the motor.
+- [ ] Temporarily connect 12 volts DC to the motor.
 - [ ] If it turns counterclockwise, reverse the polarity.
-- [ ] If it turns clockwise, mark the terminal connected to the positive (red) wire.
+- [ ] Mark the terminal connected to the positive (red) wire.
 - [ ] Disconnect the motor from the power.
-- [ ] Slip ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the pigtail wires.  Do not shrink it yet.
-- [ ] Slip ~10&nbsp;mm (3/8&nbsp;inch) of heat-shrink tubing onto each of the pigtail wires.
-- [ ] Strip about ~5&nbsp;mm (3/16&nbsp;inch) from the red wire and solder it to the marked terminal.
+- [ ] Shrink ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the pigtail wires ~75&nbsp;mm (3&nbsp;in.) from the connector.
+- [ ] Slip ~10&nbsp;mm (3/8&nbsp;inch) of heat-shrink tubing onto each of the pigtail wires. Do not shrink them yet.
+- [ ] Strip ~5&nbsp;mm (3/16&nbsp;inch) from the red wire and solder it to the marked terminal.
 - [ ] Strip ~5&nbsp;mm (3/16&nbsp;inch) from the black wire and solder it to the other terminal.
-- [ ] Shrink the individual tubes over the exposed connections.
-- [ ] Shrink the larger tubing so that the center of it is ~75&nbsp;mm (3&nbsp;inches) from the connector.
+- [ ] Shrink the individual tubes over the connections.
 
 ![Motor pigtail](motor_pigtails.png)
 
-### Attach the Shaft Adapter
+### Install the Motor
 
 - [x] Install the appropriate nut or heat-set insert into the side of the shaft adapter.
 - [x] Screw an M3×6mm screw just far enough to engage the threads.
@@ -157,11 +155,8 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 ![Attaching the shaft adapter](attach_adapter.png)
 
 - [ ] Slip the shaft adapter over the motor shaft as far down as it will go.
-- [ ] Align the set screw(s) with the flat side(s) of the motor shaft and tighten.
+- [ ] Tighten the set screw(s) against the flat side(s) of the motor shaft.
 - [ ] Screw the shaft screw through the top of the adapter and into the end of the shaft.  
-
-### Install the Motor
-
 - [ ] Place the build plate on the motor and attach with four screws as shown.
 
 ![Mounting the motor to the base plate.](mounting_the_motor.png)
@@ -195,12 +190,10 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ### Attach the Circuit Board (`#SSSDUP` only)
 
-- [ ] Place the circuit onto the base plate with the components on the motor side and the switch on the axle side.
-> Tip:  Match the triangular arrow printed on the board to the one embossed on the build plate to get the correct orientation.  Slide that edge of the board under the lip first.
-
+- [ ] Match the triangular arrow on the circuit to the one embossed on the build plate and slide that end under the lip.
 - [ ] Secure the circuit board with an M3×6mm screw at H1 and a square nut in the pocket underneath.
 
-![Progress:  Slightly Smarter circuit installed](progress_pcb_attached.png)
+![Attaching the circuit board](attach_pcb.png)
 
 - [ ] Plug the motor pigtail into the 2-pin connector on the circuit board.
 - [ ] Secure the pigtail to the base plate with a small zip tie as shown.
@@ -253,8 +246,8 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ![Brim of sensor dome is flat against the rim of the housing](sensor_assembly_brim_to_rim.jpg)
 
-- [ ] Screw the cap onto the sensor housing.  When tightened, it pinches the brim of the dome, holding the module secure inside the housing.
-- [ ] Hand tighten the round nut onto the cable gland.
+- [ ] Screw the cap onto the sensor housing.
+- [ ] Tighten the round nut onto the cable gland.
 
 ![Completed sensor assembly](sensor_assembly_completed.jpg)
 
@@ -321,7 +314,7 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 - [ ] Keeping some tension on the string, wind the spool 2.5 revolutions in the direction shown by the arrows.  If the spider reaches the guide before you complete the turns, the spider was tied too high.
 - [ ] Trim the excess monofilament.
 
-### Final Connections (`#SSSDUP` only)
+### Final Connection (`#SSSDUP` only)
 
 - [ ] Plug the sensor into the 3-pin connector on the circuit board.
 - [ ] Use a small zip tie to secure the cable to the base plate as shown.
