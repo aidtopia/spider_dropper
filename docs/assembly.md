@@ -9,11 +9,11 @@ STL files will be available on `https:\\printables.com\` [TODO]
 
 Make sure you know which model you are building.  Much of the assembly is the same for all three, but instructions specific to certain models will be tagged.
 
-| Model                             |   Tag     |  Motor   |   Effect       | Soldering |
-| :-------------------------------- | :-------: | :------: | :------------: | :-------: |
-| Stupidly Simple Spider Dropper AC | `#SSSDAC` | reindeer |   continuous   |   none    |
-| Stupidly Simple Spider Dropper DC | `#SSSDDC` |  12V DC  |   continuous   |  2 wires  |
-| SSSD w/ Slightly Smarter Upgrade  | `#SSSDUP` |  12V DC  |motion triggered|  circuit  |
+| Model                             |    Tag     |  Motor   |   Effect       | Soldering |
+| :-------------------------------- | :--------: | :------: | :------------: | :-------: |
+| Stupidly Simple Spider Dropper AC | `#SSSD-AC` | reindeer |   continuous   |   none    |
+| Stupidly Simple Spider Dropper DC | `#SSSD-DC` |  12V DC  |   continuous   |  2 wires  |
+| SSSD w/ Slightly Smarter Upgrade  | `#SSSD-UP` |  12V DC  |motion triggered|  circuit  |
 
 ## Safety
 
@@ -27,22 +27,22 @@ Make sure you know which model you are building.  Much of the assembly is the sa
 
 ## Tools
 
-| Tool                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
-| :----------------------------- | :-------: | :-------: | :-------: |
-| Phillips screwdriver           | \#0 & \#1 |    \#0    |   \#0     |
-| small wire cutter              | required  | required  | required  |
-| wire stripper (22 AWG)         |           | required  | required  |
-| soldering iron                 |           | required  | required  |
-| heat gun (heat-shrink tubing)  |           |recommended|recommended|
-| needle nose pliers or tweezers |recommended|recommended|recommended|
-| crimping pliers (Dupont)       |           |           | required\*|
-| crimping pliers (JST XH)       |           |           | required\*|
-| bearing removal tool `#3D`     | optional  | optional  | optional  |
-| soldering jig `#3D`            |           |           | optional  |
-| pin bender `#3D`               |           |           | optional  |
-| measuring tape or ruler        |recommended|recommended|recommended|
-| drill with 1/8" (3mm) bit      |recommended|recommended|recommended|
-| hot glue gun (w/ black glue)   |recommended|recommended|recommended|
+| Tool                           | `#SSSD-AC` | `#SSSD-DC` | `#SSSD-UP` |
+| :----------------------------- | :--------: | :--------: | :--------: |
+| Phillips screwdriver           | \#0 & \#1  |    \#0     |    \#0     |
+| small wire cutter              |  required  |  required  |  required  |
+| wire stripper (22 AWG)         |            |  required  |  required  |
+| soldering iron                 |            |  required  |  required  |
+| heat gun (heat-shrink tubing)  |            |recommended |recommended |
+| needle nose pliers or tweezers |recommended |recommended |recommended |
+| crimping pliers (Dupont)       |            |            | required\* |
+| crimping pliers (JST XH)       |            |            | required\* |
+| bearing removal tool `#3D`     |  optional  |  optional  |  optional  |
+| soldering jig `#3D`            |            |            |  optional  |
+| pin bender `#3D`               |            |            |  optional  |
+| measuring tape or ruler        |recommended |recommended |recommended |
+| drill with 1/8" (3mm) bit      |recommended |recommended |recommended |
+| hot glue gun (w/ black glue)   |recommended |recommended |recommended |
 
 \* **Norcal Haunters:** Crimping pliers are not required for the Make & Take kits.
 
@@ -53,24 +53,24 @@ Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in
 
 ## Parts
 
-| Part                           | `#SSSDAC` | `#SSSDDC` | `#SSSDUP` |
-| :----------------------------- | :-------: | :-------: | :-------: |
-| motor                          | reindeer  |  JGY-370  |  JGY-370  |
-| 2-wire motor "pigtail"         |           |  barrel   |  JST XH   |
-| shaft adapter `#3D`            |    7mm    |    6mm    |    6mm    |
-| [M3 threaded inserts](#threaded-inserts) |2|     1     |     1     |
-| M3×16mm sheet metal screws     |     4     |           |           |
-| M3×6mm machine screws          |     2     |     6     |     7     |
-| base plate `#3D`               |     1     |     1     |     1     |
-| spool assembly `#3D`           |     1     |     1     |     1     |
-| 608 (skateboard) bearings      |     2     |     2     |     2     |
-| drive gear `#3D`               |     1     |     1     |     1     |
-| hub screw `#3D`                |     1     |     1     |     1     |
-| monofilament (fishing line)    |  3+ feet  |  3+ feet  |  3+ feet  |
-| toy spider                     |     1     |     1     |     1     |
-| 4" zip ties                    |     1     |     2     |     2     |
-| 8" zip ties                    |     2     |     2     |     3     |
-| 12VDC power supply             |           | not incl. | not incl. |
+| Part                           | `#SSSD-AC` | `#SSSD-DC` | `#SSSD-UP` |
+| :----------------------------- | :--------: | :--------: | :--------: |
+| motor                          |  reindeer  |  JGY-370   |  JGY-370   |
+| 2-wire motor "pigtail"         |            |   barrel   |  JST XH    |
+| shaft adapter `#3D`            |    7mm     |    6mm     |    6mm     |
+| [M3 threaded inserts](#threaded-inserts) |2 |     1      |     1      |
+| M3×16mm sheet metal screws     |     4      |            |            |
+| M3×6mm machine screws          |     2      |     6      |     7      |
+| base plate `#3D`               |     1      |     1      |     1      |
+| spool assembly `#3D`           |     1      |     1      |     1      |
+| 608 (skateboard) bearings      |     2      |     2      |     2      |
+| drive gear `#3D`               |     1      |     1      |     1      |
+| hub screw `#3D`                |     1      |     1      |     1      |
+| monofilament (fishing line)    |  3+ feet   |  3+ feet   |  3+ feet   |
+| toy spider                     |     1      |     1      |     1      |
+| 4" zip ties                    |     1      |     2      |     2      |
+| 8" zip ties                    |     2      |     2      |     3      |
+| 12VDC power supply             |            | not incl.  | not incl.  |
 
 For detailed part specifications and possible sources, check the spreadsheet in the project repository on Github.
 
@@ -88,7 +88,7 @@ There are three options for threaded inserts.  You must match the insert type to
 
 **Norcal Haunters:**  Heat-set threaded inserts have been pre-installed in the Make & Take kits.
 
-### Additional Parts (`#SSSDUP` only)
+### Additional Parts (`#SSSD-UP` only)
 
 | Qty | Circuit Part                    | | Qty | Sensor Part                |
 | --: | :------------------------------ |-| --: | :------------------------- |
@@ -124,7 +124,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ![Print layout for fine parts](fine_parts.png)
 
-### Prepare the Reindeer Motor (`#SSSDAC` only)
+### Prepare the Reindeer Motor (`#SSSD-AC` only)
 
 - [ ] Confirm the motor turns clockwise and does not auto-reverse if obstructed.
 - [ ] Remove any crank or hub that came with the motor. Retain the shaft screw for later.
@@ -132,7 +132,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ![Locations of Reindeer Motor Mounting Posts](deer_motor_mounts.png)
 
-### Prepare the DC Motor (`#SSSDDC` or `#SSSDUP`)
+### Prepare the DC Motor (`#SSSD-DC` or `#SSSD-UP`)
 
 - [ ] Temporarily connect 12 volts DC to the motor.
 - [ ] If it turns counterclockwise, reverse the polarity.
@@ -161,7 +161,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 
 ![Mounting the motor to the base plate.](mounting_the_motor.png)
 
-### Solder the Slightly Smarter Circuit (`#SSSDUP` only)
+### Solder the Slightly Smarter Circuit (`#SSSD-UP` only)
 
 ![Bare circuit board](pcb_front.png)
 
@@ -188,7 +188,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 ![Switch installed on back of circuit board](pcb_back_populated.png)<br>
 Note:  The lever of the switch is smaller than shown in the illustration above.
 
-### Attach the Circuit Board (`#SSSDUP` only)
+### Attach the Circuit Board (`#SSSD-UP` only)
 
 - [ ] Match the triangular arrow on the circuit to the one embossed on the build plate and slide that end under the lip.
 - [ ] Secure the circuit board with an M3×6mm screw at H1 and a square nut in the pocket underneath.
@@ -200,7 +200,7 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ![Motor Pigtail Secured with zip tie](pigtail_secured.jpg)
 
-### Make the Sensor Cable (`#SSSDUP` only)
+### Make the Sensor Cable (`#SSSD-UP` only)
 
 - [x] Remove ~50&nbsp;mm (2&nbsp;inches) of the jacket from one end of the cable.
 - [x] Strip ~2&nbsp;mm from the tips of each of the exposed wires.
@@ -215,7 +215,7 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 - [x] Crimp the Dupont-style pins (female) onto the wires.  Do not put them into the connector housing yet.
 - [x] Slide ~25&nbsp;mm (1&nbsp;inch) of heat-shrink tubing over the cable and shrink it ~50&nbsp;mm (2&nbsp;inches) from the tips of the pins.
 
-### Connect the Motion Sensor (`#SSSDUP` only)
+### Connect the Motion Sensor (`#SSSD-UP` only)
 
 ![Motion Sensor Assembly](sensor_assembly_exploded.jpg)
 
@@ -314,7 +314,7 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 - [ ] Keeping some tension on the string, wind the spool 2.5 revolutions in the direction shown by the arrows.  If the spider reaches the guide before you complete the turns, the spider was tied too high.
 - [ ] Trim the excess monofilament.
 
-### Final Connection (`#SSSDUP` only)
+### Final Connection (`#SSSD-UP` only)
 
 - [ ] Plug the sensor into the 3-pin connector on the circuit board.
 - [ ] Use a small zip tie to secure the cable to the base plate as shown.
@@ -334,9 +334,9 @@ There must be at least 24 inches (610 mm) of line between the bottom of the stri
 - [ ] Allow the spool to fully unwind and the spider to dangle.
 - [ ] Connect the power.
 
-`#SSSDAC`/`#SSSDDC`:  The spider should rise and then drop suddenly.  The cycle should repeat continuously.
+`#SSSD-AC`/`#SSSD-DC`:  The spider should rise and then drop suddenly.  The cycle should repeat continuously.
 
-`#SSSDUP`:  The spider should rise to its highest point, and then stop until the sensor detects motion.  When that happens, the spider will drop suddenly and then rise again.
+`#SSSD-UP`:  The spider should rise to its highest point, and then stop until the sensor detects motion.  When that happens, the spider will drop suddenly and then rise again.
 
 - [ ] Confirm the line winds in an orderly fashion around the spool.
 - [ ] Confirm the drive gear doesn't rub against the spool.
