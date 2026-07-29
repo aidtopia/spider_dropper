@@ -255,25 +255,21 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ### Install the Spool
 
+![Inserting the bearings](insert_bearings.png)
+
 - [ ] Place one bearing on a strong, flat surface.
 - [ ] Position the wide face of the spool over the bearing and press down firmly until the bearing is inside the bore.
-- [ ] Repeat with the second bearing.
-
-> Note: Both bearings should be aligned and flush with the spool at both ends of the bore.  If not, you can use the bearing tool (`#3D`) to pop the bearings out and try again.
-
+- [ ] Invert the spool and repeat with the second bearing.
 - [ ] Slide the spool onto the axle so that the wider part is closer to the base plate.
-- [ ] Check that the spool can spin and that it doesn't wobble or rub the plate.
 
 ![Progress:  Spool installed](progress_spool_installed.png)
 
 ### Install the Drive Gear
 
-- [ ] Press the drive gear onto the shaft adapter so that the toothless section is closest to the small gear of the spool.
+- [ ] Press the drive gear onto the shaft adapter so that the toothless section is closest to the spool gear.
 - [ ] Confirm that the flat surface of the gear is flush with the top of the shaft adapter.
 - [ ] Turn the spool and confirm it doesn't rub against the drive gear.
 - [ ] Screw the hub screw into the shaft adapter and hand tighten.
-
-> Note: The hub screw ensures the drive gear won't work its way off the shaft adapter, and the drive gear, in turn, ensures the spool won't work off of its axle.
 
 ![Progress:  Drive gear installed](progress_gear_installed.png)
 
