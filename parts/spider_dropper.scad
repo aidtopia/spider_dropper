@@ -1237,8 +1237,8 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         $fs = nozzle_d/2;
         difference() {
             union() {
-                clean_cylinder(h=bearing608_th, d=bearing608_od-nozzle_d, chamfer=-nozzle_d);
-                clean_cylinder(h=2*bearing608_th, d=bearing608_id-nozzle_d, chamfer=-nozzle_d);
+                clean_cylinder(h=2*bearing608_th, d=bearing608_od-nozzle_d, chamfer=-nozzle_d);
+                clean_cylinder(h=3*bearing608_th, d=bearing608_id-nozzle_d, chamfer=-nozzle_d);
             }
             clean_cylinder(h=2*bearing608_th, d=4*nozzle_d, chamfer=nozzle_d, clear=1);
         }

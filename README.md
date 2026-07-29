@@ -58,9 +58,7 @@ Despite all the progress, I grew bored with the project.  The continuous operati
 
 Around this time, I was playing around with mini PIR motion sensors.  PIR motion sensors generally aren't the right solution for triggering a startle effect because they're sensitive over a large area.  Haunters often try to control the field of view by recessing the sensors in a bit of PVC pipe, which helps but can be bulky.  And older sensors generally require a microcontroller to deal with "settling time" and "debouncing."  But these newer PIR sensors have a built-in microcontroller that handles those details.  These were small enough to fit into a discreet 3D-printed housing to control the detection zone.  In fact, I'd already designed such a housing.  I had even figured out how to reduce false triggers from distant motion.  They could be powered with 12 volts, the same voltage as the DC motors.  And they were inexpensive.
 
-With what I'd learned about these newer PIR motion sensor, I realized I could start the DC motor turning with a simple circuit.  The only trick would be to turn the motor off just before the spider was about to drop.  I was vaguely aware of the "park" feature in windshield wiper motors, so I studied how those worked.  That was the last puzzle piece in the design of the Slightly Smarter upgrade.
-
-I managed
+With what I'd learned about these newer PIR motion sensors, I realized I could start the DC motor turning with a simple circuit.  The only trick would be to turn the motor off just before the spider was about to drop.  I was vaguely aware of the "park" feature in windshield wiper motors, so I studied how those worked.  That was the last puzzle piece in the design of the Slightly Smarter upgrade.
 
 And that inspired me to further refine the design until I had a kit design I felt good enough to share with other.
 
