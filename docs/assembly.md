@@ -95,7 +95,7 @@ There are three options for threaded inserts.  You must match the insert type to
 |   1 | Slightly Smarter circuit board  | |   1 | HC-SR312 PIR motion sensor |
 |   1 | 100Kohm resistor                | |   1 | PIR housing `#3D`          |
 |   1 | 1N4001 diode                    | |   1 | PIR cap (snoot) `#3D`      |
-|   1 | IRLZ3FN n-channel MOSFET        | |   1 | PG7 cable gland            |
+|   1 | IRLZ3FN n-channel MOSFET        | |   1 | M12 cable gland\*          |
 |   1 | 2-pin JST XH (male) connector   | |   1 | 3-wire 22-26 AWG cable     |
 |   1 | 3-pin JST XH (male) connector   | |   3 | Dupont-style female pins   |
 |   1 | 250 mA PTC resettable fuse      | |   1 | Dupont-style 3-pin housing |
@@ -103,8 +103,7 @@ There are three options for threaded inserts.  You must match the insert type to
 |   1 | ZX40E20C01 microswitch          | |   1 | JST XH 3-pin housing       |
 |   1 | additional M3 square nut        | |     |                            |
 
- 
-
+\* **Norcal Haunters**: Some kits have glands incorrectly marked as PG7; they are actually M12.
 
 ## Assembly
 
@@ -219,24 +218,24 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 ![Motion Sensor Assembly](sensor_assembly_exploded.jpg)
 
-- [ ] Remove the flat nut from the cable gland.  You won't need it.
-- [ ] Screw the gland into the back of the 3D-printed sensor housing.
+- [x] Remove the flat nut from the cable gland.  You won't need it.
+- [x] Screw the gland into the back of the 3D-printed sensor housing.
 
 > Tip:  Tighten and loosen the gland to the housing a few times to clear out the threads.
 
-- [ ] Remove the round nut from the cable gland.
-- [ ] Slip the Dupont pins into the rounded end and let the nut slide up the cable.
-- [ ] Feed the Dupont pins into the gland.
+- [x] Remove the round nut from the cable gland.
+- [x] Slip the Dupont pins into the rounded end and let the nut slide up the cable.
+- [x] Feed the Dupont pins into the gland.
 
 > Tip:  Be careful not to dislodge the rubber seal held at the tips of the fins in the cable gland.
 
 ![Progress: Cable through sensor housing](sensor_assembly_dupont.jpg)
 
-- [ ] When the pins extend out the top of the sensor housing, insert them into the Dupont connector body in **RED/YELLOW/BLACK** order.
+- [x] When the pins extend out the top of the sensor housing, insert them into the Dupont connector body in **RED/YELLOW/BLACK** order.
 
 !["+" pin goes to red wire](sensor_assembly_cable_terminated.jpg)
 
-- [ ] Insert the PIR sensor module into the Dupont connector, ensuring that the pin marked **`+`** or **`VIN`** corresponds to the **RED** wire.
+- [ ] Insert the PIR module into the connector, ensuring that the pin marked **`+`** or **`VIN`** corresponds to the **RED** wire.
 
 > Tip:  If the dome pops off the PIR module, be careful not to touch the exposed sensor.  Replace the dome and hold it in place until the module is secured in the housing.
 
