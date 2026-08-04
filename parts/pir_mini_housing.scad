@@ -10,7 +10,7 @@
 // * The back of the housing is threaded for a cable gland with
 //   strain relief.  (I designed for glands marked "PG7", but the
 //   threading was actually M12x1.5, which is now the default.  You
-//   case select `gland="PG7"` to get threads that should mate with
+//   can select `gland="PG7"` to get threads that should mate with
 //   a true PG7 gland.)
 // * The regular cap allows the dome to protrude from the end of the
 //   housing for maximum sensing area.
@@ -33,9 +33,22 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
     lens_d = 12.5;
     lip_d  = 14.2;
     lip_th = 0.4;
-    neck_d = 10.4;
+    neck_d = 10.75;
     neck_l = 3.8;
     neck_flat = neck_d - 3;
+
+    // Some modules don't have the pcb board exactly inline with the back
+    // of the sensor. The notch accommodates this board offset.
+    notch_d = neck_d + 2;
+    notch_th = 3;
+    notch_l = 13;
+    
+    // Some modules also have the connector offset, so we also need a
+    // cavity for the connector.
+    conn_extent = 6;  // to one side from center of module
+    conn_w = 8;
+    conn_h = 29;  // back of connector to lip
+
     cable_d = 5;
     cap_thread_d = 18;
     cap_thread_pitch = 1.5;
@@ -68,7 +81,7 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
     reducer_d2 = neck_flat + nozzle_d;
     reducer_h = reducer_d1 - reducer_d2;  // 45 deg angle
     ziptie_w  = 5 + nozzle_d;
-    ziptie_th = 1.5 + nozzle_d;
+    ziptie_th = 1.5;
     ziptie_dy = (cap_thread_d - ziptie_th)/2 - nozzle_d;
     ziptie_dz = (shell_h + cap_thread_l)/2;
     zip_r = 15;
@@ -88,10 +101,13 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
         half_width = shell_d*cos(30)/2;
         opening_r = gland_thread_d/2;
         text_size = half_width - opening_r - 2*nozzle_d;
-        translate([0, (opening_r + half_width)/2 - nozzle_d, -0.1]) {
-            linear_extrude(0.4) mirror([1, 0, 0]) {
-                text(gland, size=text_size, halign="center", valign="center",
-                     font="Liberation Sans:style=Bold");
+        rotate([0, 0, 60]) {
+            translate([0, (opening_r + half_width)/2, -0.1]) {
+                linear_extrude(0.4) mirror([1, 0, 0]) {
+                    text(gland, size=text_size,
+                         halign="center", valign="center",
+                         font="Liberation Sans:style=Bold");
+                }
             }
         }
     }
@@ -114,19 +130,36 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
                            nozzle_d=nozzle_d);
             // reducer (cone-shaped to enable printing w/o supports)
             translate([0, 0, gland_thread_l-0.01])
-                cylinder(h=reducer_h, d1=reducer_d1, d2=reducer_d2, $fn=6);
-            // cavity for board (and support beneath the neck)
-            translate([0, 0, th]) {
-                linear_extrude(body_h+1, convexity=4) {
+                cylinder(h=reducer_h, d1=reducer_d1, d2=reducer_d2);
+            // cavity for board
+            translate([0, 0, gland_thread_l]) {
+                linear_extrude(body_h+2, convexity=4) {
                     intersection() {
                         circle(d=neck_d + nozzle_d);
-                        square([neck_d+nozzle_d, neck_d-3], center=true);
+                        square([neck_d+nozzle_d, neck_flat], center=true);
                     }
                 }
             }
+            // notch for offset boards
+            translate([0, 0, body_h-lip_th-notch_l]) {
+                linear_extrude(notch_l+1) {
+                    square([notch_d, notch_th], center=true);
+                }
+            }
             // cavity for the neck
-            translate([0, 0, body_h-lip_th-neck_l])
+            translate([0, 0, body_h-lip_th-neck_l]) {
                 cylinder(h=neck_l+1, d=neck_d+nozzle_d);
+            }
+            // cavity for offset connector
+            translate([0, 0, body_h-lip_th-conn_h]) {
+                linear_extrude(conn_h+1) {
+                    intersection() {
+                        translate([-conn_w/2, 0]) square([conn_w, conn_extent]);
+                        circle(d=lip_d+nozzle_d);
+                    }
+                }
+            }
+
             // recess for the lip of the lens
             translate([0, 0, body_h-lip_th])
                 cylinder(h=lip_th+1, d=lip_d+nozzle_d);
