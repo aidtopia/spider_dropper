@@ -4,14 +4,14 @@
 // * Fits _most_ HC-SR312 mini PIR motion sensor modules.
 // * The sensor cavity is shaped to orient the sensor consistently.
 // * The cap screws over the sensor to hold it securely in place and
-// to keep the lens array (the white plastic dome) in place.
+//   to keep the lens array (the white plastic dome) in place.
 // * Slots in the housing accommodate zip-ties for mounting to posts
 //   or rails.
 // * The back of the housing is threaded for a cable gland with
 //   strain relief.  (I designed for glands marked "PG7", but the
 //   threading was actually M12x1.5, which is now the default.  You
-//   can select `gland="PG7"` to get threads that should mate with
-//   a true PG7 gland.)
+//   can select `gland="PG7"` to get threads that mate with a true
+//   PG7 gland.)
 // * The regular cap allows the dome to protrude from the end of the
 //   housing for maximum sensing area.
 // * The longer cap slightly restricts the angle of the detection
@@ -23,8 +23,14 @@
 //   cellophane tape.
 //
 // Print in PETG or PLA.
-// I recommend a layer height of 0.2mm (0.15mm for CORE One) to get
-// threads that fit well.
+// I recommend a layer height of 0.2mm (0.15mm for Prusa CORE One) to
+// get threads that fit well.
+
+// Select the thread size of the cable gland.
+Gland_Size = "M12"; // ["M12", "PG7"]
+
+// Select which cap(s) to include.
+Cap_Choice = "all"; // ["all", "short", "tall", "snoot", "none"]
 
 use <aidthread.scad>
 
@@ -200,8 +206,8 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
         difference() {
             linear_extrude(cap_h) hex_footprint();
             translate([0, 0, cap_h-cap_thread_l+0.1])
-                AT_threads(cap_thread_l, cap_thread_d, cap_thread_pitch, tap=true,
-                        nozzle_d=nozzle_d);
+                AT_threads(cap_thread_l, cap_thread_d, cap_thread_pitch,
+                           tap=true, nozzle_d=nozzle_d);
             translate([0, 0, -1])
                 cylinder(h=cap_h+1, d=lens_d+nozzle_d);
         }
@@ -213,8 +219,8 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
         difference() {
             linear_extrude(snoot_l) hex_footprint();
             translate([0, 0, snoot_l-cap_thread_l+0.1])
-                AT_threads(cap_thread_l, cap_thread_d, cap_thread_pitch, tap=true,
-                           nozzle_d=nozzle_d);
+                AT_threads(cap_thread_l, cap_thread_d, cap_thread_pitch,
+                           tap=true, nozzle_d=nozzle_d);
             d = lens_d + nozzle_d;
             translate([0, 0, th])
                 cylinder(h=snoot_l, d=d);
@@ -242,4 +248,4 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
     }
 }
 
-PIR_housing();
+PIR_housing(gland=Gland_Size, cap=Cap_Choice);

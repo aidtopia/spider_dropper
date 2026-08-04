@@ -58,15 +58,17 @@ Motor_Type = "JGY-370"; // ["JGY-370", "Reindeer"]
 // If available, use thin square nuts or heat-set threaded inserts for a stronger shaft adapter.
 Nut_Type = 2.4; // [2.4:"Regular", 1.8:"Thin", 4:"Heatset Insert"]
 
+// To include a housing for the PIR motion sensor module, select the thread size of the cable gland.
+PIR_Gland_Size = "none"; // ["none", "M12", "PG7"]
+
+// Select the cap type you want to use (applies only if PIR_Gland_Size is not "none").
+PIR_Cap_Choice = "snoot"; // ["none", "snoot", "tall", "short"]
+
 Include_Base_Plate = true;
 Include_Spool_Assembly = true;
 Include_Drive_Gear = true;
 Include_Shaft_Adapter = true;
 Include_Hub_Screw = true;
-Include_PIR_Housing = false;
-
-// Not required. Can be used for visualization, checking alignment and clearance w/o an actual PCB.
-Include_PCB_Model = false;
 
 // Not required. Useful for pushing a bearing out of a mechanism.
 Include_Bearing_Tool = false;
@@ -76,6 +78,9 @@ Include_Soldering_Jig = false;
 
 // Not required. Helpful for bending leads when soldering the Slightly Smarter circuit.
 Include_Pin_Bender = false;
+
+// Not required. Can be used for visualization, checking alignment and clearance w/o an actual PCB.
+Include_PCB_Model = false;
 
 // Show how the parts would be arranged for printing.
 Preview_for_Printing = false;
@@ -1446,12 +1451,18 @@ module spider_dropper(drop_distance=inch(24), nozzle_d=0.4) {
         }
     }
 
-    if (Include_PIR_Housing) {
+    if (PIR_Gland_Size != "none") {
         if (show_assembled) {
-            translate([0, plate_w/2+25, 0]) PIR_housing(cap="snoot", nozzle_d=nozzle_d);
+            translate([0, plate_w/2+25, 0]) {
+                PIR_housing(gland=PIR_Gland_Size, cap=PIR_Cap_Choice,
+                            nozzle_d=nozzle_d);
+            }
         } else {
             translate([plate_l+1+hub_head_d+1+pcb_w+2*min_th+2+pcb_w/2, plate_w+1+spool_flange_d/2, 0]) {
-                color("purple") PIR_housing(cap="snoot", nozzle_d=nozzle_d);
+                color("purple") {
+                    PIR_housing(gland=PIR_Gland_Size, cap=PIR_Cap_Choice,
+                                nozzle_d=nozzle_d);
+                }
             }
         }
     }
