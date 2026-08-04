@@ -63,7 +63,7 @@ Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in
 | M3×6mm machine screws          |     2      |     6      |     7      |
 | base plate `#3D`               |     1      |     1      |     1      |
 | spool assembly `#3D`           |     1      |     1      |     1      |
-| 608 (skateboard) bearings      |     2      |     2      |     2      |
+| 608 (skate) bearings           |     2      |     2      |     2      |
 | drive gear `#3D`               |     1      |     1      |     1      |
 | hub screw `#3D`                |     1      |     1      |     1      |
 | monofilament (fishing line)    |  3+ feet   |  3+ feet   |  3+ feet   |
@@ -99,7 +99,7 @@ There are three options for threaded inserts.  You must match the insert type to
 |   1 | 2-pin JST XH (male) connector   | |   1 | 3-wire 22-26 AWG cable     |
 |   1 | 3-pin JST XH (male) connector   | |   3 | Dupont-style female pins   |
 |   1 | 250 mA PTC resettable fuse      | |   1 | Dupont-style 3-pin housing |
-|   1 | PJ-044AH barrel connector       | |   3 | JST XH header female pins  |
+|   1 | PJ-044AH barrel jack            | |   3 | JST XH header female pins  |
 |   1 | ZX40E20C01 microswitch          | |   1 | JST XH 3-pin housing       |
 |   1 | additional M3 square nut        | |     |                            |
 
@@ -176,7 +176,7 @@ Print with a 0.4&nbsp;mm nozzle and no supports.  PLA works, but prefer PETG for
 - [ ] Solder the 3- and 2-pin JST XH connectors at J1 and J3, respectively. Orient per the board markings.
 - [ ] Solder the PTC fuse at F1, being careful not to overheat it.
 - [ ] Trim the excess leads.
-- [ ] Solder the barrel connector at J1.
+- [ ] Solder the barrel jack at J2.
 
 ![Populated circuit board](pcb_front_populated.png)
 
