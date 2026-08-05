@@ -47,7 +47,7 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
     // of the sensor. The notch accommodates this board offset.
     notch_d = neck_d + 2;
     notch_th = 3;
-    notch_l = 13;
+    notch_l = 14;
     
     // Some modules also have the connector offset, so we also need a
     // cavity for the connector.
