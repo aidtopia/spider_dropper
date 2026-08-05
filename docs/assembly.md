@@ -233,7 +233,7 @@ Note:  The lever of the switch is smaller than shown in the illustration above.
 
 - [x] When the pins extend out the top of the sensor housing, insert them into the Dupont connector body in **RED/YELLOW/BLACK** order.
 
-!["+" pin goes to red wire](sensor_assembly_cable_terminated.jpg)
+!["+" pin goes to red wire](connect_sensor_module.jpg)
 
 - [ ] Insert the PIR module into the connector, ensuring that the pin marked **`+`** or **`VIN`** corresponds to the **RED** wire.
 
