@@ -1,6 +1,7 @@
-# Stupidly Simple Spider Dropper<br>Assembly Instructions<br>DRAFT
+# Stupidly Simple Spider Dropper<br>Assembly Instructions
 
-Adrian McCarthy 2026 for the [Northern California Haunters Group](https://www.norcalhaunters.com/)
+Adrian McCarthy for the [Northern California Haunters Group](https://www.norcalhaunters.com/)<br>
+August 2026
 
 Source files and documentation available at https://github.com/aidtopia/spider_dropper<br>
 STL files will be available on `https:\\printables.com\` [TODO]
@@ -282,7 +283,7 @@ The base plate has two string guides at the edges near the spool.  Decide whethe
 - [ ] Thread the monofilament into one of the holes along the edge of the spool.
 - [ ] Loop the monofilament through the two holes in the bar that divides the recess.
 - [ ] Tie the line to itself.
-- [ ] Trm the excess and ensure the knot remains entirely within the recess.
+- [ ] Trim the excess and ensure the knot remains entirely within the recess.
 
 ![Line Routing](string_path.png)
 
