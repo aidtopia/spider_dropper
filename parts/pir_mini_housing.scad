@@ -109,7 +109,7 @@ module PIR_housing(cap="all", gland="M12", nozzle_d=0.4) {
         text_size = half_width - opening_r - 2*nozzle_d;
         rotate([0, 0, 60]) {
             translate([0, (opening_r + half_width)/2, -0.1]) {
-                linear_extrude(0.4) mirror([1, 0, 0]) {
+                linear_extrude(0.6) mirror([1, 0, 0]) {
                     text(gland, size=text_size,
                          halign="center", valign="center",
                          font="Liberation Sans:style=Bold");
