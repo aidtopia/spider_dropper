@@ -63,7 +63,7 @@ Tools tagged with `#3D` can be printed with a 3D printer.  (Subject to change in
 | M3×16mm sheet metal screws     |     4      |            |            |
 | M3×6mm machine screws          |     2      |     6      |     7      |
 | base plate `#3D`               |     1      |     1      |     1      |
-| spool assembly `#3D`           |     1      |     1      |     1      |
+| spool `#3D`                    |     1      |     1      |     1      |
 | 608 (skate) bearings           |     2      |     2      |     2      |
 | drive gear `#3D`               |     1      |     1      |     1      |
 | hub screw `#3D`                |     1      |     1      |     1      |

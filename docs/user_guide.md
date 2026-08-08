@@ -32,13 +32,13 @@ The cap over the motion sensor can be unscrewed and swapped for alternate ones t
 
 ## Jams
 
-If the spider fails to freely drop its full distance, the mechanism will almost certainly jam shortly thereafter.
+If the spider fails to drop the full distance, the mechanism will likely jam on the next cycle.
 
 If you detect a jam early and disconnect the power, you can probably free it up before there's any damage.
 
-If the jam persists, the motor could overheat.  To avoid that, the 3D-printed shaft adapter is designed to be a sacrifical part.  Under the constant strain of a jam, it will deform, allowing the motor to run freely without actually driving the mechanism.  If this happens, the mechanism can be repaired by replacing the shaft adapter.  See the Assembly Instructions for details.
+If the jam persists, the motor could overheat.  To avoid that, the 3D-printed shaft adapter is designed to be a sacrificial part.  Under the constant strain of a jam, it will deform, allowing the motor to run freely without actually driving the mechanism.  If this happens, the mechanism can be repaired by replacing the shaft adapter.  See the Assembly Instructions for details.
 
-If your model has the "Slightly Smarter" upgrade, the circuit has a "resettable" fuse.  If it gets too hot, it will cut the power to the motor.  When the fuse cools again, it will automatically reset.  You don't need to replace the fuse or do anything to reset it other than give it time to cool off.  (If it cools off before the jam has been cleared, it may cut the power again.)
+If your model has the "Slightly Smarter" upgrade, the circuit has a fuse.  If it gets too hot, it will cut the power to the motor.  When the fuse cools again, it will automatically reset.  You don't need to replace the fuse or do anything to reset it other than give it time to cool off.  (If it cools off before the jam has been cleared, it may cut the power again.)
 
 With these protections in place, it should be fine to let the spider dropper run unattended.  In the worst case, the spider will simply stop dropping, but the motor should not overheat.
 
@@ -52,21 +52,23 @@ With these protections in place, it should be fine to let the spider dropper run
 
 3.  Pull the drive gear off the shaft adapter.
 
-4.  Pull the spool assembly off its axle.  (It may be tight.  Don't wiggle, just pull it straight.)
+4.  Pull the spool off its axle.  (It may be tight.  Don't wiggle, just pull it straight.)
 
 5.  Free up the monofilament line.  If it's kinked, replace the line.
 
-6.  If the motor shaft adapter has deformed, replace it.  (If you can spin it around the motor shaft, it's a goner.)  To remove the old shaft adapter, first remove the shaft screw that's holds the adapter on the motor shaft.  (The shaft screw is not the same as the set screw(s) in the side of adapter.)
+6.  If the shaft adapter has deformed, replace it.  (If you can rotate it around the motor shaft with the set screw(s) tightened, it's a goner.)
+
+    To remove the old shaft adapter, loosen the set screw(s) and remove the shaft screw (the one that goes into the end of the shaft).  Print a new adapter.  Insert the nut(s) or heat-set threaded insert(s) and then the set screws.  Slide the adapter over shaft as far as it will go.  Tighten the set screw(s) against the flat side(s) of the shaft.  Screw shaft screw through the end of the adapter into the end of the shaft.
 
 ![shaft adapter and axle](shaft_axle.png "Shaft Adapter and Axle")
 
 7.  Push the spool back onto the axle.  Make sure it's on all the way.  When you look at it from the edge, it should be perfectly parallel to the honeycomb plate, and the string guide holes should be perfectly centered with the center of the spool.
 
-![alignment](alignment.png "Edge View Showing Alignment")
-
 8.  Make sure the string is completely unwound and pulled as far as possible through the string guide.
 
 9.  Slide the drive gear onto the shaft adapter so that the portion without teeth is closest to the small gear.  Check it from the edges.  The drive gear should be perfectly parallel with the honeycomb plate.  There should be a slight gap between the spool and the drive gear.  And the top edges of the two gears should be aligned.  Secure the drive gear with the hub screw.
+
+![alignment](alignment.png "Edge View Showing Alignment")
 
 10.  With the mechanism suspended, and the spider at its lowest position, reconnect the power.  Run it through a couple cycles to make sure there are no obstructions to a full drop.
 
